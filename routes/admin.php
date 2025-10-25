@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ApiProductController;
 
 Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], function(){
     Route::get('/dashboard', [HomeController::class, 'adminHome'])->name('admin.dashboard');
@@ -98,6 +99,14 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
     Route::post('/sections/update-order', [SectionController::class, 'updateOrder'])->name('sections.updateOrder');
     Route::post('/sections/toggle-status', [SectionController::class, 'toggleStatus'])->name('sections.toggleStatus');
+
+    //Api Products
+    Route::get('/api-product', [ApiProductController::class, 'index'])->name('api_products.index');
+    Route::post('/api-product', [ApiProductController::class, 'store'])->name('api_products.store');
+    Route::get('/api-product/{id}/edit', [ApiProductController::class, 'edit'])->name('api_products.edit');
+    Route::post('/api-product-update', [ApiProductController::class, 'update'])->name('api_products.update');
+    Route::delete('/api-product/{id}', [ApiProductController::class, 'destroy'])->name('api_products.delete');
+    Route::post('/api-product-status', [ApiProductController::class, 'toggleStatus'])->name('api_products.toggleStatus');
 
     //Api Products
     Route::post('/sync-products', [ProductController::class, 'syncProducts'])->name('sync.products');
