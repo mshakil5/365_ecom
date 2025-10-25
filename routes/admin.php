@@ -90,11 +90,11 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::post('/contact-emails/update', [ContactMailController::class, 'update'])->name('contactemails.update');
     Route::delete('/contact-emails/{id}', [ContactMailController::class, 'destroy'])->name('contactemails.destroy');
 
-      Route::get('/master', [MasterController::class, 'index'])->name('master.index');
-      Route::post('/master', [MasterController::class, 'store'])->name('master.store');
-      Route::get('/master/{id}/edit', [MasterController::class, 'edit'])->name('master.edit');
-      Route::post('/master-update', [MasterController::class, 'update'])->name('master.update');
-      Route::delete('/master/{id}', [MasterController::class, 'destroy'])->name('master.delete');
+    Route::get('/master', [MasterController::class, 'index'])->name('master.index');
+    Route::post('/master', [MasterController::class, 'store'])->name('master.store');
+    Route::get('/master/{id}/edit', [MasterController::class, 'edit'])->name('master.edit');
+    Route::post('/master-update', [MasterController::class, 'update'])->name('master.update');
+    Route::delete('/master/{id}', [MasterController::class, 'destroy'])->name('master.delete');
 
     Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
     Route::post('/sections/update-order', [SectionController::class, 'updateOrder'])->name('sections.updateOrder');
@@ -116,8 +116,11 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::get('/products/group/{code}', [ProductController::class, 'groupByProductCode']);
 
     //In House Products
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/create-product', [ProductController::class, 'create'])->name('create.product');
     Route::post('/store-product', [ProductController::class, 'store'])->name('store.product');
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/product/{id}', [ProductController::class, 'update'])->name('update.product');
     
     Route::get('/get-data', [ProductController::class, 'getData'])->name('get.data');
 

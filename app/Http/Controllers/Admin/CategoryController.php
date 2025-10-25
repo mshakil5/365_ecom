@@ -22,7 +22,7 @@ class CategoryController extends Controller
                 ->addIndexColumn()
                 ->addColumn('image', function ($row) {
                     return $row->image
-                        ? '<img src="'.asset('images/category/'.$row->image).'" class="img-thumbnail" style="width:50px;height:50px;">'
+                        ? '<img src="'.asset('images/category/'.$row->image).'" class="img-thumbnail">'
                         : '';
                 })
                 ->addColumn('status', function ($row) {
