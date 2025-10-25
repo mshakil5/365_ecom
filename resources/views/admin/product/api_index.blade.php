@@ -19,12 +19,17 @@
                         <th>Sl</th>
                         <th>Code</th>
                         <th>Name</th>
-                        <th>Company</th>
+                        {{-- <th>Company</th> --}}
                         <th>Category</th>
                         <th>EAN</th>
+                        <th>Short Code</th>
+                        <th>Tariff</th>
+                        <th>C Code</th>
+                        <th>C Name</th>
+                        <th>Pantone</th>
                         <th>Price</th>
                         <th>Quantity</th>
-                        <th>Country</th>
+                        {{-- <th>Country</th> --}}
                         <th>Image</th>
                     </tr>
                 </thead>
@@ -63,12 +68,17 @@ $(document).ready(function(){
             {data:'DT_RowIndex', name:'DT_RowIndex', orderable:false, searchable:false},
             {data:'product_code_api', name:'product_code_api'},
             {data:'product_name_api', name:'product_name_api'},
-            {data:'company', name:'company'},
+            // {data:'company', name:'company'},
             {data:'category_api', name:'category_api'},
             {data:'ean', name:'ean'},
+            {data:'short_code', name:'short_code'},
+            {data:'tariff_no', name:'tariff_no'},
+            {data:'colour_code', name:'colour_code'},
+            {data:'colour_name_api', name:'colour_name_api'},
+            {data:'pantone', name:'pantone'},
             {data:'price_single', name:'price_single', orderable:false, searchable:false},
             {data:'quantity_api', name:'quantity_api', searchable:false},
-            {data:'country_of_origin', name:'country_of_origin'},
+            // {data:'country_of_origin', name:'country_of_origin'},
             {data:'image', name:'image', orderable:false, searchable:false},
         ]
     });

@@ -65,7 +65,7 @@ class BrandController extends Controller
         }
 
         if ($brand->save()) {
-            return response()->json(['message' => 'Brand created successfully.'], 201);
+            return response()->json(['message' => 'Brand created successfully.','brand' => $brand ], 201);
         }
 
         return response()->json(['message' => 'Failed to create brand.'], 500);

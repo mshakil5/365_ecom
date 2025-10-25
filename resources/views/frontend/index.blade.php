@@ -1,8 +1,6 @@
 @extends('frontend.pages.master')
 
 @section('content')
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -36,14 +34,12 @@
       margin-bottom:18px;
     }
 
-    /* Grid: we use CSS Grid to make 5 columns at large width but keep bootstrap container */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 20px;
     }
 
-    /* Responsive breakpoints */
     @media (max-width: 1200px) {
       .product-grid { grid-template-columns: repeat(4, 1fr); }
     }
@@ -133,7 +129,7 @@
       display:flex;
       gap:8px;
       align-items:center;
-      margin-top:auto; /* push swatches down */
+      margin-top:auto;
     }
     .swatch {
       width:18px;
@@ -181,7 +177,6 @@
       min-width: 220px;
     }
 
-    /* small utilities */
     .muted { color: var(--muted); font-size:0.9rem; }
     .flex-gap { display:flex; gap:10px; align-items:center; }
   </style>

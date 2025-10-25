@@ -48,12 +48,12 @@ class TagController extends Controller
 
         $tag = new Tag();
         $tag->name = $request->name;
-        $tag->slug = Str::slug($request->name); // auto-generate slug
+        $tag->slug = Str::slug($request->name);
         $tag->status = 1;
         $tag->created_by = auth()->id();
         $tag->save();
 
-        return response()->json(['message'=>'Tag created successfully.']);
+        return response()->json(['message'=>'Tag created successfully.', 'tag' => $tag]);
     }
 
     public function edit($id)

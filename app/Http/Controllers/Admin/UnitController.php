@@ -48,12 +48,12 @@ class UnitController extends Controller
 
         $unit = new Unit();
         $unit->name = $request->name;
-        $unit->slug = Str::slug($request->name); // auto-generate slug
+        $unit->slug = Str::slug($request->name);
         $unit->status = 1;
         $unit->created_by = auth()->id();
         $unit->save();
 
-        return response()->json(['message'=>'Unit created successfully.']);
+        return response()->json(['message'=>'Unit created successfully.', 'unit' => $unit]);
     }
 
     public function edit($id)

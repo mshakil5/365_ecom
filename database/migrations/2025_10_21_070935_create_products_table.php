@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('slug')->unique()->nullable();
             $table->string('code')->nullable()->index();
+            $table->string('feature_image')->nullable();
             $table->Text('short_description')->nullable();
             $table->longText('long_description')->nullable();
             $table->decimal('price', 8, 2)->nullable()->index();
@@ -42,7 +43,6 @@ return new class extends Migration
             $table->boolean('is_top_rated')->default(0)->index();
             
             // Meta/Image Fields
-            $table->string('feature_image')->nullable();
             $table->string('meta_title')->nullable();
             $table->longText('meta_description')->nullable();
             $table->longText('meta_keywords')->nullable();

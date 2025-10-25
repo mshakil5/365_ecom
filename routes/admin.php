@@ -104,10 +104,13 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::get('/import-chunk/{id}', [ProductController::class, 'importChunk'])->name('import.chunk');
     Route::get('/all-api-products', [ProductController::class, 'getApiProducts'])->name('allApiProducts');
 
-    Route::get('/get-data', [ProductController::class, 'getData'])->name('get.data');
+    Route::get('/products/group/{code}', [ProductController::class, 'groupByProductCode']);
+
     //In House Products
     Route::get('/create-product', [ProductController::class, 'create'])->name('create.product');
-
+    Route::post('/store-product', [ProductController::class, 'store'])->name('store.product');
+    
+    Route::get('/get-data', [ProductController::class, 'getData'])->name('get.data');
 
     // Category crud
     Route::get('/category', [CategoryController::class, 'getCategory'])->name('allcategory');

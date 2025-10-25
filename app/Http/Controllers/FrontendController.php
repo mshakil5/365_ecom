@@ -45,7 +45,7 @@ class FrontendController extends Controller
 
     public function latestProducts(Request $request)
     {
-        $products = Product::inRandomOrder()
+        $products = Product::where('product_source', 2)->inRandomOrder()
             ->take(20)
             ->get();
 

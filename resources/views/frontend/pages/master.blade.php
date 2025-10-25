@@ -28,7 +28,7 @@
 
 <body>
 
-    {{-- @include('frontend.partials.header') --}}
+    @include('frontend.partials.header')
 
     @yield('content')
     

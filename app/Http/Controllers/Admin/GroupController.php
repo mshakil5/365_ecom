@@ -54,7 +54,7 @@ class GroupController extends Controller
         $group->created_by = auth()->id();
 
         $group->save();
-        return response()->json(['message' => 'Group created successfully.']);
+        return response()->json(['message' => 'Group created successfully.', 'group' => $group]);
     }
 
     public function edit($id)
