@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ApiProductController;
+use App\Http\Controllers\Admin\ProductPriceController;
 
 Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], function(){
     Route::get('/dashboard', [HomeController::class, 'adminHome'])->name('admin.dashboard');
@@ -217,4 +218,11 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::post('/type-update', [TypeController::class, 'update'])->name('types.update');
     Route::delete('/type/{id}', [TypeController::class, 'destroy'])->name('types.delete');
     Route::post('/type-status', [TypeController::class, 'toggleStatus'])->name('types.toggleStatus');
+
+    Route::get('product-price', [ProductPriceController::class, 'index'])->name('product_prices.index');
+    Route::post('product-price', [ProductPriceController::class, 'store'])->name('product_prices.store');
+    Route::get('product-price/{id}/edit', [ProductPriceController::class, 'edit'])->name('product_prices.edit');
+    Route::post('product-price/update', [ProductPriceController::class, 'update'])->name('product_prices.update');
+    Route::delete('product-price/{id}', [ProductPriceController::class, 'destroy'])->name('product_prices.destroy');
+    Route::post('product-price/toggle-status', [ProductPriceController::class, 'toggleStatus'])->name('product_prices.toggleStatus');
 });

@@ -46,8 +46,12 @@ class ProductController extends Controller
                         : '<span class="badge bg-danger">Inactive</span>';
                 })
                 ->editColumn('created_at', function ($row) {
-                    return optional($row->created_at)->format('d M, Y');
-                    })
+                  return optional($row->created_at)->format('d M, Y');
+                })
+                ->addColumn('prices', function($row) {
+                    $url = route('product_prices.index') . '?product_id=' . $row->id;
+                    return '<a href="'.$url.'" class="btn btn-sm btn-primary"><i class="ri-money-dollar-circle-line"></i></a>';
+                })
                 ->addColumn('action', function($row){
                     return '
                     <div class="dropdown">
@@ -59,7 +63,7 @@ class ProductController extends Controller
                         </ul>
                     </div>';
                 })
-                ->rawColumns(['feature_image', 'status', 'action'])
+                ->rawColumns(['feature_image', 'status', 'prices', 'action'])
                 ->make(true);
         }
 

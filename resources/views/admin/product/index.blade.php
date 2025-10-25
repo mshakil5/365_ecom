@@ -26,6 +26,7 @@
                         <th>Code</th>
                         <th>Price</th>
                         <th>Company</th>
+                        <th>Prices</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -49,6 +50,7 @@ $(function () {
             {data: 'code', name: 'code'},
             {data: 'price', name: 'price'},
             {data: 'company', name: 'company'},
+            {data: 'prices', name: 'prices'},
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ]
     });
