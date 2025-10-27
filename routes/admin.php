@@ -13,17 +13,12 @@ use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\SubSubCategoryController;
-use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\ProductModelController;
-use App\Http\Controllers\Admin\GroupController;
-use App\Http\Controllers\Admin\UnitController;
-use App\Http\Controllers\Admin\WarrantyController;
 use App\Http\Controllers\Admin\SizeController;
 use App\Http\Controllers\Admin\ColorController;
-use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ApiProductController;
 use App\Http\Controllers\Admin\ProductPriceController;
+use App\Http\Controllers\Admin\CompanyController;
 
 Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], function(){
     Route::get('/dashboard', [HomeController::class, 'adminHome'])->name('admin.dashboard');
@@ -109,11 +104,10 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::delete('/api-product/{id}', [ApiProductController::class, 'destroy'])->name('api_products.delete');
     Route::post('/api-product-status', [ApiProductController::class, 'toggleStatus'])->name('api_products.toggleStatus');
 
-    //Api Products
-    Route::post('/sync-products', [ProductController::class, 'syncProducts'])->name('sync.products');
-    Route::get('/import-chunk/{id}', [ProductController::class, 'importChunk'])->name('import.chunk');
-    Route::get('/all-api-products', [ProductController::class, 'getApiProducts'])->name('allApiProducts');
+    Route::get('/sync-products', [ApiProductController::class, 'syncProducts'])->name('sync.products');
 
+    Route::get('/all-api-products', [ProductController::class, 'getApiProducts'])->name('allApiProducts');
+    Route::get('product-details/{product}', [ProductController::class, 'productDetails'])->name('product.details');
     Route::get('/products/group/{code}', [ProductController::class, 'groupByProductCode']);
 
     //In House Products
@@ -152,37 +146,12 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::post('/sub-sub-category-status', [SubSubCategoryController::class, 'toggleStatus'])->name('subsubcategories.toggleStatus');
     Route::post('/sub-sub-category-update-serial', [SubSubCategoryController::class, 'updateSerial'])->name('subsubcategories.updateSerial');
 
-    // Brand crud
-    Route::get('/brand', [BrandController::class, 'index'])->name('brands.index');
-    Route::post('/brand', [BrandController::class, 'store'])->name('brands.store');
-    Route::get('/brand/{id}/edit', [BrandController::class, 'edit'])->name('brands.edit');
-    Route::post('/brand-update', [BrandController::class, 'update'])->name('brands.update');
-    Route::delete('/brand/{id}', [BrandController::class, 'destroy'])->name('brands.delete');
-    Route::post('/brand-status', [BrandController::class, 'toggleStatus'])->name('brands.toggleStatus');
-
-    // Product Model crud
-    Route::get('/product-model', [ProductModelController::class, 'index'])->name('productmodel.index');
-    Route::post('/product-model', [ProductModelController::class, 'store'])->name('productmodel.store');
-    Route::get('/product-model/{id}/edit', [ProductModelController::class, 'edit'])->name('productmodel.edit');
-    Route::post('/product-model-update', [ProductModelController::class, 'update'])->name('productmodel.update');
-    Route::delete('/product-model/{id}', [ProductModelController::class, 'destroy'])->name('productmodel.delete');
-    Route::post('/product-model-status', [ProductModelController::class, 'toggleStatus'])->name('productmodel.toggleStatus');
-
-    // Group CRUD
-    Route::get('/group', [GroupController::class, 'index'])->name('groups.index');
-    Route::post('/group', [GroupController::class, 'store'])->name('groups.store');
-    Route::get('/group/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
-    Route::post('/group-update', [GroupController::class, 'update'])->name('groups.update');
-    Route::delete('/group/{id}', [GroupController::class, 'destroy'])->name('groups.delete');
-    Route::post('/group-status', [GroupController::class, 'toggleStatus'])->name('groups.toggleStatus');
-
-    // Unit CRUD
-    Route::get('/unit', [UnitController::class, 'index'])->name('units.index');
-    Route::post('/unit', [UnitController::class, 'store'])->name('units.store');
-    Route::get('/unit/{id}/edit', [UnitController::class, 'edit'])->name('units.edit');
-    Route::post('/unit-update', [UnitController::class, 'update'])->name('units.update');
-    Route::delete('/unit/{id}', [UnitController::class, 'destroy'])->name('units.delete');
-    Route::post('/unit-status', [UnitController::class, 'toggleStatus'])->name('units.toggleStatus');
+    Route::get('/company', [CompanyController::class, 'index'])->name('companies.index');
+    Route::post('/company', [CompanyController::class, 'store'])->name('companies.store');
+    Route::get('/company/{id}/edit', [CompanyController::class, 'edit'])->name('companies.edit');
+    Route::post('/company-update', [CompanyController::class, 'update'])->name('companies.update');
+    Route::delete('/company/{id}', [CompanyController::class, 'destroy'])->name('companies.delete');
+    Route::post('/company-status', [CompanyController::class, 'toggleStatus'])->name('companies.toggleStatus');
 
     Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
     Route::post('/tags', [TagController::class, 'store'])->name('tags.store');
@@ -190,13 +159,6 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::post('/tags-update', [TagController::class, 'update'])->name('tags.update');
     Route::delete('/tags/{id}', [TagController::class, 'destroy'])->name('tags.delete');
     Route::post('/tags-status', [TagController::class, 'toggleStatus'])->name('tags.toggleStatus');
-
-    Route::get('/warranty', [WarrantyController::class, 'index'])->name('warranties.index');
-    Route::post('/warranty', [WarrantyController::class, 'store'])->name('warranties.store');
-    Route::get('/warranty/{id}/edit', [WarrantyController::class, 'edit'])->name('warranties.edit');
-    Route::post('/warranty-update', [WarrantyController::class, 'update'])->name('warranties.update');
-    Route::delete('/warranty/{id}', [WarrantyController::class, 'destroy'])->name('warranties.delete');
-    Route::post('/warranty-status', [WarrantyController::class, 'toggleStatus'])->name('warranties.toggleStatus');
 
     Route::get('/size', [SizeController::class, 'index'])->name('sizes.index');
     Route::post('/size', [SizeController::class, 'store'])->name('sizes.store');
@@ -212,17 +174,15 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::delete('/color/{id}', [ColorController::class, 'destroy'])->name('colors.delete');
     Route::post('/color-status', [ColorController::class, 'toggleStatus'])->name('colors.toggleStatus');
 
-    Route::get('/type', [TypeController::class, 'index'])->name('types.index');
-    Route::post('/type', [TypeController::class, 'store'])->name('types.store');
-    Route::get('/type/{id}/edit', [TypeController::class, 'edit'])->name('types.edit');
-    Route::post('/type-update', [TypeController::class, 'update'])->name('types.update');
-    Route::delete('/type/{id}', [TypeController::class, 'destroy'])->name('types.delete');
-    Route::post('/type-status', [TypeController::class, 'toggleStatus'])->name('types.toggleStatus');
-
     Route::get('product-price', [ProductPriceController::class, 'index'])->name('product_prices.index');
     Route::post('product-price', [ProductPriceController::class, 'store'])->name('product_prices.store');
     Route::get('product-price/{id}/edit', [ProductPriceController::class, 'edit'])->name('product_prices.edit');
     Route::post('product-price/update', [ProductPriceController::class, 'update'])->name('product_prices.update');
     Route::delete('product-price/{id}', [ProductPriceController::class, 'destroy'])->name('product_prices.destroy');
     Route::post('product-price/toggle-status', [ProductPriceController::class, 'toggleStatus'])->name('product_prices.toggleStatus');
+
+        // Stock
+    Route::get('/stocks', [StockController::class, 'getStocks'])->name('allstocks');
+    Route::get('/stock', [StockController::class, 'getStock'])->name('allstock');
+    Route::get('/purchase', [StockController::class, 'purchase'])->name('purchase');
 });

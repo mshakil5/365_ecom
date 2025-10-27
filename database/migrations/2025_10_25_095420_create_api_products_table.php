@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('url');
             $table->text('description')->nullable();
             $table->boolean('status')->default(1);
+            $table->timestamp('last_sync_at')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();

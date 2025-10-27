@@ -1,198 +1,382 @@
 @extends('frontend.pages.master')
 
 @section('content')
-
-<style>
-
-@media (max-width: 768px) {
-    .zoom-image-hover {
-        pointer-events: none;
-    }
-}
-
-
-    .progress-circle {
-        width: 113px;
-        height: 113px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: white;
-    }
-    .circle-1 { background-color: #d1d1d1; }
-    .circle-2 { background-color: #85c041; }
-    .circle-3 { background-color: #008000; }
-
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
-        display: none;
-        z-index: 9999;
-        overflow-y: auto;
-        padding: 40px 0;
-    }
-
-    .modal-content {
-        background: #fff;
-        border-radius: 5px;
-        animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: scale(0.9); }
-        to { opacity: 1; transform: scale(1); }
-    }
-
-    .tag-item {
-      display: inline-block;
-      background-color: #f1f1f1;
-      color: #333;
-      border-radius: 4px;
-      padding: 3px 8px;
-      font-size: 14px;
-      text-decoration: none;
-  }
-</style>
-
-<div class="breadcrumb-section">
-    <div class="breadcrumb-wrapper">
+    <!-- Product Details Section -->
+    <div class="product-details-section mt-2">
         <div class="container">
             <div class="row">
-                <div class="col-12 d-flex justify-content-between align-items-center flex-md-row flex-column">
-                    
-                    <!-- Static Page Title -->
-                    <h3 class="breadcrumb-title">Product Details</h3>
-                    
-                    <div class="breadcrumb-nav">
-                        <nav aria-label="breadcrumb">
-                            <ul>
-                                <li><a href="#">Home</a></li>
-                                <li aria-current="page">{{ $product->product_name_api }}</li>
-                            </ul>
-                        </nav>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="product-details-section mt-2">
-    <div class="container">
-        <div class="row">
-
-            <div class="col-md-6">
-                <div class="product-details-gallery-area d-flex align-items-center flex-row-reverse" data-aos="fade-up"  data-aos-delay="0">
-                    <div class="product-large-image product-large-image-vertical ml-15">
-
-
-                        <div class="product-image-large-single zoom-image-hover">
-                            <img src="{{ $product->image }}" alt="Feature Image">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="product-details-content-area" data-aos="fade-up" data-aos-delay="200">
-                    <div class="product-details-text">
-                        <h4 class="title">{{ $product->product_name_api }}</h4>
-                        <div class="price">     
-                            @if($product->del_price > $product->price_single)
-                                <del>£{{ number_format($product->del_price, 2) }}</del>
+                <!-- Product Gallery -->
+                <div class="col-md-6">
+                    <div class="product-details-gallery-area d-flex align-items-center flex-row-reverse">
+                        {{-- Large images --}}
+                        <div class="product-large-image product-large-image-vertical ml-15">
+                            @foreach ($product->images as $image)
+                                <div class="product-image-large-single zoom-image-hover">
+                                    <img src="{{ $image->image_path }}" alt="{{ $product->name }}"
+                                        class="{{ $image->is_primary ? 'main-image' : '' }}">
+                                </div>
+                            @endforeach
+                            @if ($product->feature_image && !$product->images->contains('image_path', $product->feature_image))
+                                <div class="product-image-large-single zoom-image-hover">
+                                    <img src="{{ $product->feature_image }}" alt="{{ $product->name }}" class="main-image">
+                                </div>
                             @endif
-                            £{{ number_format($product->price_single, 2) }} <span class="text-black">excl VAT</span>
-                            <input type="hidden" value="{{ $product->price_single }}" id="product_price">
-                        </div>
-                    </div>
-
-                    <div class="product-details-variable">
-                    </div>
-
-                    <div class="product-details-variable">
-
-                        <div class="product-block product-block--sales-point">
-                            <ul class="sales-points">
-                            <li class="sales-point">
-                                <span class="icon-and-text inventory--low">
-                                <span class="icon icon--inventory"></span>
-                                <span class="d-none" data-product-inventory="" data-threshold="2" data-enabled="false">{{ number_format($product->quantity_api, 0) }} items left</span>
-                                </span>
-                            </li>
-                            </ul>
                         </div>
 
+                        {{-- Thumbnails --}}
+                        <div class="product-image-thumb product-image-thumb-vertical pos-relative">
+                            @foreach ($product->images as $image)
+                                <div class="product-image-thumb-single">
+                                    <img class="img-fluid" src="{{ $image->image_path }}" alt="{{ $product->name }}">
+                                </div>
+                            @endforeach
+                            @if ($product->feature_image && !$product->images->contains('image_path', $product->feature_image))
+                                <div class="product-image-thumb-single">
+                                    <img class="img-fluid" src="{{ $product->feature_image }}" alt="{{ $product->name }}">
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="d-flex align-items-center">
-                        <div class="variable-single-item">
-                            <span>Quantity</span>
-                            <div class="product-variable-quantity">
-                                <input min="1" max="{{ $product->quantity_api }}" value="1" type="number" class="quantity-input">
+
+                <!-- Product Details -->
+                <div class="col-md-6">
+                    <div class="product-details-content-area">
+                        <div class="product-details-text">
+                            <h4 class="title">{{ $product->nam }}</h4>
+                            <div class="price">
+                                {{-- <del>$49.99</del> --}}
+                                £{{ number_format($product->price, 2) }} <span class="text-black">excl VAT</span>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="product-details-meta mb-20">
-                        <ul>
-                            <li><a href="#"><i class="icon-heart"></i>Add to wishlist</a></li>
-                        </ul>
-                    </div>
-                    
+                        <div class="product-details-variable">
+                            <h4 class="title">Available Options</h4>
 
-                    <div class="product-details-social">
-                        <ul>
-                            <li><a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(Request::fullUrl()) }}"  class="facebook" target="_blank">
-                                <i class="fa fa-facebook"></i>
-                            </a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                            @php
+                                $colors = $product->variants->pluck('color')->filter()->unique('id');
+                            @endphp
 
-<div class="product-details-content-tab-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="product-details-content-tab-wrapper" data-aos="fade-up"  data-aos-delay="0">
-                    <ul class="nav tablist product-details-content-tab-btn d-flex justify-content-center">
-                        <li><a class="nav-link active" data-bs-toggle="tab" href="#description">
-                                <h5>Description</h5>
-                            </a></li>
-                        <li><a class="nav-link" data-bs-toggle="tab" href="#review">
-                            </a></li>
-                    </ul>
+                            @if ($colors->count() > 0)
+                                <div class="variable-single-item">
+                                    <span>Color</span>
+                                    <div class="product-variable-color">
+                                        @foreach ($colors as $color)
+                                            <label>
+                                                <input type="radio" name="color" value="{{ $color->id }}"
+                                                    {{ $loop->first ? 'checked' : '' }}>
+                                                <span class="product-color" title="{{ $color->name ?? 'Color' }}"
+                                                    style="background-color: {{ $color->hex ?? '#ccc' }};">
+                                                </span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
 
-                    <div class="product-details-content-tab">
-                        <div class="tab-content">
-                            <div class="tab-pane active show" id="description">
-                                <div class="single-tab-content-item">
-                                    
-                                    {!! $product->full_description !!}
 
+                            @php
+                                $sizes = $product->variants->pluck('size')->filter()->unique('id');
+                            @endphp
+
+                            @if ($sizes->count() > 0)
+                                <div class="variable-single-item mb-3">
+                                    <span class="d-block mb-2 fw-semibold">Size:</span>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach ($sizes as $size)
+                                            <label class="size-option">
+                                                <input type="radio" name="size" value="{{ $size->id }}"
+                                                    {{ $loop->first ? 'checked' : '' }}>
+                                                <span>{{ $size->name ?? 'N/A' }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+
+                            <div class="d-flex align-items-center mt-3">
+                                <div class="variable-single-item me-3">
+                                    <span>Quantity</span>
+                                    <div class="product-variable-quantity">
+                                        <input min="1" value="1" type="number" class="quantity-input">
+                                    </div>
+                                </div>
+
+                                <div class="product-add-to-cart-btn">
+                                    <a href="#" class="offcanvas-toggle">Add To Cart</a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="product-details-text pt-3">
 
+                            <div class="pricing-table mt-4">
+                                <div class="tab">
+                                    <h3 class="tab-link tab-link-first active" data-tab="Blank">Blank Pricing</h3>
+                                    <h3 class="tab-link" data-tab="Print">Print</h3>
+                                    <h3 class="tab-link" data-tab="Embroidery">Embroidery</h3>
+                                    <h3 class="tab-link tab-link-last" data-tab="HighStitch">High Stitch Count</h3>
+                                </div>
+
+                                <div class="tab-panes">
+                                    <!-- Blank Tab -->
+                                    <div id="Blank" class="tab-content active">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Qty</th>
+                                                    <td>1-7</td>
+                                                    <td>8-14</td>
+                                                    <td>15-39</td>
+                                                    <td>40-99</td>
+                                                    <td>100-249</td>
+                                                    <td>250-499</td>
+                                                    <td>500+</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Price</th>
+                                                    <td>$14.95</td>
+                                                    <td>$13.46</td>
+                                                    <td>$12.68</td>
+                                                    <td>$12.11</td>
+                                                    <td>$10.12</td>
+                                                    <td>$8.50</td>
+                                                    <td><a href="#">Contact Us</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Discount</th>
+                                                    <td></td>
+                                                    <td>-10%</td>
+                                                    <td>-15%</td>
+                                                    <td>-19%</td>
+                                                    <td>-32%</td>
+                                                    <td>-43%</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Print Tab -->
+                                    <div id="Print" class="tab-content">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Qty</th>
+                                                    <td>1</td>
+                                                    <td>2-9</td>
+                                                    <td>10-34</td>
+                                                    <td>35-99</td>
+                                                    <td>100-249</td>
+                                                    <td>250-499</td>
+                                                    <td>500+</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Price</th>
+                                                    <td>$7.99</td>
+                                                    <td>$5.99</td>
+                                                    <td>$4.50</td>
+                                                    <td>$3.25</td>
+                                                    <td>$2.75</td>
+                                                    <td>$2.25</td>
+                                                    <td><a href="#">Contact Us</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Discount</th>
+                                                    <td></td>
+                                                    <td>-25%</td>
+                                                    <td>-44%</td>
+                                                    <td>-59%</td>
+                                                    <td>-66%</td>
+                                                    <td>-72%</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Embroidery Tab -->
+                                    <div id="Embroidery" class="tab-content">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Qty</th>
+                                                    <td>1</td>
+                                                    <td>2-9</td>
+                                                    <td>10-39</td>
+                                                    <td>40-99</td>
+                                                    <td>100-249</td>
+                                                    <td>250-499</td>
+                                                    <td>500+</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Price</th>
+                                                    <td>$8.49</td>
+                                                    <td>$6.25</td>
+                                                    <td>$4.99</td>
+                                                    <td>$3.75</td>
+                                                    <td>$3.25</td>
+                                                    <td>$2.50</td>
+                                                    <td><a href="#">Contact Us</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Discount</th>
+                                                    <td></td>
+                                                    <td>-26%</td>
+                                                    <td>-41%</td>
+                                                    <td>-56%</td>
+                                                    <td>-62%</td>
+                                                    <td>-71%</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- High Stitch Tab -->
+                                    <div id="HighStitch" class="tab-content">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Qty</th>
+                                                    <td>1</td>
+                                                    <td>2-9</td>
+                                                    <td>10-39</td>
+                                                    <td>40-99</td>
+                                                    <td>100-249</td>
+                                                    <td>250-499</td>
+                                                    <td>500+</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Price</th>
+                                                    <td>$16.00</td>
+                                                    <td>$11.50</td>
+                                                    <td>$9.00</td>
+                                                    <td>$6.50</td>
+                                                    <td>$5.50</td>
+                                                    <td>$4.50</td>
+                                                    <td><a href="#">Contact Us</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Discount</th>
+                                                    <td></td>
+                                                    <td>-28%</td>
+                                                    <td>-44%</td>
+                                                    <td>-59%</td>
+                                                    <td>-66%</td>
+                                                    <td>-72%</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p>{{ $product->full_description ?? ($product->short_description ?? 'No description available.') }}
+                            </p>
+
+                            @if ($product->composition)
+                                <div
+                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                                    <i class="fa fa-tshirt" style="font-size:24px;color:#007bff;margin-right:10px;"></i>
+                                    <span style="font-size:16px;">Composition: {{ $product->composition }}</span>
+                                </div>
+                            @endif
+
+                            @if ($product->gsm)
+                                <div
+                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                                    <i class="fa fa-weight" style="font-size:24px;color:#ff9800;margin-right:10px;"></i>
+                                    <span style="font-size:16px;">GSM: {{ $product->gsm }}</span>
+                                </div>
+                            @endif
+
+                            @if ($product->country_of_origin)
+                                <div
+                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                                    <i class="fa fa-globe" style="font-size:24px;color:green;margin-right:10px;"></i>
+                                    <span style="font-size:16px;">Country of Origin:
+                                        {{ $product->country_of_origin }}</span>
+                                </div>
+                            @endif
+
+                            @if ($product->wash_degrees)
+                                <div
+                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;border-radius:5px;">
+                                    <i class="fa fa-water" style="font-size:24px;color:#17a2b8;margin-right:10px;"></i>
+                                    <span style="font-size:16px;">Wash Degrees: {{ $product->wash_degrees }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-@endsection
+    <style>
+        .tab {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 15px;
+        }
 
-@section('script')
+        .tab-link {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            font-size: 15px;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab-link.active {
+            background: #fff;
+            border-bottom: 2px solid white;
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .size-option {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .size-option input {
+            display: none;
+        }
+
+        .size-option:hover {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .size-option input:checked+span {
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 6px;
+            padding: 6px 14px;
+        }
+    </style>
 
 @endsection

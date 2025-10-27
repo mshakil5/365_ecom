@@ -87,13 +87,13 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('brands.index') || Route::is('productmodel.index') || Route::is('groups.index') || Route::is('units.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('types.index') || Route::is('warranties.index') ? 'active' : '' }}"
+                    <a class="nav-link menu-link {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') ? 'active' : '' }}"
                       href="#sidebarAllProducts" data-bs-toggle="collapse" role="button"
                       aria-expanded="true" aria-controls="sidebarAllProducts">
                         <i class="ri-shopping-bag-3-line"></i> <span>Product Management</span>
                     </a>
 
-                    <div class="collapse menu-dropdown {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('brands.index') || Route::is('productmodel.index') || Route::is('groups.index') || Route::is('units.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('types.index') || Route::is('warranties.index') ? 'show' : '' }}"
+                    <div class="collapse menu-dropdown {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') ? 'show' : '' }}"
                         id="sidebarAllProducts">
                         <ul class="nav nav-sm flex-column">
 
@@ -113,7 +113,7 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('products.index') }}"
-                                  class="nav-link {{ Route::is('products.index') || Route::is('products.edit') ? 'active' : '' }}">
+                                  class="nav-link {{ Route::is('products.index') || Route::is('products.edit') || Route::is('product.details') ? 'active' : '' }}">
                                    Products
                                 </a>
                             </li>
@@ -128,7 +128,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('product_prices.index') }}"
                                   class="nav-link {{ Route::is('product_prices.index') ? 'active' : '' }}">
-                                   product Prices
+                                   Product Prices
                                 </a>
                             </li>
 
@@ -146,7 +146,7 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item">
+                            <li class="nav-item d-none">
                                 <a href="{{ route('subsubcategories.index') }}"
                                   class="nav-link {{ Route::is('subsubcategories.index') ? 'active' : '' }}">
                                     Sub Sub Category
@@ -154,30 +154,9 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('brands.index') }}"
-                                  class="nav-link {{ Route::is('brands.index') ? 'active' : '' }}">
-                                    Brand
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('productmodel.index') }}"
-                                  class="nav-link {{ Route::is('productmodel.index') ? 'active' : '' }}">
-                                    Model
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('groups.index') }}"
-                                  class="nav-link {{ Route::is('groups.index') ? 'active' : '' }}">
-                                    Group
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('units.index') }}"
-                                  class="nav-link {{ Route::is('units.index') ? 'active' : '' }}">
-                                    Unit
+                                <a href="{{ route('companies.index') }}"
+                                  class="nav-link {{ Route::is('companies.index') ? 'active' : '' }}">
+                                    Companies
                                 </a>
                             </li>
 
@@ -201,18 +180,53 @@
                                     Color
                                 </a>
                             </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link"
+                      href="#sidebarStockManagement" data-bs-toggle="collapse" role="button"
+                      aria-expanded="false" aria-controls="sidebarStockManagement">
+                        <i class="ri-archive-line"></i> <span>Stock</span>
+                    </a>
+
+                    <div class="collapse menu-dropdown"
+                        id="sidebarStockManagement">
+                        <ul class="nav nav-sm flex-column">
 
                             <li class="nav-item">
-                                <a href="{{ route('types.index') }}"
-                                  class="nav-link {{ Route::is('types.index') ? 'active' : '' }}">
-                                    Type
+                                <a href="#"
+                                  class="nav-link">
+                                    Purchase
                                 </a>
                             </li>
 
-                            <li class="nav-item d-none">
-                                <a href="{{ route('warranties.index') }}"
-                                  class="nav-link {{ Route::is('warranties.index') ? 'active' : '' }}">
-                                    Warranty
+                            <li class="nav-item">
+                                <a href="#"
+                                  class="nav-link">
+                                    Stock List
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="#"
+                                  class="nav-link">
+                                    Purchase History
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="#"
+                                  class="nav-link">
+                                    System Loss
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="#"
+                                  class="nav-link">
+                                    Stocking History
                                 </a>
                             </li>
 
@@ -220,7 +234,6 @@
                     </div>
                 </li>
 
-                <!-- Contact Messages -->
                 <li class="nav-item">
                     <a href="{{ route('contacts.index') }}" class="nav-link {{ Route::is('contacts.index') ? 'active' : '' }}">
                         <i class="ri-mail-open-line"></i>
@@ -228,7 +241,6 @@
                     </a>
                 </li>
 
-                <!-- Customers -->
                 <li class="nav-item">
                     <a href="{{ route('user.index') }}" class="nav-link {{ Route::is('user.index') ? 'active' : '' }}">
                         <i class="ri-user-3-line"></i>
@@ -236,7 +248,6 @@
                     </a>
                 </li>
 
-                <!-- Settings Dropdown -->
                 @php
                     $settingsActive = Route::is(
                         'admin.companyDetails',

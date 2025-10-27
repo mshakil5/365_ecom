@@ -52,10 +52,29 @@
                         <th>Company</th>
                         <th>URL</th>
                         <th>Status</th>
+                        <th>Last Sync</th>
                         <th>Action</th>
                     </tr>
                 </thead>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="syncModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 d-flex flex-column align-items-center text-center">
+            <lord-icon 
+                src="https://cdn.lordicon.com/uetqnvvg.json" 
+                trigger="loop"
+                colors="primary:#405189,secondary:#0ab39c" 
+                style="width:80px;height:80px">
+            </lord-icon>
+            <h5 class="fs-16 mt-2" id="modalTitle">Importing Products</h5>
+            <p class="text-muted mb-1" id="modalProgressText">Starting...</p>
+            <div class="progress w-100 mt-2">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" id="modalProgressBar" style="width:0%">0%</div>
+            </div>
         </div>
     </div>
 </div>
@@ -75,10 +94,12 @@ $(function() {
             {data:'company', name:'company'},
             {data:'url', name:'url'},
             {data:'status', name:'status', orderable:false, searchable:false},
+            {data:'last_sync', name:'last_sync', orderable:false, searchable:false},
             {data:'action', name:'action', orderable:false, searchable:false}
         ]
     });
 
+    // New/Edit Form Handling (your existing code)
     $('#newBtn').click(function() {
         $('#createThisForm')[0].reset();
         $('#codeid').val('');
@@ -136,6 +157,39 @@ $(function() {
             table.ajax.reload(null,false);
         }).fail(()=>showError('Failed'));
     });
+
+    $(document).on('click', '.importBtn', function() {
+        let apiId = $(this).data('id');
+        let companyName = $(this).data('company');
+        let importButton = $(this);
+
+        $('#modalTitle').text(`Importing from ${companyName}`);
+        $('#modalProgressText').text('Importing products...');
+        $('#modalProgressBar').css('width', '0%').text('0%');
+        $('#syncModal').modal({backdrop: 'static', keyboard: false});
+        $('#syncModal').modal('show');
+
+        importButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Importing...');
+
+        $.get("/admin/sync-products?id=" + apiId, function(res) {
+            console.log(res);
+
+            $('#modalProgressBar').css('width', '100%').text('100%');
+            $('#modalProgressText').text('Import completed successfully!');
+
+            importButton.prop('disabled', false).html('<i class="fas fa-download"></i> Import');
+
+            setTimeout(() => { $('#syncModal').modal('hide'); }, 1500);
+
+            showSuccess(`Products imported successfully from ${companyName}!`);
+        }).fail(function(xhr) {
+            $('#modalProgressText').text('Failed to import products.');
+            importButton.prop('disabled', false).html('<i class="fas fa-download"></i> Import');
+            console.log(xhr.responseText);
+            showError('Failed to import products.');
+        });
+    });
+
 });
 </script>
 @endsection

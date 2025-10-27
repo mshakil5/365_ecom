@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->nullable()->constrained('products')->onDelete('cascade');
-            $table->foreignId('color_id')->nullable()->constrained('colors')->onDelete('cascade');
-            $table->string('image')->nullable();
-            $table->string('created_by')->nullable();
-            $table->string('updated_by')->nullable();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('color_id')->nullable()->constrained('colors');
+            $table->string('image_path');
+            $table->enum('image_type', ['model', 'front', 'back', 'swatch', 'general'])->default('general');
+            $table->integer('sort_order')->default(0);
+            $table->boolean('is_primary')->default(false);
             $table->timestamps();
+                
+            $table->index(['product_id', 'color_id', 'image_type']);
         });
     }
 

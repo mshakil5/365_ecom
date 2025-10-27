@@ -1,4 +1,4 @@
-{{-- <footer class="footer-section section-top-gap-100 no-print">
+<footer class="footer-section section-top-gap-100 no-print">
     <div class="footer-top section-inner-bg">
         <div class="container">
             <div class="row">
@@ -74,12 +74,12 @@
                             </div>
                             <div class="col-6 col-sm-6">
                                 <ul class="footer-menu-nav">
-                                    <li><a href="{{ route('frontend.privacy-policy') }}">Privacy</a></li>
-                                    <li><a href="{{ route('frontend.terms-and-conditions') }}">Terms and conditions</a>
+                                    <li><a href="{{ route('privacy-policy') }}">Privacy</a></li>
+                                    <li><a href="{{ route('terms-and-conditions') }}">Terms and conditions</a>
                                     </li>
-                                    <li><a href="{{ route('frontend.faq') }}">FAQ</a></li>
-                                    <li><a href="{{ route('frontend.shopdetail') }}">About Us</a></li>
-                                    <li><a href="{{ route('frontend.contact') }}">Contact Us</a></li>
+                                    <li><a href="{{ route('faq') }}">FAQ</a></li>
+                                    <li><a href="{{ route('about-us') }}">About Us</a></li>
+                                    <li><a href="{{ route('contact') }}">Contact Us</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -117,7 +117,7 @@
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="footer-payment">
-                        <img class="img-fluid" src="{{ asset('frontend/images/icon/payment-icon.png') }}"
+                        <img class="img-fluid" src="{{ asset('resources/frontend/images/payment-icon.png') }}"
                             alt="Payment gateways">
                     </div>
                 </div>
@@ -213,4 +213,4 @@
         line-height: 40px;
         border-radius: 50%
     }
-</style> --}}
+</style>

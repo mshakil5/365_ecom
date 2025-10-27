@@ -8,28 +8,43 @@ class Product extends Model
 {
     protected $guarded = [];
 
-    public function categories()
+     public function company()
     {
-        return $this->belongsToMany(Category::class, 'category_products', 'product_id', 'category_id');
+        return $this->belongsTo(Company::class);
     }
 
-    public function subCategories()
+    public function category()
     {
-        return $this->belongsToMany(SubCategory::class, 'category_products', 'product_id', 'sub_category_id');
+        return $this->belongsTo(Category::class);
     }
 
-    public function subSubCategories()
+    public function variants()
     {
-        return $this->belongsToMany(SubSubCategory::class, 'category_products', 'product_id', 'sub_sub_category_id');
+        return $this->hasMany(ProductVariant::class);
     }
 
-    public function tags()
+    public function images()
     {
-        return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');
+        return $this->hasMany(ProductImage::class);
     }
 
-    public function productImages()
+    public function apiLog()
     {
-        return $this->hasMany(ProductImage::class, 'product_id');
+        return $this->belongsTo(ApiLog::class, 'api_log_id');
+    }
+
+    public function getPrimaryImageAttribute()
+    {
+        return $this->images()->where('is_primary', true)->first()?->image_path;
+    }
+
+    public function getColorsAttribute()
+    {
+        return $this->variants()->with('color')->get()->pluck('color')->unique();
+    }
+
+    public function getSizesAttribute()
+    {
+        return $this->variants()->with('size')->get()->pluck('size')->unique();
     }
 }

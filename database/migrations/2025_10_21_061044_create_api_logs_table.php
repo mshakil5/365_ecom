@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('endpoint')->nullable();
             $table->string('job_name')->nullable(); // The name of the job that is being run.
-            
+            $table->unsignedBigInteger('api_product_id')->nullable()->index();
             $table->string('status')->default('pending')->index(); // 'success', 'failed', 'partial', 'pending'.
             $table->unsignedInteger('records_processed')->default(0); // Total number of items returned in the array.
             $table->unsignedInteger('records_created')->default(0);  // Number of new product records created.

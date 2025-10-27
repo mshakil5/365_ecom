@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Slider;
 use App\Models\Section;
 use App\Models\Product;
+use App\Models\Category;
 
 class FrontendController extends Controller
 {
@@ -34,13 +35,42 @@ class FrontendController extends Controller
             ->orderBy('sl', 'asc')
             ->get();
 
+      $categories = Category::where('status', 1)
+          ->whereHas('products', function($query) {
+              $query->where('status', 1);
+          })
+          ->with(['products' => function($query) {
+              $query->where('status', 1)
+                    ->take(10);
+          }])
+          ->orderBy('serial', 'asc')
+          ->get();
+
+          $latestProducts = Product::with(['variants.color', 'variants.size'])
+              ->where('product_source', 2)
+              ->inRandomOrder()
+              ->take(20)
+              ->get();
+
+          $trendingProducts = Product::with(['variants.color', 'variants.size'])
+              ->where('product_source', 2)
+              ->inRandomOrder()
+              ->take(20)
+              ->get();
+
         $this->seo(
             $company?->meta_title ?? '',
             $company?->meta_description ?? '',
             $company?->meta_keywords ?? '',
             $company?->meta_image ? asset('images/company/meta/' . $company->meta_image) : null
         );
-      return view('frontend.index', compact('sliders', 'sections'));
+      return view('frontend.index', compact('sliders', 'sections', 'categories', 'latestProducts', 'trendingProducts'));
+    }
+
+    public function customizeProduct($productId)
+    {
+        $product = Product::findOrFail($productId);
+        return view('frontend.product.customize', compact('product'));
     }
 
     public function latestProducts(Request $request)
@@ -55,9 +85,9 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function showProduct($id)
+    public function showProduct($slug)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('slug', $slug)->firstOrFail();
         return view('frontend.pages.product_detail', compact('product'));
     }
     

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale())}}">
 @php
-    $company = App\Models\CompanyDetails::select('company_name', 'fav_icon', 'google_site_verification', 'footer_content', 'facebook', 'twitter', 'linkedin', 'website', 'phone1', 'email1', 'address1')->firstOrCreate();
+    $company = App\Models\CompanyDetails::firstOrCreate();
 @endphp
 
 <head>

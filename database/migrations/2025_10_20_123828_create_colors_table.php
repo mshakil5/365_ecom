@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('colors', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('code')->nullable();
+            $table->string('name')->nullable();
+            $table->string('pantone')->nullable();
+            $table->string('hex')->nullable();
             $table->boolean('status')->default(1);
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
