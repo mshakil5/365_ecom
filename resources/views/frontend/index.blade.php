@@ -22,7 +22,10 @@
           <div class="col-lg-6 d-flex">
             <a href="#" class="w-100 text-decoration-none text-dark">
               <div class="hero-card hero-left w-100" data-aos="fade-up" data-aos-delay="50">
-                <img src="{{ asset('images/meta_image/' . ($heroSection1->meta_image ?? '')) }}" alt="">
+                <x-img 
+                      path="images/meta_image/{{ $heroSection1->meta_image ?? '' }}" 
+                      alt="" 
+                  />
                 <h4>{{ $heroSection1->short_title }}</h4>
                 <p>{{ $heroSection1->long_title ?? '' }}</p>
               </div>
@@ -32,7 +35,10 @@
           <div class="col-lg-6 d-flex flex-column justify-content-between">
             <a href="#" class="text-decoration-none text-dark mb-4">
               <div class="hero-card hero-right" data-aos="fade-up" data-aos-delay="100">
-                <img src="{{ asset('images/meta_image/' . ($heroSection2->meta_image ?? '')) }}" alt="">
+                <x-img 
+                    path="images/meta_image/{{ $heroSection2->meta_image ?? '' }}" 
+                    alt="" 
+                />
                 <h4>{{ $heroSection2->short_title }}</h4>
                 <p>{{ $heroSection2->long_title ?? '' }}</p>
               </div>
@@ -40,7 +46,10 @@
 
             <a href="#" class="text-decoration-none text-dark">
               <div class="hero-card hero-right" data-aos="fade-up" data-aos-delay="150">
-                <img src="{{ asset('images/meta_image/' . ($heroSection3->meta_image ?? '')) }}" alt="">
+                <x-img 
+                    path="images/meta_image/{{ $heroSection3->meta_image ?? '' }}" 
+                    alt="" 
+                />
                 <h4>{{ $heroSection3->short_title }}</h4>
                 <p>{{ $heroSection3->long_title ?? '' }}</p>
               </div>
@@ -69,9 +78,13 @@
                         <div class="col-lg-3 col-md-4 col-sm-6 col-12">
                             <a href="{{ route('category.show', $category->slug) }}" class="product-catagory-single" data-aos="fade-up" data-aos-delay="{{ $index * 200 }}">
                                 <div class="product-catagory-img">
-                                    @if ($category->image)
-                                        <img src="{{ asset('images/category/' . $category->image) }}" alt="{{ $category->description ?? '' }}" class="img-fluid" style="height: 100px; object-fit: cover;" loading="{{ $index < 4 ? 'eager' : 'lazy' }}">
-                                    @endif
+                                <x-img 
+                                    :path="'images/category/' . ($category->image ?? '')"
+                                    :alt="$category->description ?? ''" 
+                                    class="img-fluid" 
+                                    style="height: 100px; object-fit: cover;" 
+                                    :loading="$index < 4 ? 'eager' : 'lazy'" 
+                                />
                                 </div>
                                 <div class="product-catagory-content">
                                     <h4 class="product-catagory-title">{{ $category->name }}</h4>

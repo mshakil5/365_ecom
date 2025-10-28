@@ -10,9 +10,13 @@
                     <div class="header-logo">
 
                         <a href="{{ route('home') }}">
-                            <img src="{{ asset('images/company/' . $company->company_logo) }}"
-                                alt="{{ $company->company_name }}" width="171" height="81"
-                                style="object-fit: contain; display: block;">
+                            <x-img 
+                                path="images/company/{{ $company->company_logo }}" 
+                                alt="{{ $company->company_name }}" 
+                                width="171" 
+                                height="81" 
+                                style="object-fit: contain; display: block;" 
+                            />
                         </a>
                     </div>
                 </div>
@@ -148,8 +152,12 @@
 
                     <div class="mobile-header--center">
                         <a href="{{ route('home') }}" class="mobile-logo-link" aria-label="Go to homepage">
-                            <img src="{{ asset('images/company/' . $company->company_logo) }}" alt=""
-                                class="mobile-logo-img" style="width: 220px; height: 35px;">
+                          <x-img 
+                              path="images/company/{{ $company->company_logo }}" 
+                              alt="{{ $company->company_name }}" 
+                              class="mobile-logo-img" 
+                              style="width: 220px; height: 35px;" 
+                          />
                         </a>
                     </div>
 

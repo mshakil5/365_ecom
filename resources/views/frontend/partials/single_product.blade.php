@@ -1,10 +1,12 @@
 <div class="col-xl-3 col-lg-4 col-sm-6 col-12 mb-4">
     <article class="product-card border-around p-3" data-product-id="{{ $product->id }}">
+      <a href="{{ route('product.show', $product->slug) }}">
         <div class="img-wrap position-relative mb-2">
             <img src="{{ $product->feature_image ?? $product->image }}" 
                  alt="{{ $product->product_name_api ?? $product->name }}" 
-                 class="img-fluid" style="height:230px; object-fit:cover;">
+                 class="img-fluid" style="height:230px; object-fit:cover; object-position: top;">
         </div>
+      </a>
 
         <div class="product-title fw-bold mb-1">
             <a href="{{ route('product.show', $product->slug) }}" class="text-dark text-decoration-none">
@@ -32,9 +34,20 @@
 
         @if ($product->colors->isNotEmpty())
             <div class="swatches d-flex gap-1" aria-label="Available colors">
-                @foreach($product->colors as $color)
+                @php
+                    $maxVisible = 7;
+                    $extraCount = $product->colors->count() - $maxVisible;
+                @endphp
+
+                @foreach($product->colors->take($maxVisible) as $color)
                     <div class="swatch" style="background: {{ $color->hex ?? '#000' }}" title="{{ $color->name }}"></div>
                 @endforeach
+
+                @if ($extraCount > 0)
+                    <div class="swatch text-center text-dark" style="background: transparent; font-size:0.75rem; line-height:1.8;" title="{{ $extraCount }} more colors">
+                        +{{ $extraCount }}
+                    </div>
+                @endif
             </div>
         @endif
     </article>
