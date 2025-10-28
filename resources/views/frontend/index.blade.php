@@ -2,37 +2,61 @@
 
 @section('content')
 
-    @if (count($sliders) > 0)
-        <div id="carouselExampleCaptions" class="carousel slide d-none" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                @foreach ($sliders as $index => $slider)
-                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                        <img src="{{ asset('images/slider/' . $slider->image) }}" class="d-block w-100"
-                            alt="{{ $slider->title }}" loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
-                        <div class="carousel-caption text-white d-none d-md-block">
-                            @if ($slider->sub_title)
-                                <h5>{{ $slider->sub_title }}</h5>
-                            @endif
-                            @if ($slider->title)
-                                <h2 class="text-white">{{ $slider->title }}</h2>
-                            @endif
-                            <p>{{ $slider->description }}</p>
-                            @if ($slider->link)
-                                <a href="{{ $slider->link }}" class="hero-button">Shopping Now</a>
-                            @endif
-                        </div>
-                    </div>
-                @endforeach
+    <div class="product-catagory-section mt-5">
+      <div class="section-content-gap">
+        <div class="container">
+          <div class="row">
+            <div class="section-content">
+              <h3 class="section-title" data-aos="fade-up" data-aos-delay="50">{{ $heroTitle->short_title }}</h3>
             </div>
+          </div>
         </div>
-    @endif
+      </div>
+      </div>
+    </div>
+
+    <div class="hero-area mt-5">
+      <div class="container">
+        <div class="row g-4 align-items-stretch">
+
+          <div class="col-lg-6 d-flex">
+            <a href="#" class="w-100 text-decoration-none text-dark">
+              <div class="hero-card hero-left w-100" data-aos="fade-up" data-aos-delay="50">
+                <img src="{{ asset('images/meta_image/' . ($heroSection1->meta_image ?? 'default.jpg')) }}" alt="">
+                <h4>{{ $heroSection1->short_title }}</h4>
+                <p>{{ $heroSection1->long_title ?? '' }}</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-lg-6 d-flex flex-column justify-content-between">
+            <a href="#" class="text-decoration-none text-dark mb-4">
+              <div class="hero-card hero-right" data-aos="fade-up" data-aos-delay="100">
+                <img src="{{ asset('images/meta_image/' . ($heroSection2->meta_image ?? 'default.jpg')) }}" alt="">
+                <h4>{{ $heroSection2->short_title }}</h4>
+                <p>{{ $heroSection2->long_title ?? '' }}</p>
+              </div>
+            </a>
+
+            <a href="#" class="text-decoration-none text-dark">
+              <div class="hero-card hero-right" data-aos="fade-up" data-aos-delay="150">
+                <img src="{{ asset('images/meta_image/' . ($heroSection3->meta_image ?? 'default.jpg')) }}" alt="">
+                <h4>{{ $heroSection3->short_title }}</h4>
+                <p>{{ $heroSection3->long_title ?? '' }}</p>
+              </div>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
 
     <div class="product-catagory-section mt-5">
         <div class="section-content-gap">
             <div class="container">
                 <div class="row">
                     <div class="section-content">
-                        <h3 class="section-title" data-aos="fade-up" data-aos-delay="50">Popular Categories</h3>
+                        <h3 class="section-title" data-aos="fade-up" data-aos-delay="50">Bestselling Categories</h3>
                     </div>
                 </div>
             </div>
@@ -132,211 +156,6 @@
 
         </div>
     </div>
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --card-radius: 14px;
-            --muted: #6c757d;
-            --accent: #0d6efd;
-            --shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-        }
-
-        body {
-            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background: #f6f8fb;
-            color: #111827;
-        }
-
-        .page-header {
-            padding: 36px 0 18px;
-        }
-
-        .shop-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 18px;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
-        }
-
-        @media (max-width: 1200px) {
-            .product-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        @media (max-width: 992px) {
-            .product-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 720px) {
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 420px) {
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .product-card {
-            background: #fff;
-            border-radius: var(--card-radius);
-            padding: 12px;
-            box-shadow: var(--shadow);
-            transition: transform .18s ease, box-shadow .18s ease;
-            display: flex;
-            flex-direction: column;
-            min-height: 320px;
-        }
-
-        .product-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-        }
-
-        .img-wrap {
-            width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(180deg, #fafbff 0%, #f5f7fb 100%);
-            margin-bottom: 10px;
-            position: relative;
-        }
-
-        .img-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .badge-top {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 6px 8px;
-            font-size: 12px;
-            border-radius: 8px;
-            background: rgba(13, 110, 253, 0.08);
-            color: var(--accent);
-            font-weight: 600;
-            backdrop-filter: blur(2px);
-        }
-
-        .product-title {
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 6px;
-            color: #0f1724;
-        }
-
-        .price-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .price-current {
-            font-weight: 700;
-            font-size: 1.05rem;
-        }
-
-        .price-old {
-            color: var(--muted);
-            text-decoration: line-through;
-            font-size: 0.9rem;
-        }
-
-        .swatches {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-top: auto;
-        }
-
-        .swatch {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
-            cursor: pointer;
-            transition: transform .12s;
-            display: inline-block;
-        }
-
-        .swatch:hover {
-            transform: scale(1.12);
-        }
-
-        .meta-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .btn-ghost {
-            border: 1px solid #e6e9ef;
-            background: transparent;
-            padding: 6px 9px;
-            border-radius: 8px;
-            font-size: 0.92rem;
-        }
-
-        .rating {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #f59e0b;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .topbar-select {
-            min-width: 220px;
-        }
-
-        .muted {
-            color: var(--muted);
-            font-size: 0.9rem;
-        }
-
-        .flex-gap {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-    </style>
 
     <div class="shop-section mt-5 d-none">
         <div class="container">

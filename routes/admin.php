@@ -181,7 +181,7 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::delete('product-price/{id}', [ProductPriceController::class, 'destroy'])->name('product_prices.destroy');
     Route::post('product-price/toggle-status', [ProductPriceController::class, 'toggleStatus'])->name('product_prices.toggleStatus');
 
-        // Stock
+    // Stock
     Route::get('/stocks', [StockController::class, 'getStocks'])->name('allstocks');
     Route::get('/stock', [StockController::class, 'getStock'])->name('allstock');
     Route::get('/purchase', [StockController::class, 'purchase'])->name('purchase');

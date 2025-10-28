@@ -139,7 +139,7 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item">
+                            <li class="nav-item d-none">
                                 <a href="{{ route('subcategories.index') }}"
                                   class="nav-link {{ Route::is('subcategories.index') ? 'active' : '' }}">
                                     Sub Category

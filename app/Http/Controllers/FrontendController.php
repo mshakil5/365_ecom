@@ -35,28 +35,32 @@ class FrontendController extends Controller
             ->orderBy('sl', 'asc')
             ->get();
 
-      $categories = Category::where('status', 1)
-          ->whereHas('products', function($query) {
-              $query->where('status', 1);
-          })
-          ->with(['products' => function($query) {
-              $query->where('status', 1)
-                    ->take(10);
-          }])
-          ->orderBy('serial', 'asc')
-          ->get();
+        $categories = Category::where('status', 1)
+            ->whereHas('products', function($query) {
+                $query->where('status', 1);
+            })
+            ->with(['products' => function($query) {
+                $query->where('status', 1)
+                      ->take(10);
+            }])
+            ->orderBy('serial', 'asc')
+            ->get();
 
-          $latestProducts = Product::with(['variants.color', 'variants.size'])
-              ->where('product_source', 2)
-              ->inRandomOrder()
-              ->take(20)
-              ->get();
+        $latestProducts = Product::with(['variants.color', 'variants.size'])
+            ->where('product_source', 2)
+            ->inRandomOrder()
+            ->take(20)
+            ->get();
 
-          $trendingProducts = Product::with(['variants.color', 'variants.size'])
-              ->where('product_source', 2)
-              ->inRandomOrder()
-              ->take(20)
-              ->get();
+        $trendingProducts = Product::with(['variants.color', 'variants.size'])
+            ->where('product_source', 2)
+            ->inRandomOrder()
+            ->take(20)
+            ->get();
+          $heroTitle = Master::firstOrCreate(['name' => 'hero_title']);
+          $heroSection1 = Master::firstOrCreate(['name' => 'hero_section_1']);
+          $heroSection2 = Master::firstOrCreate(['name' => 'hero_section_2']);
+          $heroSection3 = Master::firstOrCreate(['name' => 'hero_section_3']);
 
         $this->seo(
             $company?->meta_title ?? '',
@@ -64,7 +68,22 @@ class FrontendController extends Controller
             $company?->meta_keywords ?? '',
             $company?->meta_image ? asset('images/company/meta/' . $company->meta_image) : null
         );
-      return view('frontend.index', compact('sliders', 'sections', 'categories', 'latestProducts', 'trendingProducts'));
+      return view('frontend.index', compact('sliders', 'sections', 'categories', 'latestProducts', 'trendingProducts', 'heroTitle', 'heroSection1', 'heroSection2', 'heroSection3'));
+    }
+
+
+    public function showCategoryProducts($slug)
+    {
+        $category = Category::where('slug', $slug)
+            ->where('status', 1)
+            ->firstOrFail();
+
+        $products = $category->products()
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('frontend.category_products', compact('category', 'products'));
     }
 
     public function customizeProduct($productId)
