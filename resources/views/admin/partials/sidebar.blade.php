@@ -87,13 +87,13 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') ? 'active' : '' }}"
+                    <a class="nav-link menu-link {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') || Route::is('guidelines.index') ? 'active' : '' }}"
                       href="#sidebarAllProducts" data-bs-toggle="collapse" role="button"
                       aria-expanded="true" aria-controls="sidebarAllProducts">
                         <i class="ri-shopping-bag-3-line"></i> <span>Product Management</span>
                     </a>
 
-                    <div class="collapse menu-dropdown {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') ? 'show' : '' }}"
+                    <div class="collapse menu-dropdown {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') || Route::is('guidelines.index') ? 'show' : '' }}"
                         id="sidebarAllProducts">
                         <ul class="nav nav-sm flex-column">
 
@@ -181,6 +181,13 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a href="{{ route('guidelines.index') }}"
+                                  class="nav-link {{ Route::is('guidelines.index') ? 'active' : '' }}">
+                                    Guidelines
+                                </a>
+                            </li>
+                            
                             <li class="nav-item">
                                 <a href="{{ route('allsector') }}"
                                   class="nav-link {{ Route::is('allsector') ? 'active' : '' }}">

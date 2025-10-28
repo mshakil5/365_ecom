@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\ProductPriceController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\SectorController;
 use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\Admin\GuidelineController;
 
 Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], function(){
     Route::get('/dashboard', [HomeController::class, 'adminHome'])->name('admin.dashboard');
@@ -182,6 +183,13 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::post('product-price/update', [ProductPriceController::class, 'update'])->name('product_prices.update');
     Route::delete('product-price/{id}', [ProductPriceController::class, 'destroy'])->name('product_prices.destroy');
     Route::post('product-price/toggle-status', [ProductPriceController::class, 'toggleStatus'])->name('product_prices.toggleStatus');
+
+    // Guidelines
+    Route::get('/guidelines', [GuidelineController::class, 'index'])->name('guidelines.index');
+    Route::post('/guidelines', [GuidelineController::class, 'store'])->name('guidelines.store');
+    Route::get('/guidelines/{id}/edit', [GuidelineController::class, 'edit'])->name('guidelines.edit');
+    Route::post('/guidelines-update', [GuidelineController::class, 'update'])->name('guidelines.update');
+    Route::get('/guidelines/available-positions', [GuidelineController::class, 'availablePositions']);
 
     // Sector crud
     Route::get('/sector', [SectorController::class, 'getSector'])->name('allsector');
