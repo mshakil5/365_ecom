@@ -22,7 +22,7 @@
           <div class="col-lg-6 d-flex">
             <a href="#" class="w-100 text-decoration-none text-dark">
               <div class="hero-card hero-left w-100" data-aos="fade-up" data-aos-delay="50">
-                <img src="{{ asset('images/meta_image/' . ($heroSection1->meta_image ?? 'default.jpg')) }}" alt="">
+                <img src="{{ asset('images/meta_image/' . ($heroSection1->meta_image ?? '')) }}" alt="">
                 <h4>{{ $heroSection1->short_title }}</h4>
                 <p>{{ $heroSection1->long_title ?? '' }}</p>
               </div>
@@ -32,7 +32,7 @@
           <div class="col-lg-6 d-flex flex-column justify-content-between">
             <a href="#" class="text-decoration-none text-dark mb-4">
               <div class="hero-card hero-right" data-aos="fade-up" data-aos-delay="100">
-                <img src="{{ asset('images/meta_image/' . ($heroSection2->meta_image ?? 'default.jpg')) }}" alt="">
+                <img src="{{ asset('images/meta_image/' . ($heroSection2->meta_image ?? '')) }}" alt="">
                 <h4>{{ $heroSection2->short_title }}</h4>
                 <p>{{ $heroSection2->long_title ?? '' }}</p>
               </div>
@@ -40,7 +40,7 @@
 
             <a href="#" class="text-decoration-none text-dark">
               <div class="hero-card hero-right" data-aos="fade-up" data-aos-delay="150">
-                <img src="{{ asset('images/meta_image/' . ($heroSection3->meta_image ?? 'default.jpg')) }}" alt="">
+                <img src="{{ asset('images/meta_image/' . ($heroSection3->meta_image ?? '')) }}" alt="">
                 <h4>{{ $heroSection3->short_title }}</h4>
                 <p>{{ $heroSection3->long_title ?? '' }}</p>
               </div>
@@ -81,6 +81,27 @@
                         </div>
                     @endforeach
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="shop-section mt-5">
+        <div class="container">
+            <div class="section-content d-flex justify-content-between align-items-center flex-wrap mb-3">
+                <h3 class="section-title" data-aos="fade-up" data-aos-delay="0">Shop By Sector</h3>
+            </div>
+
+            <div class="sector-slider d-flex flex-row flex-nowrap overflow-auto" data-aos="fade-up" data-aos-delay="50">
+                @foreach($sectors as $sector)
+                    <div class="sector-card me-3" style="min-width: 250px;">
+                        <a href="#" class="text-decoration-none text-dark">
+                            <div class="sector-card-inner">
+                                <img src="{{ asset('images/sector/' . ($sector->image ?? '')) }}" alt="{{ $sector->name }}" class="img-fluid">
+                                <h5 class="mt-2 text-center">{{ $sector->name }}</h5>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>

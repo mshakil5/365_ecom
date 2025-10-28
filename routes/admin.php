@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ApiProductController;
 use App\Http\Controllers\Admin\ProductPriceController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\SectorController;
 
 Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], function(){
     Route::get('/dashboard', [HomeController::class, 'adminHome'])->name('admin.dashboard');
@@ -180,6 +181,15 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::post('product-price/update', [ProductPriceController::class, 'update'])->name('product_prices.update');
     Route::delete('product-price/{id}', [ProductPriceController::class, 'destroy'])->name('product_prices.destroy');
     Route::post('product-price/toggle-status', [ProductPriceController::class, 'toggleStatus'])->name('product_prices.toggleStatus');
+
+    // Sector crud
+    Route::get('/sector', [SectorController::class, 'getSector'])->name('allsector');
+    Route::post('/sector', [SectorController::class, 'sectorStore'])->name('sector.store');
+    Route::get('/sector/{id}/edit', [SectorController::class, 'sectorEdit']);
+    Route::post('/sector-update', [SectorController::class, 'sectorUpdate']);
+    Route::delete('/sector/{id}', [SectorController::class, 'sectorDelete'])->name('sector.delete');
+    Route::post('/sector-status', [SectorController::class, 'toggleStatus']);
+    Route::post('/sectors/update-order', [SectorController::class, 'updateOrder'])->name('sectors.updateOrder');
 
     // Stock
     Route::get('/stocks', [StockController::class, 'getStocks'])->name('allstocks');

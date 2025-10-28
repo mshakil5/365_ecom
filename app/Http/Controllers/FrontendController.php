@@ -18,6 +18,7 @@ use App\Models\Slider;
 use App\Models\Section;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Sector;
 
 class FrontendController extends Controller
 {
@@ -46,6 +47,8 @@ class FrontendController extends Controller
             ->orderBy('serial', 'asc')
             ->get();
 
+        $sectors = Sector::where('status', 1)->orderBy('serial')->get();
+
         $latestProducts = Product::with(['variants.color', 'variants.size'])
             ->where('product_source', 2)
             ->inRandomOrder()
@@ -68,7 +71,7 @@ class FrontendController extends Controller
             $company?->meta_keywords ?? '',
             $company?->meta_image ? asset('images/company/meta/' . $company->meta_image) : null
         );
-      return view('frontend.index', compact('sliders', 'sections', 'categories', 'latestProducts', 'trendingProducts', 'heroTitle', 'heroSection1', 'heroSection2', 'heroSection3'));
+      return view('frontend.index', compact('sliders', 'sections', 'categories', 'sectors', 'latestProducts', 'trendingProducts', 'heroTitle', 'heroSection1', 'heroSection2', 'heroSection3'));
     }
 
 

@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{{ asset('resources/frontend/css/plugins/plugins.min.css') }}">
     <link rel="stylesheet" href="{{ asset('resources/frontend/css/style.min.css') }}">
     <link rel="stylesheet" href="{{ asset('resources/frontend/css/toastr.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('resources/frontend/css/custom.css') }}">
 </head>
@@ -43,6 +44,7 @@
     <script src="{{ asset('resources/frontend/js/plugins.min.js') }}"></script>
     <script src="{{ asset('resources/frontend/js/main.js') }}"></script>
     <script src="{{ asset('resources/frontend/js/toastr.min.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="{{ asset('resources/frontend/js/custom.js')}}"></script>
 
     @yield('script')
