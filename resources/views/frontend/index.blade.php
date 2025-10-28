@@ -106,6 +106,8 @@
         </div>
     </div>
 
+    @include('frontend.partials.brands')
+
     <div class="product-tab-section section-top-gap-100">
         <div class="section-content-gap">
             <div class="container">

@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\ApiProductController;
 use App\Http\Controllers\Admin\ProductPriceController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\SectorController;
+use App\Http\Controllers\Admin\PartnerController;
 
 Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], function(){
     Route::get('/dashboard', [HomeController::class, 'adminHome'])->name('admin.dashboard');
@@ -190,6 +191,13 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::delete('/sector/{id}', [SectorController::class, 'sectorDelete'])->name('sector.delete');
     Route::post('/sector-status', [SectorController::class, 'toggleStatus']);
     Route::post('/sectors/update-order', [SectorController::class, 'updateOrder'])->name('sectors.updateOrder');
+
+    Route::get('/partner', [PartnerController::class, 'index'])->name('partners.index');
+    Route::post('/partner', [PartnerController::class, 'store'])->name('partners.store');
+    Route::get('/partner/{id}/edit', [PartnerController::class, 'edit'])->name('partners.edit');
+    Route::post('/partner-update', [PartnerController::class, 'update'])->name('partners.update');
+    Route::delete('/partner/{id}', [PartnerController::class, 'destroy'])->name('partners.delete');
+    Route::post('/partner-status', [PartnerController::class, 'toggleStatus'])->name('partners.toggleStatus');
 
     // Stock
     Route::get('/stocks', [StockController::class, 'getStocks'])->name('allstocks');

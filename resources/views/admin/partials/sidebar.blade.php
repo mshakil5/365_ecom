@@ -263,6 +263,7 @@
                         'admin.privacy-policy',
                         'admin.terms-and-conditions',
                         'faq.index',
+                        'partners.index',
                         'admin.mail-body',
                         'contactemails.index',
                         'sections.index',
@@ -325,6 +326,10 @@
                             <li class="nav-item">
                                 <a href="{{ route('faq.index') }}" 
                                   class="nav-link {{ Route::is('faq.index') ? 'active' : '' }}">FAQ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('partners.index') }}" 
+                                  class="nav-link {{ Route::is('partners.index') ? 'active' : '' }}">Brands</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('allslider') }}" 
