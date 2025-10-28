@@ -14,9 +14,13 @@
                     @foreach ($brands as $brand)
                         <div class="grid-card">
                             <div class="card">
-                                <img class="no-border"
-                                    src="{{ asset('images/partners/' . ($brand->image ?? 'default.png')) }}"
-                                    alt="{{ $brand->name }}" width="150" height="150">
+                                <x-img 
+                                    :path="'images/partners/' . ($brand->image ?? 'default.png')" 
+                                    :alt="$brand->name ?? ''" 
+                                    class="no-border" 
+                                    width="150" 
+                                    height="150"
+                                />
                             </div>
                         </div>
                     @endforeach

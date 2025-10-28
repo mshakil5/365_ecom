@@ -343,28 +343,55 @@
                                             </div>
 
                                             <!-- Images Tab -->
-                                            <div class="tab-pane fade" id="nav-images" role="tabpanel"
-                                                aria-labelledby="nav-images-tab">
+                                            <div class="tab-pane fade" id="nav-images" role="tabpanel" aria-labelledby="nav-images-tab">
                                                 <div class="row">
                                                     @foreach ($product->images as $image)
                                                         <div class="col-md-3 mb-3">
-                                                            <div class="card">
-                                                                <img src="{{ $image->image_path }}" class="card-img-top"
-                                                                    alt="Product Image"
+                                                            <div class="card h-100">
+                                                                <img src="{{ $image->image_path }}" class="card-img-top" alt="Product Image"
                                                                     style="height: 150px; object-fit: cover;">
-                                                                <div class="card-body p-2">
-                                                                    <small class="text-muted d-block">
-                                                                        Type: {{ ucfirst($image->image_type) }}
-                                                                    </small>
-                                                                    @if ($image->color)
-                                                                        <small class="text-muted">
-                                                                            Color: {{ $image->color->name }}
-                                                                        </small>
-                                                                    @endif
-                                                                    @if ($image->is_primary)
-                                                                        <span class="badge bg-primary">Primary</span>
-                                                                    @endif
-                                                                </div>
+<div class="card-body p-2 text-center d-flex justify-content-between align-items-center">
+    <div>
+        <small class="text-muted">Type: {{ ucfirst($image->image_type) }}</small>
+        @if ($image->is_primary)
+            <span class="badge bg-primary ms-1">Primary</span>
+        @endif
+    </div>
+    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+        data-bs-target="#editImageTypeModal{{ $image->id }}">
+        Edit Type
+    </button>
+</div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Modal -->
+                                                        <div class="modal fade" id="editImageTypeModal{{ $image->id }}" tabindex="-1"
+                                                            aria-labelledby="editImageTypeModalLabel{{ $image->id }}" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <form class="update-image-type-form" data-id="{{ $image->id }}">
+                                                                    @csrf
+                                                                    <input type="hidden" name="image_id" value="{{ $image->id }}">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="editImageTypeModalLabel{{ $image->id }}">Update Image Type</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <select name="image_type" class="form-select" required>
+                                                                                <option value="">Select Type</option>
+                                                                                <option value="front" {{ $image->image_type == 'front' ? 'selected' : '' }}>Front</option>
+                                                                                <option value="back" {{ $image->image_type == 'back' ? 'selected' : '' }}>Back</option>
+                                                                                <option value="right" {{ $image->image_type == 'right' ? 'selected' : '' }}>Right</option>
+                                                                                <option value="left" {{ $image->image_type == 'left' ? 'selected' : '' }}>Left</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="submit" class="btn btn-primary">Update Type</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
                                                             </div>
                                                         </div>
                                                     @endforeach
@@ -389,4 +416,43 @@
             <!-- end col -->
         </div>
     </div>
+@endsection
+
+@section('script')
+<script>
+  $(document).ready(function() {
+      $('.update-image-type-form').on('submit', function(e) {
+          e.preventDefault();
+
+          let form = $(this);
+          let imageId = form.data('id');
+          let imageType = form.find('select[name="image_type"]').val();
+          let token = form.find('input[name="_token"]').val();
+
+          $.ajax({
+              url: "{{ route('admin.product.image.update') }}",
+              type: "POST",
+              data: {
+                  _token: token,
+                  image_id: imageId,
+                  image_type: imageType
+              },
+              success: function(res) {
+                  if(res.success){
+                      showSuccess(res.message);
+                      location.reload();
+                  }
+              },
+              error: function(xhr) {
+                  if (xhr.status === 422 && xhr.responseJSON) {
+                      let first = Object.values(xhr.responseJSON.errors)[0][0];
+                      showError(first);
+                  } else {
+                      showError(xhr.responseJSON?.message ?? 'Something went wrong');
+                  }
+              }
+          });
+      });
+  });
+</script>
 @endsection

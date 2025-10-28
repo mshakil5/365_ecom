@@ -527,6 +527,31 @@ class ProductController extends Controller
         return view('admin.product.show', compact('product'));
     }
 
+    public function updateImageType(Request $request)
+    {
+        $request->validate([
+            'image_id' => 'required|exists:product_images,id',
+            'image_type' => 'required|in:front,back,right,left',
+        ]);
+
+        $image = ProductImage::findOrFail($request->image_id);
+
+        $exists = ProductImage::where('product_id', $image->product_id)
+            ->where('image_type', $request->image_type)
+            ->where('id', '!=', $image->id)
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['errors' => ['image_type' => ['This image type already exists for this product.']]], 422);
+        }
+
+        $image->update([
+            'image_type' => $request->image_type
+        ]);
+
+        return response()->json(['success' => 'Image type updated successfully.']);
+    }
+
     public function groupByProductCode($code)
     {
         $products = DB::table('products')

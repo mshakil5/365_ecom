@@ -109,7 +109,12 @@
                     <div class="sector-card me-3" style="min-width: 250px;">
                         <a href="#" class="text-decoration-none text-dark">
                             <div class="sector-card-inner">
-                                <img src="{{ asset('images/sector/' . ($sector->image ?? '')) }}" alt="{{ $sector->name }}" class="img-fluid">
+                                <x-img 
+                                    :path="'images/sector/' . ($sector->image ?? '')"
+                                    :alt="$sector->name ?? ''"
+                                    class="img-fluid"
+                                    style="height: 100px; object-fit: cover;"
+                                />
                                 <h5 class="mt-2 text-center">{{ $sector->name }}</h5>
                             </div>
                         </a>

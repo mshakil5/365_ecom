@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('color_id')->nullable()->constrained('colors');
             $table->string('image_path');
-            $table->enum('image_type', ['model', 'front', 'back', 'swatch', 'general'])->default('general');
+            $table->enum('image_type', ['model','front','back','swatch','general','right','left'])->default('general');
             $table->integer('sort_order')->default(0);
             $table->boolean('is_primary')->default(false);
             $table->timestamps();

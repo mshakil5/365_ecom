@@ -208,4 +208,37 @@ class FrontendController extends Controller
         }
     }
 
+    public function storeCart(Request $request)
+    {
+        $request->session()->put('cart', $request->input('cart'));
+
+        return response()->json(['success' => true]);
+
+    }
+
+    public function showCart(Request $request)
+    {
+        $cartJson = $request->session()->get('cart', '[]');
+        $cart = json_decode($cartJson, true);
+        return view('frontend.cart', compact('cart'));
+    }
+
+    // remove cart item
+    public function removeCartItem(Request $request)
+    {
+        $cartJson = $request->session()->get('cart', '[]');
+        $cart = json_decode($cartJson, true);
+
+        $productId = $request->input('productId');
+        $offerId = $request->input('offer_id');
+
+        $cart = array_filter($cart, function ($item) use ($productId, $offerId) {
+            return $item['productId'] != $productId || $item['offerId'] != $offerId;
+        });
+
+        $request->session()->put('cart', json_encode(array_values($cart)));
+
+        return response()->json(['success' => true, 'cart' => $cart]);
+    }
+
 }

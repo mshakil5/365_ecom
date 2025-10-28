@@ -110,7 +110,8 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::get('/sync-products', [ApiProductController::class, 'syncProducts'])->name('sync.products');
 
     Route::get('/all-api-products', [ProductController::class, 'getApiProducts'])->name('allApiProducts');
-    Route::get('product-details/{product}', [ProductController::class, 'productDetails'])->name('product.details');
+    Route::get('/product-details/{product}', [ProductController::class, 'productDetails'])->name('product.details');
+    Route::post('/product/image/update', [ProductController::class, 'updateImageType'])->name('admin.product.image.update');
     Route::get('/products/group/{code}', [ProductController::class, 'groupByProductCode']);
 
     //In House Products

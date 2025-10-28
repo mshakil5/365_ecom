@@ -267,6 +267,47 @@
                                     <span style="font-size:16px;">Wash Degrees: {{ $product->wash_degrees }}</span>
                                 </div>
                             @endif
+
+
+                             {{-- Missing fields from products table --}}
+                @if ($product->specifications)
+                    <div style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                        <i class="fa fa-list-alt" style="font-size:24px;color:#6f42c1;margin-right:10px;"></i>
+                        <span style="font-size:16px;">Specifications: {{ $product->specifications }}</span>
+                    </div>
+                @endif
+
+                @if ($product->gender)
+                    <div style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                        <i class="fa fa-user" style="font-size:24px;color:#fd7e14;margin-right:10px;"></i>
+                        <span style="font-size:16px;">Gender: {{ $product->gender }}</span>
+                    </div>
+                @endif
+
+                @if ($product->tariff_no)
+                    <div style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                        <i class="fa fa-hashtag" style="font-size:24px;color:#20c997;margin-right:10px;"></i>
+                        <span style="font-size:16px;">Tariff No: {{ $product->tariff_no }}</span>
+                    </div>
+                @endif
+
+                @if ($product->packaging)
+                    <div style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                        <i class="fa fa-box" style="font-size:24px;color:#0d6efd;margin-right:10px;"></i>
+                        <span style="font-size:16px;">Packaging: {{ $product->packaging }}</span>
+                    </div>
+                @endif
+
+            @if ($product->video_link)
+                <div style="margin-bottom:15px;">
+                    <label style="font-weight:500;">Video Preview:</label>
+                    <video width="100%" height="auto" controls style="border-radius:5px; border:1px solid #ccc;">
+                        <source src="{{ $product->video_link }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            @endif
+                            
                         </div>
 
                     </div>

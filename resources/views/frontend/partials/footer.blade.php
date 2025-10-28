@@ -171,12 +171,12 @@
     .material-addtocart {
         bottom: 83px;
         right: 27px;
-        background-color: #ea1c26;
+        background-color: #1e2d7d;
         color: white;
     }
 
     .material-addtocart:hover {
-        background-color: #ff3b2f;
+        background-color: #1e2d7d;
         transform: scale(1.1);
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
     }
@@ -206,7 +206,7 @@
         font-size: 22px;
         margin-right: 20px;
         color: #fff;
-        background: #ea1c26;
+        background: #1e2d7d;
         width: 60px;
         height: 40px;
         text-align: center;
