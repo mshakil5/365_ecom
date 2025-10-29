@@ -1,4 +1,4 @@
-@extends('frontend.master')
+@extends('frontend.pages.master')
 
 @section('content')
   <div class="page-title light-background">

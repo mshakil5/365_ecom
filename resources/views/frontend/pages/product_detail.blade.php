@@ -82,92 +82,53 @@
 
                             <div class="pricing-table scroll-gradient-element">
                                 <div class="tab-links d-flex">
-                                    <h3 class="tab-link active" data-tab="Blank">Blank Pricing</h3>
-                                    <h3 class="tab-link" data-tab="Print">Print</h3>
-                                    <h3 class="tab-link" data-tab="Embroidery">Embroidery</h3>
-                                    <h3 class="tab-link" data-tab="HighStitch">High Stitch Count</h3>
+                                    @foreach($prices as $category => $items)
+                                        <h3 class="tab-link {{ $loop->first ? 'active' : '' }}" data-tab="{{ Str::slug($category) }}">
+                                            {{ $category }}
+                                        </h3>
+                                    @endforeach
                                 </div>
 
                                 <div class="tab-panes">
-                                    <!-- Blank -->
-                                    <div id="Blank" class="tab-content active">
-                                        <table class="table table-striped">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Qty</th>
-                                                    <td>1-7</td><td>8-14</td><td>15-39</td><td>40-99</td><td>100-249</td><td>250-499</td><td>500+</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Price</th>
-                                                    <td>£14.95</td><td>£13.46</td><td>£12.68</td><td>£12.11</td><td>£10.12</td><td>£8.50</td><td><a href="#">Contact Us</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Discount</th>
-                                                    <td></td><td>-10%</td><td>-15%</td><td>-19%</td><td>-32%</td><td>-43%</td><td></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    @foreach($prices as $category => $items)
+                                        <div id="{{ Str::slug($category) }}" class="tab-content {{ $loop->first ? 'active' : '' }}">
+                                            <table class="table table-striped">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Qty</th>
+                                                        <td>1</td>
+                                                        @foreach($items as $item)
+                                                            <td>{{ $item->min_max_qty }}</td>
+                                                        @endforeach
+                                                        <td><a href="#">500+</a></td>
+                                                    </tr>
 
-                                    <!-- Print -->
-                                    <div id="Print" class="tab-content">
-                                        <table class="table table-striped">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Qty</th>
-                                                    <td>1</td><td>2-9</td><td>10-34</td><td>35-99</td><td>100-249</td><td>250-499</td><td>500+</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Price</th>
-                                                    <td>£7.99</td><td>£5.99</td><td>£4.50</td><td>£3.25</td><td>£2.75</td><td>£2.25</td><td><a href="#">Contact Us</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Discount</th>
-                                                    <td></td><td>-25%</td><td>-44%</td><td>-59%</td><td>-66%</td><td>-72%</td><td></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                    <tr>
+                                                        <th>Price</th>
+                                                        <td>£{{ number_format($product->price, 2) }}</td> <!-- Base price -->
+                                                        @foreach($items as $item)
+                                                            @php
+                                                                $discounted = $item->discount_percent 
+                                                                    ? $product->price * (1 - $item->discount_percent / 100) 
+                                                                    : $product->price;
+                                                            @endphp
+                                                            <td>£{{ number_format($discounted, 2) }}</td>
+                                                        @endforeach
+                                                        <td><a href="#">Contact Us</a></td>
+                                                    </tr>
 
-                                    <!-- Embroidery -->
-                                    <div id="Embroidery" class="tab-content">
-                                        <table class="table table-striped">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Qty</th>
-                                                    <td>1</td><td>2-9</td><td>10-39</td><td>40-99</td><td>100-249</td><td>250-499</td><td>500+</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Price</th>
-                                                    <td>£8.49</td><td>£6.25</td><td>£4.99</td><td>£3.75</td><td>£3.25</td><td>£2.50</td><td><a href="#">Contact Us</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Discount</th>
-                                                    <td></td><td>-26%</td><td>-41%</td><td>-56%</td><td>-62%</td><td>-71%</td><td></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <!-- High Stitch -->
-                                    <div id="HighStitch" class="tab-content">
-                                        <table class="table table-striped">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Qty</th>
-                                                    <td>1</td><td>2-9</td><td>10-39</td><td>40-99</td><td>100-249</td><td>250-499</td><td>500+</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Price</th>
-                                                    <td>£16.00</td><td>£11.50</td><td>£9.00</td><td>£6.50</td><td>£5.50</td><td>£4.50</td><td><a href="#">Contact Us</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Discount</th>
-                                                    <td></td><td>-28%</td><td>-44%</td><td>-59%</td><td>-66%</td><td>-72%</td><td></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                    <tr style="color:#6c757d; font-style:italic;">
+                                                        <th>Discount</th>
+                                                        <td></td>
+                                                        @foreach($items as $item)
+                                                            <td>{{ $item->discount_percent ? '-'.$item->discount_percent.'%' : '' }}</td>
+                                                        @endforeach
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -226,22 +187,16 @@
                                 </div>
 
                                 <div class="product-add-to-cart-btn">
-                                    <a href="#" class="offcanvas-toggle">Add To Cart</a>
+                                    <a href="#offcanvas" class="offcanvas-toggle add-to-cart"
+                                        data-product-id="{{ $product->id }}"
+                                        data-product-name="{{ $product->product_name_api ?? $product->name }}"
+                                        data-image="{{ $product->feature_image ?? $product->image }}">
+                                        Add To Cart
+                                    </a>
                                 </div>
                             </div>
                         </div>
                         <div class="product-details-text pt-3">
-
-                            <p>{{ $product->full_description ?? ($product->short_description ?? 'No description available.') }}
-                            </p>
-
-                            @if ($product->composition)
-                                <div
-                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
-                                    <i class="fa fa-tshirt" style="font-size:24px;color:#007bff;margin-right:10px;"></i>
-                                    <span style="font-size:16px;">Composition: {{ $product->composition }}</span>
-                                </div>
-                            @endif
 
                             @if ($product->gsm)
                                 <div
@@ -262,52 +217,47 @@
 
                             @if ($product->wash_degrees)
                                 <div
-                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;border-radius:5px;">
+                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px; margin-bottom:10px;border-radius:5px;">
                                     <i class="fa fa-water" style="font-size:24px;color:#17a2b8;margin-right:10px;"></i>
                                     <span style="font-size:16px;">Wash Degrees: {{ $product->wash_degrees }}</span>
                                 </div>
                             @endif
 
+                            @if ($product->gender)
+                                <div
+                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                                    <i class="fa fa-user" style="font-size:24px;color:#fd7e14;margin-right:10px;"></i>
+                                    <span style="font-size:16px;">Gender: {{ $product->gender }}</span>
+                                </div>
+                            @endif
 
-                             {{-- Missing fields from products table --}}
-                @if ($product->specifications)
-                    <div style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
-                        <i class="fa fa-list-alt" style="font-size:24px;color:#6f42c1;margin-right:10px;"></i>
-                        <span style="font-size:16px;">Specifications: {{ $product->specifications }}</span>
-                    </div>
-                @endif
+                            @if ($product->tariff_no)
+                                <div
+                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                                    <i class="fa fa-hashtag" style="font-size:24px;color:#20c997;margin-right:10px;"></i>
+                                    <span style="font-size:16px;">Tariff No: {{ $product->tariff_no }}</span>
+                                </div>
+                            @endif
 
-                @if ($product->gender)
-                    <div style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
-                        <i class="fa fa-user" style="font-size:24px;color:#fd7e14;margin-right:10px;"></i>
-                        <span style="font-size:16px;">Gender: {{ $product->gender }}</span>
-                    </div>
-                @endif
+                            @if ($product->packaging)
+                                <div
+                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                                    <i class="fa fa-box" style="font-size:24px;color:#0d6efd;margin-right:10px;"></i>
+                                    <span style="font-size:16px;">Packaging: {{ $product->packaging }}</span>
+                                </div>
+                            @endif
 
-                @if ($product->tariff_no)
-                    <div style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
-                        <i class="fa fa-hashtag" style="font-size:24px;color:#20c997;margin-right:10px;"></i>
-                        <span style="font-size:16px;">Tariff No: {{ $product->tariff_no }}</span>
-                    </div>
-                @endif
+                            @if ($product->video_link)
+                                <div style="margin-bottom:15px;">
+                                    <label style="font-weight:500;">Video Preview:</label>
+                                    <video width="100%" height="auto" controls
+                                        style="border-radius:5px; border:1px solid #ccc;">
+                                        <source src="{{ $product->video_link }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            @endif
 
-                @if ($product->packaging)
-                    <div style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
-                        <i class="fa fa-box" style="font-size:24px;color:#0d6efd;margin-right:10px;"></i>
-                        <span style="font-size:16px;">Packaging: {{ $product->packaging }}</span>
-                    </div>
-                @endif
-
-            @if ($product->video_link)
-                <div style="margin-bottom:15px;">
-                    <label style="font-weight:500;">Video Preview:</label>
-                    <video width="100%" height="auto" controls style="border-radius:5px; border:1px solid #ccc;">
-                        <source src="{{ $product->video_link }}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-            @endif
-                            
                         </div>
 
                     </div>
@@ -316,54 +266,209 @@
         </div>
     </div>
 
+    <div class="product-details-content-tab-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="product-details-content-tab-wrapper" data-aos="fade-up" data-aos-delay="0">
+
+                        <!-- Tab Buttons -->
+                        <ul class="nav tablist product-details-content-tab-btn d-flex justify-content-center">
+                            <li><a class="nav-link active" data-bs-toggle="tab" href="#description">
+                                    <h5>Description</h5>
+                                </a></li>
+                            <li><a class="nav-link" data-bs-toggle="tab" href="#review">
+                                    <h5>Reviews (2)</h5>
+                                </a></li>
+                        </ul>
+
+                        <!-- Tab Contents -->
+                        <div class="product-details-content-tab">
+                            <div class="tab-content">
+
+                                <!-- Description -->
+                                <div class="tab-pane active show" id="description">
+                                    <div class="single-tab-content-item">
+                                        <p>
+                                            This stylish cotton t-shirt is perfect for everyday wear.
+                                            It features a soft texture, classic fit, and durable stitching.
+                                            Pair it with jeans or shorts for a casual look.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Reviews -->
+                                <div class="tab-pane" id="review">
+                                    <div class="single-tab-content-item">
+                                        <div class="reviews">
+                                            <h3>Reviews (2)</h3>
+
+                                            <div class="review">
+                                                <div class="row no-gutters">
+                                                    <div class="col-auto">
+                                                        <h4><a href="#">John Doe</a></h4>
+                                                        <div class="ratings-container">
+                                                            <div class="ratings">
+                                                                <div class="ratings-val" style="width: 80%;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="review-date">2 days ago</span>
+                                                    </div>
+                                                    <div class="col">
+                                                        <h4>Great Quality!</h4>
+                                                        <div class="review-content">
+                                                            <p>Nice fabric and perfect fit. Definitely recommended!</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="review">
+                                                <div class="row no-gutters">
+                                                    <div class="col-auto">
+                                                        <h4><a href="#">Jane Smith</a></h4>
+                                                        <div class="ratings-container">
+                                                            <div class="ratings">
+                                                                <div class="ratings-val" style="width: 100%;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="review-date">5 days ago</span>
+                                                    </div>
+                                                    <div class="col">
+                                                        <h4>Perfect!</h4>
+                                                        <div class="review-content">
+                                                            <p>Excellent color and comfort. Will buy again.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="review-form mt-3">
+                                            <h4>Submit a Review</h4>
+                                            <form id="reviewForm">
+                                                <div class="row">
+                                                    <div class="form-group col-6">
+                                                        <label for="reviewTitle">Title</label>
+                                                        <input type="text" id="reviewTitle" class="form-control"
+                                                            placeholder="Review Title">
+                                                    </div>
+                                                    <div class="form-group col-6">
+                                                        <label for="reviewRating">Rating</label>
+                                                        <select id="reviewRating" class="form-control">
+                                                            <option>5 Stars</option>
+                                                            <option>4 Stars</option>
+                                                            <option>3 Stars</option>
+                                                            <option>2 Stars</option>
+                                                            <option>1 Star</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="reviewDescription">Description</label>
+                                                    <textarea id="reviewDescription" class="form-control" rows="3" placeholder="Your review"></textarea>
+                                                </div>
+                                                <button type="submit" class="form-submit-btn">Submit Review</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tags -->
+                            <p class="my-3">
+                                <strong style="font-size: 16px;">Tags:</strong>
+                                <a href="#" class="tag-item">T-Shirt</a>
+                                <a href="#" class="tag-item">Cotton</a>
+                                <a href="#" class="tag-item">Casual</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if ($relatedProducts->count() > 0)
+        <div class="product-tab-section section-top-gap-100">
+            <div class="section-content-gap">
+                <div class="container">
+                    <div class="row">
+                        <div
+                            class="section-content d-flex justify-content-between align-items-md-center align-items-start flex-md-row flex-column">
+                            <h3 class="section-title" data-aos="fade-up" data-aos-delay="0">
+                                Related Products
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-tab-wrapper" data-aos="fade-up" data-aos-delay="50">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="product-default-slider product-default-slider-4grids-1row">
+                                @foreach ($relatedProducts as $related)
+                                    @include('frontend.partials.single_product', ['product' => $related])
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+
     <style>
         .scroll-gradient-wrapper {
-              position: relative;
-              overflow-x: auto;
-              padding: 0 20px;
-          }
+            position: relative;
+            overflow-x: auto;
+            padding: 0 20px;
+        }
 
-          .scroll-gradient-element {
-              display: flex;
-              flex-direction: column;
-              min-width: 100%;
-          }
+        .scroll-gradient-element {
+            display: flex;
+            flex-direction: column;
+            min-width: 100%;
+        }
 
-          .tab-links {
-              border-bottom: 2px solid #ddd;
-              margin-bottom: 10px;
-          }
+        .tab-links {
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 10px;
+        }
 
-          .tab-link {
-              padding: 10px 20px;
-              cursor: pointer;
-              background: #f8f8f8;
-              border: 1px solid #ddd;
-              border-bottom: none;
-              margin-right: 5px;
-              font-size: 15px;
-              border-radius: 5px 5px 0 0;
-              transition: all 0.2s;
-          }
+        .tab-link {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            font-size: 15px;
+            border-radius: 5px 5px 0 0;
+            transition: all 0.2s;
+        }
 
-          .tab-link.active {
-              background: #fff;
-              border-bottom: 2px solid #fff;
-              font-weight: 600;
-              color: #007bff;
-          }
+        .tab-link.active {
+            background: #fff;
+            border-bottom: 2px solid #fff;
+            font-weight: 600;
+            color: #007bff;
+        }
 
-          .tab-content {
-              display: none;
-          }
+        .tab-content {
+            display: none;
+        }
 
-          .tab-content.active {
-              display: block;
-          }
+        .tab-content.active {
+            display: block;
+        }
 
-          .table {
-              min-width: 700px;
-          }
+        .table {
+            min-width: 700px;
+        }
 
         .size-option {
             position: relative;
@@ -394,20 +499,25 @@
         }
     </style>
     <script>
-      document.querySelectorAll('.tab-link').forEach(link => {
-          link.addEventListener('click', function() {
-              const tab = this.dataset.tab;
+        document.querySelectorAll('.tab-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const tab = this.dataset.tab;
 
-              // deactivate other tabs
-              document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-              document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                // deactivate other tabs
+                document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-              // activate this tab
-              this.classList.add('active');
-              document.getElementById(tab).classList.add('active');
-          });
-      });
-
+                // activate this tab
+                this.classList.add('active');
+                document.getElementById(tab).classList.add('active');
+            });
+        });
     </script>
 
+@endsection
+
+@section('script')
+    <script>
+        console.log(typeof bootstrap !== 'undefined' ? bootstrap.Tooltip.VERSION : 'Bootstrap not found');
+    </script>
 @endsection

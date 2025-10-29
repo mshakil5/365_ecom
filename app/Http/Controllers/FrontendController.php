@@ -18,7 +18,9 @@ use App\Models\Slider;
 use App\Models\Section;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Guideline;
 use App\Models\Sector;
+use App\Models\ProductPrice;
 
 class FrontendController extends Controller
 {
@@ -91,8 +93,21 @@ class FrontendController extends Controller
 
     public function customizeProduct($productId)
     {
-        $product = Product::findOrFail($productId);
-        return view('frontend.product.customize', compact('product'));
+        $product = Product::with('images')->findOrFail($productId);
+        $images = [];
+        foreach (['front', 'back', 'left', 'right'] as $type) {
+            $img = $product->images->firstWhere('image_type', $type);
+            $images[$type] = $img ? $img->image_path : 'https://placehold.co/400x300?bg=ccc&color=000&text=' . ucfirst($type);
+        }
+
+        $dataProduct = [
+            'id' => $product->id,
+            'name' => $product->name,
+            'img' => $images,
+            'baseWidthCm' => 30,
+        ];
+        $guidelines = Guideline::latest()->get();
+        return view('frontend.product.customize', compact('product', 'guidelines', 'dataProduct'));
     }
 
     public function latestProducts(Request $request)
@@ -110,7 +125,12 @@ class FrontendController extends Controller
     public function showProduct($slug)
     {
         $product = Product::where('slug', $slug)->firstOrFail();
-        return view('frontend.pages.product_detail', compact('product'));
+        $prices = ProductPrice::where('product_id', $product->id)
+          ->where('status', 1)
+          ->get()
+          ->groupBy('category');
+        $relatedProducts = Product::where('category_id', $product->category_id)->where('id', '!=', $product->id)->take(5)->get();
+        return view('frontend.pages.product_detail', compact('product', 'relatedProducts', 'prices'));
     }
     
     public function contact()

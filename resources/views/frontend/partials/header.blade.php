@@ -1,4 +1,4 @@
-<header class="header-section d-lg-block d-none">
+<header class="header-section d-lg-block d-none sticky-header">
 
 
     <!-- Start Header Center Area -->
@@ -13,8 +13,8 @@
                             <x-img 
                                 path="images/company/{{ $company->company_logo }}" 
                                 alt="{{ $company->company_name }}" 
-                                width="171" 
-                                height="81" 
+                                width="280" 
+                                height="90"
                                 style="object-fit: contain; display: block;" 
                             />
                         </a>
@@ -26,7 +26,7 @@
                             <div class="header-search-box default-search-style d-flex">
                                 <input data-layout="desktop"
                                     class="searchInput default-search-style-input-box border-around border-right-none"
-                                    type="search" name="query" placeholder="Search entire store here ..." required>
+                                    type="search" name="query" placeholder="Search products..." required>
                                 <button
                                     class="searchBtn default-search-style-input-btn position-absolute top-50 end-0 translate-middle-y"
                                     type="submit" aria-label="Search">
@@ -35,7 +35,7 @@
 
                                 <button type="button"
                                     class="voiceSearchBtn position-absolute top-50 translate-middle-y"
-                                    style="right: 65px;" aria-label="Voice Search">
+                                    style="right: 75px;" aria-label="Voice Search">
                                     <i class="fa fa-microphone fa-lg"></i>
                                 </button>
                                 <div class="searchDropdown"
@@ -87,7 +87,7 @@
     </div> <!-- End Header Center Area -->
 
     <!-- Start Bottom Area -->
-    <div class="header-bottom sticky-header">
+    <div class="header-bottom ">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -189,7 +189,7 @@
                 <div class="header-search-box default-search-style d-flex">
                     <input data-layout="mobile"
                         class="searchInput default-search-style-input-box border-around border-right-none"
-                        type="search" name="query" placeholder="Search entire store here ..." required>
+                        type="search" name="query" placeholder="Search products..." required>
                     <button
                         class="searchBtn default-search-style-input-btn position-absolute top-50 end-0 translate-middle-y"
                         type="submit" aria-label="Search">
@@ -197,7 +197,7 @@
                     </button>
 
                     <button type="button" class="voiceSearchBtn position-absolute top-50 translate-middle-y"
-                        style="right: 65px;" aria-label="Voice Search">
+                        style="right: 75px;" aria-label="Voice Search">
                         <i class="fa fa-microphone fa-lg"></i>
                     </button>
                     <div class="searchDropdown"

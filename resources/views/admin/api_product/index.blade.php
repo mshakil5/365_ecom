@@ -176,7 +176,7 @@ $(function() {
 
             $('#modalProgressBar').css('width', '100%').text('100%');
             $('#modalProgressText').text('Import completed successfully!');
-
+            table.ajax.reload(null,false);
             importButton.prop('disabled', false).html('<i class="fas fa-download"></i> Import');
 
             setTimeout(() => { $('#syncModal').modal('hide'); }, 1500);

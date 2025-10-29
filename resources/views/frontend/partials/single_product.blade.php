@@ -18,7 +18,7 @@
             <div class="price-current fw-bold">£{{ number_format($product->price_single ?? $product->price, 2) }}</div>
         </div>
 
-        <div class="meta-row d-flex justify-content-between align-items-center mb-2">
+        <div class="meta-row d-flex justify-content-between align-items-center mb-2 d-none">
             <div class="actions d-flex gap-1">
                 <a href="#offcanvas" class="btn btn-sm btn-primary add-to-cart"
                     data-product-id="{{ $product->id }}"
