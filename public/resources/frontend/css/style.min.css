@@ -16618,7 +16618,7 @@ table {
 .product-add-to-cart-btn a {
   display: inline-block;
   font-size: 16px;
-  margin-left: 20px;
+  /* margin-left: 20px; */
   background: #1e2d7d;
   height: 42px;
   line-height: 42px;

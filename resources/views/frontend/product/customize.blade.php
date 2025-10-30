@@ -279,7 +279,7 @@
                             <nav aria-label="breadcrumb">
                                 <ul>
                                     <li><a href="{{ route('home') }}">Home</a></li>
-                                    <li aria-current="page">{{ $product->name }}</li>
+                                    <li aria-current="page">Product Customizer</li>
                                 </ul>
                             </nav>
                         </div>
@@ -310,14 +310,14 @@
                                             data-product='@json($dataProduct)'>
                                             <div class="d-flex align-items-center">
                                                 <div class="me-2">
-                                                    <img src="{{ $product->feature_image }}" alt="{{ $product->name }}"
+                                                    <img src="{{ $dataProduct['image'] }}" alt="{{ $dataProduct['name'] }}"
                                                         class="img-fluid"
                                                         style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
                                                 </div>
                                                 <div>
-                                                    <div class="fw-bold">{{ $product->name }}</div>
-                                                    <div class="small-muted">From £{{ number_format($product->price, 2) }}
-                                                    </div>
+                                                    <div class="fw-bold">{{ $dataProduct['name'] }}</div>
+                                                    <div class="small-muted">From £{{ number_format($dataProduct['price'] ?? $dataProduct['price'] ?? 0, 2) }}</div>
+                                                    <div class="small-muted">Qty: {{ $dataProduct['quantity'] }}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -478,6 +478,7 @@
                                 </div>
                                 <div class="small-muted mt-2">Select a layer from the list to edit or delete it.</div>
                             </div>
+                            <input type="hidden" id="customizationData" name="customization_data">
 
                         </div>
                     </div>
@@ -550,13 +551,11 @@
                         </div>
 
                         <div class="d-flex gap-2 mt-2">
-                            <div class="input-group input-group-sm">
-                                <span class="input-group-text">Qty</span>
-                                <input id="qtyInput" type="number" class="form-control" value="1"
-                                    min="1">
-                            </div>
-                            <div class="ms-auto text-white">
-                                <div class="small-muted">Total: <span id="totalPrice" class="fw-bold">£9.99</span></div>
+                            <div class="mt-2 text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="small-muted">Quantity: <span class="fw-bold">{{ $dataProduct['quantity'] ?? 1 }}</span></div>
+                                    <div class="small-muted">Total: <span id="totalPrice" class="fw-bold">£0.00</span></div>
+                                </div>
                             </div>
                         </div>
 
@@ -570,6 +569,13 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+    <script>
+        const PRODUCT_QTY = {{ $dataProduct['quantity'] ?? 0 }};
+        const PRODUCT_BASE_PRICE = {{ $dataProduct['price'] ?? 0 }};
+        const PRINT_SETUP_COST = 5.99;
+        const EMBROIDERY_SETUP_COST = 9.99;
+    </script>
 
     <script>
         class ProductCustomiserSlimViews {
@@ -609,11 +615,75 @@
                     quantity: 1,
                 };
 
+                this.pricing = {
+                    basePrice: PRODUCT_BASE_PRICE,
+                    quantity: PRODUCT_QTY,
+                    printSetup: PRINT_SETUP_COST,
+                    embroiderySetup: EMBROIDERY_SETUP_COST
+                };
+
+                this.customizationData = [];
+
+                this.updateHiddenField(); 
+
                 // apply default view background
                 this.applyViewBackground();
 
                 this.initUI();
                 this.render();
+            }
+
+            updateHiddenField() {
+                this.cleanupArray();
+                const dataString = JSON.stringify(this.customizationData);
+                document.getElementById('customizationData').value = dataString;
+                console.log('Customization Data (Array):', this.customizationData);
+            }
+
+          recalcPrice() {
+              const basePrice = this.pricing.basePrice;
+              const quantity = this.pricing.quantity;
+              
+              // Count layers by method type
+              let printLayersCount = 0;
+              let embroideryLayersCount = 0;
+              
+              this.customizationData.forEach(layer => {
+                  if (layer.method === 'print') {
+                      printLayersCount++;
+                  } else if (layer.method === 'embroidery') {
+                      embroideryLayersCount++;
+                  }
+              });
+              
+              // Calculate total: 
+              // (base price × quantity) + (print setup × print layers × quantity) + (embroidery setup × embroidery layers × quantity)
+              const baseTotal = basePrice * quantity;
+              const printTotal = this.pricing.printSetup * printLayersCount * quantity;
+              const embroideryTotal = this.pricing.embroiderySetup * embroideryLayersCount * quantity;
+              
+              const total = baseTotal + printTotal + embroideryTotal;
+              
+              document.getElementById('totalPrice').textContent = '£' + total.toFixed(2);
+              
+              console.log('Price Calculation:', {
+                  basePrice,
+                  quantity,
+                  printLayersCount,
+                  embroideryLayersCount,
+                  baseTotal,
+                  printTotal,
+                  embroideryTotal,
+                  total
+              });
+          }
+
+            cleanupArray() {
+                Object.keys(this.customizationData).forEach(key => {
+                    if (key !== 'length' && isNaN(parseInt(key))) {
+                        delete this.customizationData[key];
+                    }
+                });
             }
 
             initUI() {
@@ -687,8 +757,21 @@
                         el.classList.add('active');
                         const m = JSON.parse(el.getAttribute('data-method'));
                         this.state.method = m;
+                        // this.customizationData.forEach(layer => {
+                        //     layer.method = m.id;
+                        // });
+
+                        this.state.layers
+                        .filter(layer => layer.view === this.currentView)
+                        .forEach(layer => {
+                            const dataIndex = this.customizationData.findIndex(l => l.layerId === layer.id);
+                            if (dataIndex !== -1) {
+                                this.customizationData[dataIndex].method = m.id;
+                            }
+                        });
                         document.getElementById('currentMethod').textContent = m.label;
                         this.recalcPrice();
+                        this.updateHiddenField();
                     });
                 });
             }
@@ -700,6 +783,8 @@
                         btns.forEach(x => x.classList.remove('active'));
                         b.classList.add('active');
                         this.state.position = b.getAttribute('data-pos');
+                        // this.customizationData.position = b.getAttribute('data-pos');
+                        this.updateHiddenField();
                     });
                 });
             }
@@ -810,10 +895,6 @@
             }
 
             bindQtyAndPricing() {
-                document.getElementById('qtyInput').addEventListener('change', (e) => {
-                    this.state.quantity = Math.max(1, parseInt(e.target.value) || 1);
-                    this.recalcPrice();
-                });
                 this.recalcPrice();
             }
 
@@ -845,15 +926,52 @@
                     view: this.currentView
                 }, opts);
                 this.state.layers.push(layer);
+
+                const layerObject = {
+                    productId: this.state.product.id,
+                    method: this.state.method.id,
+                    position: this.state.position,
+                    type: layer.type,
+                    data: layer.type === 'text' ? {
+                        text: layer.text,
+                        fontFamily: layer.fontFamily,
+                        fontSize: layer.fontSize,
+                        color: layer.color,
+                        bold: layer.bold,
+                        italic: layer.italic,
+                        underline: layer.underline
+                    } : {
+                        src: layer.src,
+                        width: layer.widthPx,
+                        height: layer.heightPx
+                    },
+                    zIndex: layer.zIndex,
+                    layerId: layer.id
+                };
+
+                this.customizationData.push(layerObject);
+
                 this.render();
                 this.selectLayer(layer.id);
+                this.updateHiddenField();
+                this.recalcPrice();
+
+                const newLayerIndex = this.customizationData.findIndex(l => l.layerId === layer.id);
+                if (newLayerIndex !== -1) {
+                    this.customizationData[newLayerIndex].method = this.state.method.id;
+                }
             }
 
             removeLayer(id) {
                 this.state.layers = this.state.layers.filter(l => l.id !== id);
+
+                this.customizationData = this.customizationData.filter(l => l.layerId !== id);
+
                 if (this.selectedLayerId === id) this.selectedLayerId = null;
                 this.hideInspector();
                 this.render();
+                this.updateHiddenField();
+                this.recalcPrice();
             }
 
             selectLayer(id) {
@@ -957,7 +1075,18 @@
                         layer.bgColor = bgc;
                         layer.opacity = parseFloat(html.querySelector('#insOpacity').value) || 1;
                         layer.rotate = parseFloat(html.querySelector('#insRotate').value) || 0;
+
+                        const layerData = this.customizationData.find(l => l.layerId === layer.id);
+                        if (layerData && layerData.type === 'image') {
+                            layerData.data.width = w;
+                            layerData.data.height = h;
+                            // layerData.method = this.state.method.id;
+                            // layerData.position = this.state.position;
+                        }
+
                         this.render();
+
+                        this.updateHiddenField();
                     });
 
                     html.querySelector('#insDelete').addEventListener('click', () => {
@@ -1025,7 +1154,22 @@
                         layer.bgColor = html.querySelector('#insTextBg').value || 'transparent';
                         layer.opacity = parseFloat(html.querySelector('#insTextOpacity').value) || 1;
                         layer.rotate = parseFloat(html.querySelector('#insTextRotate').value) || 0;
+
+                        const layerData = this.customizationData.find(l => l.layerId === layer.id);
+                        if (layerData && layerData.type === 'text') {
+                            layerData.data.text = newText;
+                            layerData.data.fontFamily = layer.fontFamily;
+                            layerData.data.fontSize = layer.fontSize;
+                            layerData.data.color = layer.color;
+                            layerData.data.bold = layer.bold;
+                            layerData.data.italic = layer.italic;
+                            layerData.data.underline = layer.underline;
+                            // layerData.method = this.state.method.id;
+                            // layerData.position = this.state.position;
+                        }
+
                         this.render();
+                        this.updateHiddenField();
                     });
 
                     html.querySelector('#insDeleteText').addEventListener('click', () => {
@@ -1094,19 +1238,6 @@
                         this.previewCanvas.style.transform = originalTransform;
                         this.loader.style.display = 'none';
                     });
-            }
-
-            recalcPrice() {
-                const basePriceMap = {
-                    'tshirt': 9.99,
-                    'mug': 6.99,
-                    'bag': 8.99
-                };
-                const base = basePriceMap[this.state.product.id] || 9.99;
-                const setup = this.state.method.setup || 0;
-                const qty = this.state.quantity || 1;
-                const total = (base * qty) + setup;
-                document.getElementById('totalPrice').textContent = '£' + total.toFixed(2);
             }
 
             render() {

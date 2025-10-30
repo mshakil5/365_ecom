@@ -82,22 +82,24 @@
 
                             <div class="pricing-table scroll-gradient-element">
                                 <div class="tab-links d-flex">
-                                    @foreach($prices as $category => $items)
-                                        <h3 class="tab-link {{ $loop->first ? 'active' : '' }}" data-tab="{{ Str::slug($category) }}">
+                                    @foreach ($prices as $category => $items)
+                                        <h3 class="tab-link {{ $loop->first ? 'active' : '' }}"
+                                            data-tab="{{ Str::slug($category) }}">
                                             {{ $category }}
                                         </h3>
                                     @endforeach
                                 </div>
 
                                 <div class="tab-panes">
-                                    @foreach($prices as $category => $items)
-                                        <div id="{{ Str::slug($category) }}" class="tab-content {{ $loop->first ? 'active' : '' }}">
+                                    @foreach ($prices as $category => $items)
+                                        <div id="{{ Str::slug($category) }}"
+                                            class="tab-content {{ $loop->first ? 'active' : '' }}">
                                             <table class="table table-striped">
                                                 <tbody>
                                                     <tr>
                                                         <th>Qty</th>
                                                         <td>1</td>
-                                                        @foreach($items as $item)
+                                                        @foreach ($items as $item)
                                                             <td>{{ $item->min_max_qty }}</td>
                                                         @endforeach
                                                         <td><a href="#">500+</a></td>
@@ -105,11 +107,13 @@
 
                                                     <tr>
                                                         <th>Price</th>
-                                                        <td>£{{ number_format($product->price, 2) }}</td> <!-- Base price -->
-                                                        @foreach($items as $item)
+                                                        <td>£{{ number_format($product->price, 2) }}</td>
+                                                        <!-- Base price -->
+                                                        @foreach ($items as $item)
                                                             @php
-                                                                $discounted = $item->discount_percent 
-                                                                    ? $product->price * (1 - $item->discount_percent / 100) 
+                                                                $discounted = $item->discount_percent
+                                                                    ? $product->price *
+                                                                        (1 - $item->discount_percent / 100)
                                                                     : $product->price;
                                                             @endphp
                                                             <td>£{{ number_format($discounted, 2) }}</td>
@@ -120,8 +124,9 @@
                                                     <tr style="color:#6c757d; font-style:italic;">
                                                         <th>Discount</th>
                                                         <td></td>
-                                                        @foreach($items as $item)
-                                                            <td>{{ $item->discount_percent ? '-'.$item->discount_percent.'%' : '' }}</td>
+                                                        @foreach ($items as $item)
+                                                            <td>{{ $item->discount_percent ? '-' . $item->discount_percent . '%' : '' }}
+                                                            </td>
                                                         @endforeach
                                                         <td></td>
                                                     </tr>
@@ -142,7 +147,7 @@
 
                             @if ($colors->count() > 0)
                                 <div class="variable-single-item">
-                                    <span>Color</span>
+                                    <span>Select Color</span>
                                     <div class="product-variable-color">
                                         @foreach ($colors as $color)
                                             <label>
@@ -159,39 +164,132 @@
 
 
                             @php
-                                $sizes = $product->variants->pluck('size')->filter()->unique('id');
+                                $variants = $product->variants;
+                                $sizes = $variants->pluck('size')->filter()->unique('id');
                             @endphp
 
                             @if ($sizes->count() > 0)
+                                <style>
+                                    .size-qty-container {
+                                        display: flex;
+                                        flex-wrap: wrap;
+                                        gap: 10px;
+                                        justify-content: flex-start;
+                                        align-items: flex-end;
+                                    }
+
+                                    .size-box {
+                                        width: 55px;
+                                        text-align: center;
+                                    }
+
+                                    .size-box .size-name {
+                                        font-weight: 600;
+                                        margin-bottom: 3px;
+                                        font-size: 0.9em;
+                                    }
+
+                                    .size-box button {
+                                        border: none;
+                                        background: none;
+                                        padding: 0;
+                                        font-size: 1.1em;
+                                        cursor: pointer;
+                                        color: #333;
+                                        line-height: 1;
+                                    }
+
+                                    .size-box button:hover {
+                                        color: #0d6efd;
+                                    }
+
+                                    .size-box input {
+                                        width: 45px;
+                                        height: 32px;
+                                        text-align: center;
+                                        border: 1px solid #ccc;
+                                        border-radius: 4px;
+                                        font-size: 14px;
+                                        font-weight: 500;
+                                        padding: 0;
+                                        margin: 2px 0;
+                                    }
+
+                                    .size-box input:focus {
+                                        outline: none;
+                                        border-color: #0d6efd;
+                                    }
+
+                                    input[type=number]::-webkit-inner-spin-button,
+                                    input[type=number]::-webkit-outer-spin-button {
+                                        -webkit-appearance: none;
+                                        margin: 0;
+                                    }
+
+                                    input[type=number] {
+                                        -moz-appearance: textfield;
+                                    }
+                                </style>
+
                                 <div class="variable-single-item mb-3">
-                                    <span class="d-block mb-2 fw-semibold">Size:</span>
-                                    <div class="d-flex flex-wrap gap-2">
+                                    <span class="d-block mb-2 fw-semibold">Select Sizes:</span>
+
+                                    <div class="size-qty-container">
                                         @foreach ($sizes as $size)
-                                            <label class="size-option">
-                                                <input type="radio" name="size" value="{{ $size->id }}"
-                                                    {{ $loop->first ? 'checked' : '' }}>
-                                                <span>{{ $size->name ?? 'N/A' }}</span>
-                                            </label>
+                                                  @php
+                                                      $variant = $variants->where('size_id', $size->id)->first();
+                                                  @endphp
+                                            <div class="size-box">
+                                                <div class="size-name">{{ $size->name }}</div>
+                                                <button type="button" class="plus-btn">+</button>
+                                                <input type="number"
+                                                  name="sizes[{{ $size->id }}]"
+                                                  value="0"
+                                                  min="0"
+                                                  class="qty-input"
+                                                  data-slug="{{ $product->slug }}"
+                                                  data-size-id="{{ $size->id }}"
+                                                  data-ean="{{ $variant->ean ?? '' }}">
+                                                <button type="button" class="minus-btn">−</button>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
+
+                                <script>
+                                    document.querySelectorAll('.plus-btn').forEach(btn => {
+                                        btn.addEventListener('click', () => {
+                                            const input = btn.nextElementSibling;
+                                            input.value = parseInt(input.value || 0) + 1;
+                                        });
+                                    });
+                                    document.querySelectorAll('.minus-btn').forEach(btn => {
+                                        btn.addEventListener('click', () => {
+                                            const input = btn.previousElementSibling;
+                                            if (parseInt(input.value) > 0) input.value = parseInt(input.value) - 1;
+                                        });
+                                    });
+                                </script>
                             @endif
 
-
                             <div class="d-flex align-items-center mt-3">
-                                <div class="variable-single-item me-3">
-                                    <span>Quantity</span>
-                                    <div class="product-variable-quantity">
-                                        <input min="1" value="1" type="number" class="quantity-input">
-                                    </div>
+                                <div class="product-add-to-cart-btn">
+                                    <a href="#" class="offcanvas-toggle add-to-cart-btn"
+                                        data-product-id="{{ $product->id }}"
+                                        data-product-name="{{ $product->name }}"
+                                        data-image="{{ $product->feature_image }}"
+                                        data-action="cart">
+                                        Add To Cart
+                                    </a>
                                 </div>
 
-                                <div class="product-add-to-cart-btn">
-                                    <a href="#offcanvas" class="offcanvas-toggle add-to-cart"
+                                <div class="product-add-to-cart-btn ms-2">
+                                    <a href="#" class="offcanvas-toggle add-to-cart-btn"
                                         data-product-id="{{ $product->id }}"
-                                        data-product-name="{{ $product->product_name_api ?? $product->name }}"
-                                        data-image="{{ $product->feature_image ?? $product->image }}">
-                                        Add To Cart
+                                        data-product-name="{{ $product->name }}"
+                                        data-image="{{ $product->feature_image }}"
+                                        data-action="customize">
+                                        Customise
                                     </a>
                                 </div>
                             </div>
@@ -233,7 +331,7 @@
 
                             @if ($product->tariff_no)
                                 <div
-                                    style="display:flex;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
+                                    style="display:none;align-items:center;border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:5px;">
                                     <i class="fa fa-hashtag" style="font-size:24px;color:#20c997;margin-right:10px;"></i>
                                     <span style="font-size:16px;">Tariff No: {{ $product->tariff_no }}</span>
                                 </div>
@@ -420,7 +518,6 @@
         </div>
     @endif
 
-
     <style>
         .scroll-gradient-wrapper {
             position: relative;
@@ -514,10 +611,4 @@
         });
     </script>
 
-@endsection
-
-@section('script')
-    <script>
-        console.log(typeof bootstrap !== 'undefined' ? bootstrap.Tooltip.VERSION : 'Bootstrap not found');
-    </script>
 @endsection

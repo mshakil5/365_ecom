@@ -31,7 +31,12 @@ Route::get('/products/latest', [FrontendController::class, 'latestProducts'])->n
 Route::get('/product/{slug}', [FrontendController::class, 'showProduct'])->name('product.show');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 Route::post('/contact', [FrontendController::class, 'storeContact'])->name('contact.store');
-Route::get('/product/customize/{product}', [FrontendController::class, 'customizeProduct'])->name('product.customize');
+
+Route::get('/cart/count', [FrontendController::class, 'getCount'])->name('cart.getCount');
+
+Route::post('/cart/add-session', [FrontendController::class, 'addToSession'])->name('cart.addSession');
+
+Route::get('/customize', [FrontendController::class, 'customize'])->name('customize.index');
 
 Route::get('/about-us', [FrontendController::class, 'aboutUs'])->name('about-us');
 Route::get('/privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('privacy-policy');

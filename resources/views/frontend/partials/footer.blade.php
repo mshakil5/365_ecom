@@ -63,8 +63,8 @@
                                 <ul class="footer-menu-nav">
                                     <li><a href="{{ route('home') }}">Home</a></li>
                                     <li><a href="{{ route('frontend.shop') }}">Shop</a></li>
-                                    <li><a href="{{ route('cart.index') }}" class="cartBtn">Cart</a></li>
-                                    <li><a href="{{ route('wishlist.index') }}" class="wishlistBtn">Wish List</a></li>
+                                    <li><a href="{{ route('cart.index') }}" >Cart</a></li>
+                                    <li><a href="{{ route('wishlist.index') }}" class="wishlistBtn d-none">Wish List</a></li>
                                     @auth
                                         <li><a href="{{ route('orders.index') }}">Orders</a></li>
                                     @else

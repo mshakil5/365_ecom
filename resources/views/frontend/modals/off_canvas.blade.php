@@ -13,8 +13,7 @@
         </div>
 
         <div class="d-flex flex-column gap-2">
-            <a href="{{ route('cart.index') }}" class="btn btn-success">Checkout</a>
-            <a href="#" id="customize-btn" class="btn btn-outline-primary">Customize this product</a>
+            <a href="{{ route('cart.index') }}" class="btn btn-success">Cart</a>
         </div>
     </div>
 </div>

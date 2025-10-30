@@ -76,7 +76,6 @@ class FrontendController extends Controller
       return view('frontend.index', compact('sliders', 'sections', 'categories', 'sectors', 'latestProducts', 'trendingProducts', 'heroTitle', 'heroSection1', 'heroSection2', 'heroSection3'));
     }
 
-
     public function showCategoryProducts($slug)
     {
         $category = Category::where('slug', $slug)
@@ -89,25 +88,6 @@ class FrontendController extends Controller
             ->get();
 
         return view('frontend.category_products', compact('category', 'products'));
-    }
-
-    public function customizeProduct($productId)
-    {
-        $product = Product::with('images')->findOrFail($productId);
-        $images = [];
-        foreach (['front', 'back', 'left', 'right'] as $type) {
-            $img = $product->images->firstWhere('image_type', $type);
-            $images[$type] = $img ? $img->image_path : 'https://placehold.co/400x300?bg=ccc&color=000&text=' . ucfirst($type);
-        }
-
-        $dataProduct = [
-            'id' => $product->id,
-            'name' => $product->name,
-            'img' => $images,
-            'baseWidthCm' => 30,
-        ];
-        $guidelines = Guideline::latest()->get();
-        return view('frontend.product.customize', compact('product', 'guidelines', 'dataProduct'));
     }
 
     public function latestProducts(Request $request)
@@ -228,6 +208,102 @@ class FrontendController extends Controller
         }
     }
 
+    public function customizeSession(Request $request)
+    {
+        $sizes = collect($request->sizes);
+        $totalQty = $sizes->sum('quantity');
+
+        session(['customize_product' => [
+            'product_id' => $request->product_id,
+            'color_id' => $request->color_id,
+            'quantity' => $totalQty,
+            'product_name' => $request->product_name,
+            'product_image' => $request->product_image,
+        ]]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function addToSession(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        if (!is_array($cart)) $cart = [];
+
+        foreach ($request->sizes as $size) {
+            $key = $request->product_id . '_' . ($request->color_id ?? 0) . '_' . $size['size_id'];
+            if(isset($cart[$key]) && is_array($cart[$key])) {
+                $cart[$key]['quantity'] += $size['quantity'];
+            } else {
+                $cart[$key] = [
+                    'product_id' => $request->product_id,
+                    'color_id' => $request->color_id,
+                    'size_id' => $size['size_id'],
+                    'quantity' => $size['quantity'],
+                    'product_name' => $request->product_name,
+                    'product_image' => $request->product_image,
+                    'ean' => $size['ean'] ?? null
+                ];
+            }
+        }
+
+        session(['cart' => $cart]);
+
+        return response()->json([
+            'success' => true,
+            'cart' => $cart
+        ]);
+    }
+
+    public function getCount()
+    {
+        $cart = session()->get('cart', []);
+
+        if (!is_array($cart)) {
+            $cart = json_decode($cart, true) ?: [];
+        }
+
+        $count = 0;
+        foreach ($cart as $item) {
+            $count += $item['quantity'] ?? 0;
+        }
+
+        return response()->json(['count' => $count]);
+    }
+
+    public function customize(Request $request)
+    {
+        $encodedId = $request->query('product');
+        $productId = intval(base64_decode($encodedId));
+        $cart = session()->get('cart', []);
+        $totalQty = collect($cart)
+        ->where('product_id', (string)$productId)
+        ->sum(function($item) { return (int)$item['quantity']; });
+
+        $product = Product::with('images')->findOrFail($productId);
+
+        $images = [];
+        foreach (['front', 'back', 'left', 'right'] as $type) {
+            $img = $product->images->firstWhere('image_type', $type);
+            $images[$type] = $img 
+                ? $img->image_path 
+                : 'https://placehold.co/400x300?bg=ccc&color=000&text=' . ucfirst($type);
+        }
+
+        $dataProduct = [
+            'id' => $product->id,
+            'name' => $product->name,
+            'price' => $product->price,  
+            'image' => $product->feature_image,
+            'img' => $images,
+            'baseWidthCm' => 30,
+            'quantity' => $totalQty,
+        ];
+
+        $guidelines = Guideline::latest()->get();
+
+        return view('frontend.product.customize', compact('dataProduct', 'guidelines', 'cart'));
+    }
+
     public function storeCart(Request $request)
     {
         $request->session()->put('cart', $request->input('cart'));
@@ -238,27 +314,22 @@ class FrontendController extends Controller
 
     public function showCart(Request $request)
     {
-        $cartJson = $request->session()->get('cart', '[]');
-        $cart = json_decode($cartJson, true);
+        $cart = $request->session()->get('cart', []);
+        if (!is_array($cart)) $cart = [];
+
         return view('frontend.cart', compact('cart'));
     }
 
-    // remove cart item
     public function removeCartItem(Request $request)
     {
-        $cartJson = $request->session()->get('cart', '[]');
-        $cart = json_decode($cartJson, true);
+        $cart = session()->get('cart', []);
+        if(isset($cart[$request->key])) {
+            unset($cart[$request->key]);
+            session(['cart' => $cart]);
+        }
 
-        $productId = $request->input('productId');
-        $offerId = $request->input('offer_id');
-
-        $cart = array_filter($cart, function ($item) use ($productId, $offerId) {
-            return $item['productId'] != $productId || $item['offerId'] != $offerId;
-        });
-
-        $request->session()->put('cart', json_encode(array_values($cart)));
-
-        return response()->json(['success' => true, 'cart' => $cart]);
+        return response()->json(['success' => true]);
     }
+
 
 }

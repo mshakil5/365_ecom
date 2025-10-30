@@ -48,14 +48,14 @@
                 <div class="col-3 text-end">
                     <!-- Start Header Action Icon -->
                     <ul class="header-action-icon">
-                        <li>
+                        <li class="d-none">
                             <a href="{{ route('wishlist.index') }}" class="offcanvas-toggle wishlistBtn">
                                 <i class="icon-heart"></i>
                                 <span class="header-action-icon-item-count wishlistCount">0</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('cart.index') }}" class="offcanvas-toggle cartBtn">
+                            <a href="{{ route('cart.index') }}">
                                 <i class="icon-shopping-cart"></i>
                                 <span class="header-action-icon-item-count cartCount">0</span>
                             </a>
@@ -208,7 +208,7 @@
 
             <!-- Start Header Action Icon -->
             <ul class="mobile-action-icon">
-                <li class="mobile-action-icon-item">
+                <li class="mobile-action-icon-item d-none">
                     <a href="{{ route('wishlist.index') }}" class="mobile-action-icon-link wishlistBtn"
                         aria-label="Wishlist">
                         <i class="icon-heart"></i>
