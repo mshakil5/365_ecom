@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -37,5 +38,40 @@ class HomeController extends Controller
     public function userHome()
     {
         return 'user';
+    }
+
+    public function cleanDB()
+    {
+        $tables = [
+            'api_logs',
+            'api_products',
+            'categories',
+            'category_products',
+            'colors',
+            'companies',
+            'contacts',
+            'contact_emails',
+            'faq_questions',
+            'guidelines',
+            'partners',
+            'products',
+            'product_images',
+            'product_prices',
+            'product_tags',
+            'product_variants',
+            'sub_categories',
+            'sub_sub_categories',
+            'tags',
+        ];
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        foreach ($tables as $table) {
+            DB::table($table)->truncate();
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        return "Cleaned successfully.";
     }
 }
