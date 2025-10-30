@@ -283,7 +283,7 @@ class FrontendController extends Controller
 
         $images = [];
         foreach (['front', 'back', 'left', 'right'] as $type) {
-            $img = $product->images->firstWhere('image_type', $type);
+            $img = $product->images->firstWhere('image_type', 'front');
             $images[$type] = $img 
                 ? $img->image_path 
                 : 'https://placehold.co/400x300?bg=ccc&color=000&text=' . ucfirst($type);
