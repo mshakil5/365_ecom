@@ -201,7 +201,7 @@
                                     @if ($product->full_description)
                                         <div class="mt-4 text-muted">
                                             <h5 class="fs-14">Description :</h5>
-                                            <p>{{ $product->full_description }}</p>
+                                            <p>{!! $product->full_description !!}</p>
                                         </div>
                                     @endif
 
@@ -250,7 +250,7 @@
                                                             @if ($product->composition)
                                                                 <tr>
                                                                     <th scope="row">Composition</th>
-                                                                    <td>{{ $product->composition }}</td>
+                                                                    <td>{!! $product->composition !!}</td>
                                                                 </tr>
                                                             @endif
                                                             @if ($product->gender)

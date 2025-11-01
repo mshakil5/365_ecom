@@ -112,6 +112,7 @@ class FrontendController extends Controller
     public function showProduct($slug)
     {
         $product = Product::where('slug', $slug)->firstOrFail();
+        $product->increment('views');
         $prices = ProductPrice::where('product_id', $product->id)
           ->where('status', 1)
           ->get()

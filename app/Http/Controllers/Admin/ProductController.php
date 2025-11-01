@@ -39,7 +39,7 @@ class ProductController extends Controller
                 ->addIndexColumn()
                 ->editColumn('feature_image', function ($row) {
                     return $row->feature_image
-                        ? '<img src="'.asset('images/products/'.$row->feature_image).'" class="img-thumbnail" width="50">'
+                        ? '<img src="'.asset($row->feature_image).'" class="img-thumbnail" width="50">'
                         : '';
                 })
                 ->editColumn('status', function ($row) {
@@ -164,37 +164,15 @@ class ProductController extends Controller
         $product->slug = $slug;
 
         if ($request->hasFile('feature_image')) {
-            $uploadedFile = $request->file('feature_image');
-            $filename = mt_rand(10000000, 99999999) . '.webp';
-            $path = public_path('images/products/');
-            if (!file_exists($path)) mkdir($path, 0755, true);
-
-            Image::make($uploadedFile)
-                ->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                })
-                ->encode('webp', 50)
-                ->save($path . $filename);
-
-            $product->feature_image = $filename;
+            $product->feature_image = $this->saveUploadedImage($request->file('feature_image'), 'feature', 1200);
         }
 
         if ($request->hasFile('small_image')) {
-            $uploadedFile = $request->file('small_image');
-            $filename = mt_rand(10000000, 99999999) . '.webp';
-            $path = public_path('images/products/');
-            if (!file_exists($path)) mkdir($path, 0755, true);
+            $product->small_image = $this->saveUploadedImage($request->file('small_image'), 'small', 400);
+        }
 
-            Image::make($uploadedFile)
-                ->resize(400, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                })
-                ->encode('webp', 50)
-                ->save($path . $filename);
-
-            $product->small_image = $filename;
+        if ($request->hasFile('meta_image')) {
+            $product->meta_image = $this->saveUploadedImage($request->file('meta_image'), 'meta', 1200);
         }
 
 
@@ -204,6 +182,24 @@ class ProductController extends Controller
             'message' => 'Product created successfully',
             'product' => $product
         ]);
+    }
+
+    private function saveUploadedImage($file, $folder, $width, $quality = 50)
+    {
+        $path = public_path("images/products/{$folder}/");
+        if (!file_exists($path)) mkdir($path, 0755, true);
+
+        $filename = mt_rand(10000000, 99999999) . '.webp';
+
+        Image::make($file)
+            ->resize($width, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })
+            ->encode('webp', $quality)
+            ->save($path . $filename);
+
+        return "/images/products/{$folder}/{$filename}";
     }
 
     public function store2(Request $request)
@@ -325,26 +321,123 @@ class ProductController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit(Product $product)
     {
-        $product = Product::with(['categories', 'subCategories', 'subSubCategories', 'tags', 'productImages'])->findOrFail($id);
         $categories = Category::where('status', 1)->orderBy('serial', 'asc')->get();
-        $subCategories = SubCategory::where('status', 1)->orderBy('serial', 'asc')->get();
-        $subSubCategories = SubSubCategory::where('status', 1)->orderBy('serial', 'asc')->get();
-        $brands = Brand::where('status', 1)->latest()->get();
-        $models = ProductModel::where('status', 1)->latest()->get();
-        $groups = Group::where('status', 1)->latest()->get();
-        $units = Unit::where('status', 1)->latest()->get();
+        $companies = Company::where('status', 1)->latest()->get();
         $sizes = Size::where('status', 1)->latest()->get();
         $colors = Color::where('status', 1)->latest()->get();
-        $types = Type::where('status', 1)->latest()->get();
         $tags = Tag::where('status', 1)->latest()->get();
 
-        return view('admin.product.edit', compact( 'product', 'categories', 'subCategories', 'subSubCategories', 'brands', 'models', 'groups', 'units', 'sizes', 'colors', 'types', 'tags'
+        return view('admin.product.edit', compact(
+            'product', 
+            'categories', 
+            'companies', 
+            'sizes', 
+            'colors', 
+            'tags'
         ));
     }
 
     public function update(Request $request, $id)
+    {
+        $product = Product::find($id);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'product_code' => 'required|string|max:255',
+            'price' => 'nullable|numeric',
+            'full_description' => 'nullable|string',
+            'long_description' => 'nullable|string',
+            'specifications' => 'nullable|string',
+            'feature_image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+            'small_image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+            'category_id' => 'required|integer|exists:categories,id',
+            'company_id' => 'required|integer|exists:companies,id',
+            'tariff_no' => 'nullable|string',
+            'wash_degrees' => 'nullable|integer',
+            'gender' => 'nullable|string',
+            'gsm' => 'nullable|integer',
+            'composition' => 'nullable|string',
+            'packaging' => 'nullable|string',
+            'country_of_origin' => 'nullable|string',
+            'gross_weight' => 'nullable|numeric',
+            'net_weight' => 'nullable|numeric',
+            'tax_code' => 'nullable|string',
+            'video_link' => 'nullable|string',
+            'meta_title' => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'meta_image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+            'is_customizable' => 'nullable|boolean',
+            'is_trending' => 'nullable|boolean',
+            'is_popular' => 'nullable|boolean',
+            'show_in_frontend' => 'nullable|boolean',
+        ]);
+
+        $fields = [
+            'name', 'product_code', 'price', 'full_description',
+            'composition', 'specifications', 'tariff_no', 'wash_degrees', 
+            'gender', 'gsm', 'packaging', 'country_of_origin',
+            'gross_weight', 'net_weight', 'tax_code', 'video_link',
+            'meta_title', 'meta_description', 'meta_keywords',
+            'is_customizable', 'is_trending', 'is_popular', 'show_in_frontend'
+        ];
+
+        foreach ($fields as $field) {
+            if ($request->has($field)) {
+                $product->$field = $request->$field;
+            } else {
+                if (in_array($field, ['is_customizable', 'is_trending', 'is_popular', 'show_in_frontend'])) {
+                    $product->$field = $request->input($field);
+                }
+            }
+        }
+
+        $product->category_id = $request->category_id;
+        $product->company_id = $request->company_id;
+        $product->updated_by = auth()->id();
+
+        if ($product->isDirty('name')) {
+            $baseSlug = Str::slug($product->name);
+            $slug = $baseSlug;
+            $counter = 1;
+            while (Product::where('slug', $slug)->where('id', '!=', $product->id)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+            $product->slug = $slug;
+        }
+
+        if ($request->hasFile('feature_image')) {
+            if ($product->feature_image && file_exists(public_path($product->feature_image))) {
+                unlink(public_path($product->feature_image));
+            }
+            $product->feature_image = $this->saveUploadedImage($request->file('feature_image'), 'feature', 1200);
+        }
+
+        if ($request->hasFile('small_image')) {
+            if ($product->small_image && file_exists(public_path($product->small_image))) {
+                unlink(public_path($product->small_image));
+            }
+            $product->small_image = $this->saveUploadedImage($request->file('small_image'), 'small', 400);
+        }
+
+        if ($request->hasFile('meta_image')) {
+            if ($product->meta_image && file_exists(public_path($product->meta_image))) {
+                unlink(public_path($product->meta_image));
+            }
+            $product->meta_image = $this->saveUploadedImage($request->file('meta_image'), 'meta', 1200);
+        }
+
+        $product->save();
+
+        return response()->json([
+            'message' => 'Product updated successfully',
+            'product' => $product
+        ]);
+    }
+
+    public function update2(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',

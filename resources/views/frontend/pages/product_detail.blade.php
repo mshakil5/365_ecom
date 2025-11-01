@@ -283,6 +283,7 @@
                                     </a>
                                 </div>
 
+                                @if($product->is_customizable == 1)
                                 <div class="product-add-to-cart-btn ms-2">
                                     <a href="#" class="offcanvas-toggle add-to-cart-btn"
                                         data-product-id="{{ $product->id }}"
@@ -292,6 +293,7 @@
                                         Customise
                                     </a>
                                 </div>
+                                @endif
                             </div>
                         </div>
                         <div class="product-details-text pt-3">
