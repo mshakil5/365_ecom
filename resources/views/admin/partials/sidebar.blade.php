@@ -198,7 +198,7 @@
                     </div>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item d-none">
                     <a class="nav-link menu-link"
                       href="#sidebarStockManagement" data-bs-toggle="collapse" role="button"
                       aria-expanded="false" aria-controls="sidebarStockManagement">

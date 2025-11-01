@@ -1,8 +1,7 @@
-<header class="header-section d-lg-block d-none sticky-header">
-
+<header class="header-section d-lg-block d-none">
 
     <!-- Start Header Center Area -->
-    <div class="header-center">
+    <div class="header-center sticky-header">
         <div class="container">
             <div class="row d-flex justify-content-between align-items-center">
                 <div class="col-3">
@@ -10,19 +9,14 @@
                     <div class="header-logo">
 
                         <a href="{{ route('home') }}">
-                            <x-img 
-                                path="images/company/{{ $company->company_logo }}" 
-                                alt="{{ $company->company_name }}" 
-                                width="280" 
-                                height="90"
-                                style="object-fit: contain; display: block;" 
-                            />
+                            <x-img path="images/company/{{ $company->company_logo }}" alt="{{ $company->company_name }}"
+                                width="280" height="90" style="object-fit: contain; display: block;" />
                         </a>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="header-search">
-                        <form action="{{ route('getDiffTypeProducts', ['ptype' => 'search-products']) }}">
+                        <form action="{{ route('products.show', 'search-products') }}">
                             <div class="header-search-box default-search-style d-flex">
                                 <input data-layout="desktop"
                                     class="searchInput default-search-style-input-box border-around border-right-none"
@@ -48,12 +42,6 @@
                 <div class="col-3 text-end">
                     <!-- Start Header Action Icon -->
                     <ul class="header-action-icon">
-                        <li class="d-none">
-                            <a href="{{ route('wishlist.index') }}" class="offcanvas-toggle wishlistBtn">
-                                <i class="icon-heart"></i>
-                                <span class="header-action-icon-item-count wishlistCount">0</span>
-                            </a>
-                        </li>
                         <li>
                             <a href="{{ route('cart.index') }}">
                                 <i class="icon-shopping-cart"></i>
@@ -87,7 +75,7 @@
     </div> <!-- End Header Center Area -->
 
     <!-- Start Bottom Area -->
-    <div class="header-bottom ">
+    <div class="header-bottom">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -98,10 +86,6 @@
                                 <li class="has-dropdown d-none">
                                     <a class="main-menu-link {{ request()->routeIs('home') ? 'active' : '' }}"
                                         href="{{ route('home') }}">Home</a>
-                                </li>
-                                <li class="has-dropdown d-none">
-                                    <a class="main-menu-link {{ request()->routeIs('frontend.shop') ? 'active' : '' }}"
-                                        href="{{ route('frontend.shop') }}">Shop</a>
                                 </li>
 
                                 @php
@@ -114,7 +98,7 @@
 
                                 @foreach ($menucategories as $category)
                                     <li class="has-dropdown">
-                                        <a class="main-menu-link" href="{{ route('category.show', $category->slug) }}">
+                                        <a class="main-menu-link" href="{{ route('products.show', $category->slug) }}">
                                             {{ $category->name }}
                                             <i class="fa fa-angle-down" style="margin-left:5px;"></i>
                                         </a>
@@ -152,19 +136,16 @@
 
                     <div class="mobile-header--center">
                         <a href="{{ route('home') }}" class="mobile-logo-link" aria-label="Go to homepage">
-                          <x-img 
-                              path="images/company/{{ $company->company_logo }}" 
-                              alt="{{ $company->company_name }}" 
-                              class="mobile-logo-img" 
-                              style="width: 220px; height: 35px;" 
-                          />
+                            <x-img path="images/company/{{ $company->company_logo }}"
+                                alt="{{ $company->company_name }}" class="mobile-logo-img"
+                                style="width: 220px; height: 35px;" />
                         </a>
                     </div>
 
                     <div class="mobile-header--right">
                         <a href="{{ route('cart.index') }}" class="mobile-action-icon-link cartBtn mx-2"
                             aria-label="Go to cart">
-                            <i class="icon-shopping-cart"></i>
+                            <i class="icon-shopping-cart" style="color: #fff;"></i>
                             <span class="mobile-action-icon-item-count cartCount">0</span>
                         </a>
                     </div>
@@ -185,7 +166,7 @@
     <div class="offcanvas-mobile-menu-wrapper">
         <!-- Start Mobile Menu User Center -->
         <div class="mobile-menu-center">
-            <form action="{{ route('getDiffTypeProducts', ['ptype' => 'search-products']) }}" class="pb-3">
+            <form action="{{ route('products.show', 'search-products') }}" class="pb-3">
                 <div class="header-search-box default-search-style d-flex">
                     <input data-layout="mobile"
                         class="searchInput default-search-style-input-box border-around border-right-none"
@@ -208,13 +189,6 @@
 
             <!-- Start Header Action Icon -->
             <ul class="mobile-action-icon">
-                <li class="mobile-action-icon-item d-none">
-                    <a href="{{ route('wishlist.index') }}" class="mobile-action-icon-link wishlistBtn"
-                        aria-label="Wishlist">
-                        <i class="icon-heart"></i>
-                        <span class="mobile-action-icon-item-count wishlistCount">0</span>
-                    </a>
-                </li>
                 <li class="mobile-action-icon-item">
                     <a href="{{ route('cart.index') }}" class="mobile-action-icon-link cartBtn" aria-label="Cart">
                         <i class="icon-shopping-cart"></i>
@@ -255,7 +229,7 @@
 
                     @foreach ($menucategories as $category)
                         <li class="has-submenu">
-                            <a href="{{ route('category.show', $category->slug) }}" class="category-link">
+                            <a href="{{ route('products.show', $category->slug) }}" class="category-link">
                                 <span>{{ $category->name }}</span>
                                 <i class="fa fa-angle-down"></i> {{-- keep the arrow icon for style --}}
                             </a>
@@ -298,9 +272,6 @@
 
 
             <div class="mobile-menu-customer-support">
-                <div class="mobile-menu-customer-support-icon">
-                    <img src="{{ asset('frontend/images/icon/support-icon.png') }}" alt="">
-                </div>
                 <div class="mobile-menu-customer-support-text">
                     <span>Customer Support</span>
                     <a class="mobile-menu-customer-support-text-phone"

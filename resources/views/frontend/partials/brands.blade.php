@@ -2,6 +2,7 @@
     $brands = App\Models\Partner::where('status', 1)->latest()->get();
 @endphp
 
+@if($brands->count() > 0)
 <div class="shop-section mt-5">
     <div class="container">
         <div id="trusted-brands" class="card-grid subNavScroll">
@@ -29,3 +30,4 @@
         </div>
     </div>
 </div>
+@endif

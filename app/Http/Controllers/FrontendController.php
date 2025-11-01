@@ -28,12 +28,6 @@ class FrontendController extends Controller
     {
         $company = CompanyDetails::select('meta_title', 'meta_description', 'meta_keywords', 'meta_image')->first();
 
-        $sliders = Cache::remember('active_sliders', now()->addDay(), function () {
-            return Slider::where('status', 1)
-                ->orderBy('serial', 'ASC')
-                ->get();
-        });
-
         $sections = Section::where('status', 1)
             ->orderBy('sl', 'asc')
             ->get();
@@ -51,21 +45,21 @@ class FrontendController extends Controller
 
         $sectors = Sector::where('status', 1)->orderBy('serial')->get();
 
-        $latestProducts = Product::with(['variants.color', 'variants.size'])
+        $products = Product::with(['variants.color', 'variants.size'])
             ->where('product_source', 2)
-            ->inRandomOrder()
-            ->take(20)
+            ->where(function($query) {
+                $query->where('is_trending', 1)
+                      ->orWhere('is_popular', 1);
+            })
             ->get();
 
-        $trendingProducts = Product::with(['variants.color', 'variants.size'])
-            ->where('product_source', 2)
-            ->inRandomOrder()
-            ->take(20)
-            ->get();
-          $heroTitle = Master::firstOrCreate(['name' => 'hero_title']);
-          $heroSection1 = Master::firstOrCreate(['name' => 'hero_section_1']);
-          $heroSection2 = Master::firstOrCreate(['name' => 'hero_section_2']);
-          $heroSection3 = Master::firstOrCreate(['name' => 'hero_section_3']);
+        $trendingProducts = $products->where('is_trending', 1)->take(20);
+        $bestSellingProducts = $products->where('is_popular', 1)->take(20);
+
+        $heroTitle = Master::firstOrCreate(['name' => 'hero_title']);
+        $heroSection1 = Master::firstOrCreate(['name' => 'hero_section_1']);
+        $heroSection2 = Master::firstOrCreate(['name' => 'hero_section_2']);
+        $heroSection3 = Master::firstOrCreate(['name' => 'hero_section_3']);
 
         $this->seo(
             $company?->meta_title ?? '',
@@ -73,21 +67,34 @@ class FrontendController extends Controller
             $company?->meta_keywords ?? '',
             $company?->meta_image ? asset('images/company/meta/' . $company->meta_image) : null
         );
-      return view('frontend.index', compact('sliders', 'sections', 'categories', 'sectors', 'latestProducts', 'trendingProducts', 'heroTitle', 'heroSection1', 'heroSection2', 'heroSection3'));
+      return view('frontend.index', compact('sections', 'categories', 'sectors', 'trendingProducts', 'bestSellingProducts', 'heroTitle', 'heroSection1', 'heroSection2', 'heroSection3'));
     }
 
-    public function showCategoryProducts($slug)
+    public function showProducts($type = null, Request $request)
     {
-        $category = Category::where('slug', $slug)
-            ->where('status', 1)
-            ->firstOrFail();
+        $query = Product::with(['variants.color', 'variants.size'])->where('status', 1);
 
-        $products = $category->products()
-            ->where('status', 1)
-            ->orderBy('id', 'desc')
-            ->get();
+        if ($type === 'trending') {
+            $query->where('is_trending', 1);
+            $title = 'Trending Products';
+        } elseif ($type === 'best-selling') {
+            $query->where('is_popular', 1);
+            $title = 'Best Selling Products';
+        } elseif ($type === 'search-products' && $request->has('query')) {
+            $search = $request->input('query');
+            $query->where('name', 'like', "%{$search}%");
+            $title = "Search results for: {$search}";
+        } elseif ($type) {
+            $category = Category::where('slug', $type)->where('status', 1)->firstOrFail();
+            $query->where('category_id', $category->id);
+            $title = $category->name;
+        } else {
+            $title = 'All Products';
+        }
 
-        return view('frontend.category_products', compact('category', 'products'));
+        $products = $query->orderBy('id', 'desc')->get();
+
+        return view('frontend.products', compact('products', 'title'));
     }
 
     public function latestProducts(Request $request)
@@ -111,6 +118,24 @@ class FrontendController extends Controller
           ->groupBy('category');
         $relatedProducts = Product::where('category_id', $product->category_id)->where('id', '!=', $product->id)->take(5)->get();
         return view('frontend.pages.product_detail', compact('product', 'relatedProducts', 'prices'));
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+
+        $products = Product::where('status', 1)
+            ->where(function($qBuilder) use ($query) {
+                $qBuilder->where('name', 'LIKE', "%$query%")
+                        ->orWhere('slug', 'LIKE', "%$query%")
+                        ->orWhere('product_code', 'LIKE', "%$query%");
+            })
+            ->select('id', 'name', 'feature_image', 'price', 'slug')
+            ->orderBy('id','desc')
+            ->take(20)
+            ->get();
+
+        return response()->json($products);
     }
     
     public function contact()
@@ -168,6 +193,12 @@ class FrontendController extends Controller
         });
 
         return view('frontend.privacy', compact('companyPrivacy'));
+    }
+
+    public function aboutUs()
+    {
+        $companyDetails = CompanyDetails::select('about_us')->first();
+        return view('frontend.about', compact('companyDetails'));
     }
 
     public function termsAndConditions()

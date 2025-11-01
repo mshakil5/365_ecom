@@ -17306,7 +17306,7 @@ table {
   font-size: 22px;
   margin-right: 20px;
   color: #fff;
-  background: #1e2d7d;
+  /* background: #1e2d7d; */
   width: 40px;
   height: 40px;
   text-align: center;
@@ -17533,7 +17533,8 @@ table {
   right: 0;
   -webkit-transform: translateY(-50%);
   transform: translateY(-50%);
-  font-weight: 400
+  font-weight: 400;
+  color: white;
 }
 
 .user-sub-menu {
@@ -17892,7 +17893,7 @@ table {
 }
 
 .mobile-menu {
-  border: 1px solid #000;
+  border: 1px solid #fff;
   padding: 5px;
   display: block
 }
@@ -17901,7 +17902,7 @@ table {
   display: block;
   width: 30px;
   height: 2px;
-  background: #000;
+  border: 1px solid #fff;
   margin-top: 5px;
   margin-bottom: 5px
 }
@@ -18194,7 +18195,7 @@ table {
   right: calc(0% - 10px);
   font-size: 11px;
   display: inline-block;
-  background: #333;
+  background: #00badb;
   color: #fff;
   text-align: center;
   line-height: 20px;
@@ -18206,7 +18207,7 @@ table {
 }
 
 .mobile-action-icon-link:hover .mobile-action-icon-item-count {
-  background: #1e2d7d
+  background: #fff
 }
 
 .offcanvas-menu {
@@ -18821,7 +18822,8 @@ table {
   line-height: 24px;
   margin-bottom: 20px;
   text-transform: capitalize;
-  font-weight: 600
+  font-weight: 600;
+  color: #fff
 }
 
 .footer-widget-subscribe {
@@ -18984,7 +18986,7 @@ table {
 
 .material-scrolltop,
 .material-scrolltop::before {
-  background-image: url(../images/icon/top-arrow.svg);
+  background-image: url(../images/top-arrow.svg);
   background-position: center 50%;
   background-repeat: no-repeat
 }
@@ -19020,4 +19022,16 @@ table {
 }
 #searchDropdown a:hover img {
     transform: scale(1.1);
+}
+
+.footer-top, .footer-bottom {
+    background-color: #022054;
+    color: #fff;
+}
+
+.footer-top a,
+.footer-top span,
+.footer-top p,
+.footer-top li {
+    color: #fff !important;
 }

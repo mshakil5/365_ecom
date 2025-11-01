@@ -6,20 +6,15 @@
                     <div class="footer-widget footer-widget-contact" data-aos="fade-up" data-aos-delay="0">
                         <div class="footer-logo">
                             <a href="{{ route('home') }}">
-                                <img src="{{ asset('images/company/' . $company->company_logo) }}"
+                                <img src="{{ asset('images/company/' . $company->footer_logo) }}"
                                     alt="{{ $company->company_name }}" class="img-fluid"
-                                    style="width: 150px; height: 50px; object-fit: contain; display: block;">
+                                    style="width: 270px; height: 50px; object-fit: contain; display: block;">
                             </a>
                         </div>
-                        <div class="footer-contact">
+                        <div class="footer-contact" style="width: 270px;">
                             <div class="customer-support">
-                                <div class="customer-support-icon">
-                                    <img src="{{ asset('frontend/images/icon/support-icon.png') }}" alt="">
-                                </div>
                                 <div class="customer-support-text">
-                                    <span>Customer Support</span>
-                                    <a class="customer-support-text-phone"
-                                        href="tel:{{ $company->phone1 }}">{{ $company->phone1 }}</a>
+                                    <span>{{ $company->footer_content }}</span>
                                 </div>
                             </div>
                         </div>
@@ -33,16 +28,6 @@
                                     </a>
                                 </li>
                             @endif
-                            @if ($company->twitter)
-                                <li>
-                                    <a href="{{ $company->twitter }}" class="svg-round ebay" target="_blank"
-                                        aria-label="Visit our eBay store" title="eBay">
-                                        <img src="{{ asset('evay.png') }}" alt="eBay logo" class="img-fluid"
-                                            style="max-height: 42px; object-fit: contain;">
-                                        <span class="sr-only">Visit our eBay store</span>
-                                    </a>
-                                </li>
-                            @endif
                             @if ($company->youtube)
                                 <li><a href="{{ $company->youtube }}" class="youtube" target="_blank"><i
                                             class="fa fa-youtube"></i></a></li>
@@ -52,19 +37,16 @@
                                             class="fa fa-instagram"></i></a></li>
                             @endif
                         </ul>
-
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                     <div class="footer-widget" data-aos="fade-up" data-aos-delay="200">
-                        <h3 class="footer-widget-title">LINKS</h3>
+                        <h3 class="footer-widget-title">QUICK LINKS</h3>
                         <div class="footer-menu row">
                             <div class="col-6 col-sm-6">
                                 <ul class="footer-menu-nav">
                                     <li><a href="{{ route('home') }}">Home</a></li>
-                                    <li><a href="{{ route('frontend.shop') }}">Shop</a></li>
-                                    <li><a href="{{ route('cart.index') }}" >Cart</a></li>
-                                    <li><a href="{{ route('wishlist.index') }}" class="wishlistBtn d-none">Wish List</a></li>
+                                    <li><a href="{{ route('cart.index') }}">Cart</a></li>
                                     @auth
                                         <li><a href="{{ route('orders.index') }}">Orders</a></li>
                                     @else
@@ -87,22 +69,35 @@
                 </div>
                 <div class="col-lg-4 col-md-12 col-sm-12 mb-4">
                     <div class="footer-widget footer-widget-menu" data-aos="fade-up" data-aos-delay="600">
-                        <h3 class="footer-widget-title">ADDRESS</h3>
-                        <div class="footer-menu">
+                        <h3 class="footer-widget-title ml-3">CONTACT</h3>
+                        <div class="footer-menu row g-2">
 
-                            <div class="contact-details-single-item">
+                            <div class="col-12 d-flex align-items-start contact-details-single-item">
                                 <div class="contact-details-icon">
-                                    <a href="https://www.google.com/maps/dir//Quatrone+-+Catering+Equipment+-+Manchester+Unit+7,+Orchard+sew+mill+Langley+Road+South,+Salford+M6+6SD/@53.4990438,-2.2898415,16z/data=!4m8!4m7!1m0!1m5!1m1!1s0x487bafcaa36da13d:0xbaa3261462266097!2m2!1d-2.2898415!2d53.4990438?entry=ttu&g_ep=EgoyMDI1MDIyNi4xIKXMDSoASAFQAw%3D%3D"
-                                        target="blank" aria-label="View our address on Google Maps"
-                                        title="Google Maps"><i class="fa fa-map-marker text-white"></i></a>
+                                    <i class="fa fa-map-marker text-white"></i>
                                 </div>
-                                <div class="contact-details-content contact-phone">
-                                    <span>{{ $company->address1 }}</span>
-                                </div>
+                                <span>{{ $company->address1 }}</span>
                             </div>
+
+                            <div class="col-12 d-flex align-items-start">
+                                <div class="contact-details-icon">
+                                    <i class="fa fa-phone text-white me-2 mt-1"></i>
+                                </div>
+                                <span>{{ $company->phone1 }}</span>
+                            </div>
+
+                            <div class="col-12 d-flex align-items-start">
+                                <div class="contact-details-icon">
+                                    <i class="fa fa-envelope text-white me-2 mt-1"></i>
+                                </div>
+                                <span>{{ $company->email1 }}</span>
+                            </div>
+
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
     </div>

@@ -18,6 +18,7 @@ use Str;
 use Exception;
 use Log;
 use DataTables;
+use Intervention\Image\Facades\Image;
 
 class ApiProductController extends Controller
 {
@@ -131,8 +132,8 @@ class ApiProductController extends Controller
         $apiUrl = $api->url;
 
         ini_set('memory_limit', '1G');
-        ini_set('max_execution_time', 600);
-        set_time_limit(600);  
+        ini_set('max_execution_time', 0);
+        set_time_limit(0);
 
         try {
             $response = Http::timeout(3000)->get($apiUrl);
@@ -210,8 +211,8 @@ class ApiProductController extends Controller
                         'video_link' => $item['VideoLink'] ?? null,
                         'packaging' => $item['Packaging'] ?? null,
                         'tax_code' => $item['TaxCode'] ?? null,
-                        'feature_image' => $item['Image'] ?? null,
-                        'small_image' => $item['SmallImage'] ?? null,
+                        'feature_image' => $this->downloadImage($item['Image'], 'feature', 1200),
+                        'small_image' => $this->downloadImage($item['SmallImage'], 'small', 400),
                         'price' => $item['PriceSingle'] ?? 0,
                         'status' => true,
                         'api_log_id' => $log->id ?? null,
@@ -274,7 +275,7 @@ class ApiProductController extends Controller
                     $images[] = [
                         'product_id' => $product->id,
                         'color_id' => null,
-                        'image_path' => $item['Image'],
+                        'image_path' => $this->downloadImage($item['Image'], 'feature', 800),
                         'image_type' => 'general',
                         'is_primary' => true,
                         'sort_order' => 1,
@@ -285,7 +286,7 @@ class ApiProductController extends Controller
                     $images[] = [
                         'product_id' => $product->id,
                         'color_id' => null,
-                        'image_path' => $item['SmallImage'],
+                        'image_path' => $this->downloadImage($item['SmallImage'], 'small', 400),
                         'image_type' => 'general',
                         'is_primary' => false,
                         'sort_order' => 2,
@@ -296,7 +297,7 @@ class ApiProductController extends Controller
                     $images[] = [
                         'product_id' => $product->id,
                         'color_id' => $color->id,
-                        'image_path' => $item['ColourImage'],
+                        'image_path' => $this->downloadImage($item['ColourImage'], 'colors', 800),
                         'image_type' => 'general',
                         'is_primary' => true,
                         'sort_order' => 3,
@@ -307,7 +308,7 @@ class ApiProductController extends Controller
                     $images[] = [
                         'product_id' => $product->id,
                         'color_id' => $color->id,
-                        'image_path' => $item['SMColourImage'],
+                        'image_path' => $this->downloadImage($item['SMColourImage'], 'sm_colors', 400),
                         'image_type' => 'general',
                         'is_primary' => false,
                         'sort_order' => 4,
@@ -317,14 +318,16 @@ class ApiProductController extends Controller
                 }
 
                 foreach ($images as $img) {
-                    DB::table('product_images')->updateOrInsert(
-                        [
-                            'product_id' => $img['product_id'],
-                            'color_id' => $img['color_id'],
-                            'image_path' => $img['image_path']
-                        ],
-                        $img
-                    );
+                    if (!empty($img['image_path'])) {
+                        DB::table('product_images')->updateOrInsert(
+                            [
+                                'product_id' => $img['product_id'],
+                                'color_id' => $img['color_id'],
+                                'image_path' => $img['image_path']
+                            ],
+                            $img
+                        );
+                    }
                 }
             }
 
@@ -339,4 +342,48 @@ class ApiProductController extends Controller
         }
     }
 
+    private function downloadImage($url, $folder, $width = null, $quality = 50)
+    {
+        try {
+            if (empty($url)) return null;
+
+            $hash = md5($url);
+            $filename = "{$hash}.webp";
+            $path = public_path("images/products/{$folder}/");
+            $fullPath = $path . $filename;
+
+            if (file_exists($fullPath)) {
+                return "/images/products/{$folder}/{$filename}";
+            }
+
+            $response = Http::timeout(15)->get($url);
+            if (!$response->successful()) {
+                \Log::warning("Image download failed: {$url} (HTTP " . $response->status() . ")");
+                return null;
+            }
+
+            $imageData = $response->body();
+            if (empty($imageData)) {
+                \Log::warning("Image empty data: {$url}");
+                return null;
+            }
+
+            if (!file_exists($path)) mkdir($path, 0755, true);
+            $image = Image::make($imageData);
+
+            if ($width) {
+                $image->resize($width, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            }
+
+            $image->encode('webp', $quality)->save($fullPath);
+
+            return "/images/products/{$folder}/{$filename}";
+        } catch (\Throwable $e) {
+            \Log::error("downloadImage() failed for {$url}: " . $e->getMessage());
+            return null;
+        }
+    }
 }

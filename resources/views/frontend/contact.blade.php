@@ -1,120 +1,119 @@
 @extends('frontend.pages.master')
 
 @section('content')
-    <div class="page-title light-background">
-        <div class="container">
-            <nav class="breadcrumbs">
-                <ol>
-                    <li><a href="{{ route('home') }}">Home</a></li>
-                    <li class="current">Contact</li>
-                </ol>
-            </nav>
+    <div class="breadcrumb-section">
+        <div class="breadcrumb-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div
+                        class="col-12 d-flex justify-content-between justify-content-md-between  align-items-center flex-md-row flex-column">
+                        <h3 class="breadcrumb-title"></h3>
+                        <div class="breadcrumb-nav">
+                            <nav aria-label="breadcrumb">
+                                <ul>
+                                    <li><a href="{{ route('home') }}">Home</a></li>
+                                    <li aria-current="page">Terms & Conditions</li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <section id="contact" class="contact section">
 
         <div class="container" data-aos="fade">
-
             <div class="row gy-5 gx-lg-5">
 
                 <div class="col-lg-4">
+                    <div class="info p-4 border rounded shadow-sm bg-light">
+                        <h3 class="mb-3">{{ $contact->short_title }}</h3>
+                        <p class="mb-4">{!! $contact->short_description !!}</p>
 
-                    <div class="info">
-                        <h3>{{ $contact->short_title }}</h3>
-                        <p>{!! $contact->short_description !!}</p>
-
-                        <div class="info-item d-flex">
-                            <i class="bi bi-geo-alt flex-shrink-0"></i>
-                            <div>
-                                <h4>Location:</h4>
-                                <p>{{ $company->address1 }}</p>
-                            </div>
+                        <div class="info-item mb-3">
+                            <h5 class="mb-1">Location:</h5>
+                            <p class="mb-0">{{ $company->address1 }}</p>
                         </div>
 
-                        <div class="info-item d-flex">
-                            <i class="bi bi-envelope flex-shrink-0"></i>
-                            <div>
-                                <h4>Email:</h4>
-                                <p>{{ $company->email1 }}</p>
-                            </div>
+                        <div class="info-item mb-3">
+                            <h5 class="mb-1">Email:</h5>
+                            <p class="mb-0">{{ $company->email1 }}</p>
                         </div>
 
-                        <div class="info-item d-flex">
-                            <i class="bi bi-phone flex-shrink-0"></i>
-                            <div>
-                                <h4>Call:</h4>
-                                <p>{{ $company->phone1 }}</p>
-                            </div>
+                        <div class="info-item mb-3">
+                            <h5 class="mb-1">Call:</h5>
+                            <p class="mb-0">{{ $company->phone1 }}</p>
                         </div>
-
                     </div>
-
                 </div>
 
                 <div class="col-lg-8">
                     @if (session('success'))
-                        <div class="alert alert-success mt-3">{{ session('success') }}</div>
+                        <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
-                    <form action="{{ route('contact.store') }}" method="POST" role="form" class="php-email-form">
+
+                    <form action="{{ route('contact.store') }}" method="POST"
+                        class="php-email-form p-4 border rounded shadow-sm bg-light">
                         @csrf
-                        <div class="row">
-                            <div class="col-md-6 form-group">
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <input type="text" name="first_name"
-                                    class="form-control @error('first_name') is-invalid @enderror" id="first_name"
-                                    placeholder="First Name" value="{{ old('first_name') }}" required autofocus>
+                                    class="form-control @error('first_name') is-invalid @enderror" placeholder="First Name"
+                                    value="{{ old('first_name') }}" required>
                                 @error('first_name')
-                                    <span class="invalid-feedback">{{ $message }}</span>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-md-6 form-group mt-3 mt-md-0">
+                            <div class="col-md-6 mt-3 mt-md-0">
                                 <input type="text" name="last_name"
-                                    class="form-control @error('last_name') is-invalid @enderror" id="last_name"
-                                    placeholder="Last Name" value="{{ old('last_name') }}" required>
+                                    class="form-control @error('last_name') is-invalid @enderror" placeholder="Last Name"
+                                    value="{{ old('last_name') }}" required>
                                 @error('last_name')
-                                    <span class="invalid-feedback">{{ $message }}</span>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-md-6 form-group">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <input type="email" name="email"
-                                    class="form-control @error('email') is-invalid @enderror" id="email"
-                                    placeholder="Your Email" value="{{ old('email') }}" required>
+                                    class="form-control @error('email') is-invalid @enderror" placeholder="Your Email"
+                                    value="{{ old('email') }}" required>
                                 @error('email')
-                                    <span class="invalid-feedback">{{ $message }}</span>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-6 mt-3 mt-md-0">
                                 <input type="text" name="phone"
-                                    class="form-control @error('phone') is-invalid @enderror" id="phone"
-                                    placeholder="Phone" value="{{ old('phone') }}" required>
+                                    class="form-control @error('phone') is-invalid @enderror" placeholder="Phone"
+                                    value="{{ old('phone') }}" required>
                                 @error('phone')
-                                    <span class="invalid-feedback">{{ $message }}</span>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="form-group mt-3">
+                        <div class="mb-3">
                             <input type="text" name="subject" class="form-control @error('subject') is-invalid @enderror"
-                                id="subject" placeholder="Subject" value="{{ old('subject') }}">
+                                placeholder="Subject" value="{{ old('subject') }}">
                             @error('subject')
-                                <span class="invalid-feedback">{{ $message }}</span>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="form-group mt-3">
-                            <textarea name="message" class="form-control @error('message') is-invalid @enderror" placeholder="Message" required
-                                rows="3">{{ old('message') }}</textarea>
+                        <div class="mb-3">
+                            <textarea name="message" class="form-control @error('message') is-invalid @enderror" placeholder="Message"
+                                rows="5" required>{{ old('message') }}</textarea>
                             @error('message')
-                                <span class="invalid-feedback">{{ $message }}</span>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="row mt-3 align-items-center">
-                            <div class="col-auto d-flex align-items-center gap-2">
+                        <div class="row align-items-center">
+                            <div class="col-auto d-flex align-items-center gap-2 mb-3 mb-md-0">
                                 <span id="captcha-question" class="fw-bold text-dark"></span>
                                 <input type="number" id="captcha-answer" class="form-control form-control-sm"
                                     style="width: 80px;" placeholder="Answer" required>
@@ -122,15 +121,14 @@
                             </div>
 
                             <div class="col text-center">
-                                <button type="submit" id="submit-btn" class="btn btn-primary">Send</button>
-                                <div id="sending-text" class="d-none">Sending...</div>
+                                <button type="submit" id="submit-btn" class="btn btn-primary px-5">Send</button>
+                                <div id="sending-text" class="d-none mt-2">Sending...</div>
                             </div>
                         </div>
                     </form>
                 </div>
 
             </div>
-
         </div>
 
     </section>

@@ -1,14 +1,24 @@
 @extends('frontend.pages.master')
 
 @section('content')
-    <div class="page-title light-background">
-        <div class="container">
-            <nav class="breadcrumbs">
-                <ol>
-                    <li><a href="{{ route('home') }}">Home</a></li>
-                    <li class="current">Terms & Conditions</li>
-                </ol>
-            </nav>
+    <div class="breadcrumb-section">
+        <div class="breadcrumb-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div
+                        class="col-12 d-flex justify-content-between justify-content-md-between  align-items-center flex-md-row flex-column">
+                        <h3 class="breadcrumb-title"></h3>
+                        <div class="breadcrumb-nav">
+                            <nav aria-label="breadcrumb">
+                                <ul>
+                                    <li><a href="{{ route('home') }}">Home</a></li>
+                                    <li aria-current="page">Terms & Conditions</li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

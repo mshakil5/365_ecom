@@ -12,7 +12,7 @@
                           <nav aria-label="breadcrumb">
                               <ul>
                                   <li><a href="{{ route('home') }}">Home</a></li>
-                                  <li aria-current="page">Privacy Policy</li>
+                                  <li aria-current="page">About Us</li>
                               </ul>
                           </nav>
                       </div>
@@ -24,14 +24,14 @@
 
   <section id="privacy" class="privacy section">
     <div class="container section-title" data-aos="fade-up">
-      <h2>Privacy Policy</h2>
+      <h2>About Us</h2>
     </div>
 
     <div class="container" data-aos="fade-up">
       <div class="row">
         <div class="col-12">
           <div class="privacy-content">
-            {!! $companyPrivacy->privacy_policy !!}
+            {!! $companyDetails->about_us !!}
           </div>
         </div>
       </div>
