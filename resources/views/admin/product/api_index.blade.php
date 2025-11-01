@@ -21,6 +21,7 @@
                         <th>Category</th>
                         <th>Company</th>
                         <th>Image</th>
+                        <th>Prices</th>
                         <th>More</th>
                     </tr>
                 </thead>
@@ -46,7 +47,8 @@ $(document).ready(function(){
             {data:'category', name:'category'},
             {data:'company', name:'company'},
             {data:'image', name:'image'},
-            {data:'more', name:'more', orderable:false, searchable:false},
+            {data: 'prices', name: 'prices'},
+            {data:'action', name:'action', orderable:false, searchable:false},
         ]
     });
 });

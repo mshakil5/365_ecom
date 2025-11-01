@@ -1,15 +1,15 @@
-<div class="modal fade" id="addUnitModal" tabindex="-1" aria-labelledby="addUnitModalLabel" aria-hidden="true">
+<div class="modal fade" id="addCompanyModal" tabindex="-1" aria-labelledby="addCompanyModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addUnitModalLabel">Add New Unit</h5>
+                <h5 class="modal-title" id="addCompanyModalLabel">Add New Company</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('units.store') }}" method="POST" id="newUnit">
+            <form action="{{ route('companies.store') }}" method="POST" id="newCompany">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Unit Name <span class="text-danger">*</span></label>
+                        <label class="form-label">Company Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="name" required>
                     </div>
                 </div>

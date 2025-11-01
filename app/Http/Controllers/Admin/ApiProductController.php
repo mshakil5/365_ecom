@@ -131,6 +131,8 @@ class ApiProductController extends Controller
         $apiUrl = $api->url;
 
         ini_set('memory_limit', '1G');
+        ini_set('max_execution_time', 600);
+        set_time_limit(600);  
 
         try {
             $response = Http::timeout(3000)->get($apiUrl);

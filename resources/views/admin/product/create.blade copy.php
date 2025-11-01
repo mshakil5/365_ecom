@@ -16,35 +16,61 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <div class="row">
-                                    <div class="col-6">
-                                        <label class="form-label">Product Name <span class="text-danger">*</span></label>
+                                    <div class="col-8">
+                                        <label class="form-label">Product Title <span class="text-danger">*</span></label>
                                         <input type="text" name="name" class="form-control" placeholder="" required>
                                     </div>
-                                    <div class="col-3">
+                                    <div class="col-4">
                                         <label class="form-label">Product Code <span class="text-danger">*</span></label>
-                                        <input type="text" name="product_code" class="form-control" placeholder=""
-                                            required>
-                                    </div>
-                                    <div class="col-3">
-                                        <label class="form-label">Price <span class="text-danger">*</span></label>
-                                        <input type="number" step="0.01" name="price" class="form-control">
+                                        <input type="text" name="code" class="form-control" placeholder="" required>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Full Description</label>
-                                <textarea name="full_description" class="form-control ckeditor-classic" rows="3"></textarea>
+                                <label class="form-label">Short Description</label>
+                                <textarea name="short_description" class="form-control" rows="3"></textarea>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Composition</label>
-                                <textarea name="composition" class="form-control ckeditor-classic"></textarea>
+                                <label class="form-label">Long Description</label>
+                                <textarea name="long_description" class="form-control ckeditor-classic"></textarea>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Specifications</label>
-                                <textarea name="specifications" class="form-control ckeditor-classic"></textarea>
+                    {{-- Categories --}}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Categories</h5>
+                        </div>
+                        <div class="card-body" id="category-container">
+                            <div class="row category-row mb-4 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Category<span class="text-danger">*</span>
+                                        <button type="button" class="btn btn-sm badge rounded-pill bg-success"
+                                            data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                                            Add New Category
+                                        </button>
+                                    </label>
+                                    <select name="category[]" class="form-select category" required></select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Sub Category</label>
+                                    <select name="subcategory[]" class="form-select subcategory"></select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label">Sub Sub Category</label>
+                                    <select  name="subsubcategory[]" class="form-select subsubcategory"></select>
+                                </div>
+
+                                <div class="col-md-1 text-center">
+                                    <button type="button" class="btn btn-success add-row">
+                                        <i class="ri-add-line"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -56,23 +82,16 @@
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-                                <label class="form-label">Small Image</label>
-                                <input type="file" name="small_image" class="form-control" accept="image/*"
-                                    onchange="previewImage(event, '#preview-sm-image')">
-                                <img id="preview-sm-image" src="#" alt="" class="avatar-md mt-3">
-                            </div>
-
-                            <div class="mb-3">
                                 <label class="form-label">Feature Image</label>
                                 <input type="file" name="feature_image" class="form-control" accept="image/*"
                                     onchange="previewImage(event, '#preview-image')">
                                 <img id="preview-image" src="#" alt="" class="img-thumbnail rounded mt-3">
                             </div>
 
-                            <h5 class="fs-14 mb-1 d-none">Product Gallery</h5>
-                            <p class="text-muted d-none">Add Product Gallery Images.</p>
+                            <h5 class="fs-14 mb-1">Product Gallery</h5>
+                            <p class="text-muted">Add Product Gallery Images.</p>
 
-                            <div class="dropzone d-none" id="product-gallery-dropzone">
+                            <div class="dropzone" id="product-gallery-dropzone">
                                 <div class="fallback">
                                     <input name="file" type="file" multiple="multiple">
                                 </div>
@@ -84,7 +103,7 @@
                                 </div>
                             </div>
 
-                            <ul class="list-unstyled mb-0 d-none" id="dropzone-preview">
+                            <ul class="list-unstyled mb-0" id="dropzone-preview">
                                 <li class="mt-2" id="dropzone-preview-list">
                                     <div class="border rounded">
                                         <div class="d-flex p-2 align-items-center">
@@ -133,45 +152,52 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label">Category <span class="text-danger">*</span>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Brand
                                         <button type="button" class="btn btn-sm badge rounded-pill bg-success"
-                                            data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                                            Add New Category
+                                            data-bs-toggle="modal" data-bs-target="#addBrandModal">
+                                            Add New Brand
                                         </button>
                                     </label>
-                                    <select name="category_id" class="form-select select2 category_id" required>
-                                        <option value="">Select Category</option>
-                                        @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label">Company <span class="text-danger">*</span>
-                                        <button type="button" class="btn btn-sm badge rounded-pill bg-success"
-                                            data-bs-toggle="modal" data-bs-target="#addCompanyModal">
-                                            Add New Company
-                                        </button>
-                                    </label>
-                                    <select name="company_id" class="form-select select2 company_id" required>
-                                        <option value="">Select Company</option>
-                                        @foreach ($companies as $company)
-                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                    <select name="brand_id" class="form-select select2 brand_id">
+                                        <option value="">Select Brand</option>
+                                        @foreach ($brands as $brand)
+                                            <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" name="is_customizable"
-                                            value="1">
-                                        <label class="form-check-label">Allow Customization</label>
-                                    </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Unit
+                                        <button type="button" class="btn btn-sm badge rounded-pill bg-success"
+                                            data-bs-toggle="modal" data-bs-target="#addUnitModal">
+                                            Add New Unit
+                                        </button>
+                                    </label>
+                                    <select name="unit_id" class="form-select select2 unit_id">
+                                        <option value="">Select Unit</option>
+                                        @foreach ($units as $unit)
+                                            <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
-                                <div class="col-md-6 mb-3 d-none">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Group
+                                        <button type="button" class="btn btn-sm badge rounded-pill bg-success"
+                                            data-bs-toggle="modal" data-bs-target="#addGroupModal">
+                                            Add New Group
+                                        </button>
+                                    </label>
+                                    <select name="group_id" class="form-select select2 group_id">
+                                        <option value="">Select Group</option>
+                                        @foreach ($groups as $group)
+                                            <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Tags
                                         <button type="button" class="btn btn-sm badge rounded-pill bg-success"
                                             data-bs-toggle="modal" data-bs-target="#addTagModal">
@@ -185,7 +211,7 @@
                                     </select>
                                 </div>
 
-                                <div class="col-md-6 d-none">
+                                <div class="col-md-6">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="is_featured"
                                             value="1">
@@ -196,19 +222,12 @@
                                 <div class="col-md-6">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="is_trending"
-                                            value="1" checked>
+                                            value="1">
                                         <label class="form-check-label">Trending Product</label>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" name="show_in_frontend" value="1" checked>
-                                        <label class="form-check-label">Show on Frontend</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 d-none">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="is_new_arrival"
                                             value="1">
@@ -216,7 +235,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 d-none">
+                                <div class="col-md-6">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="is_top_rated"
                                             value="1">
@@ -228,11 +247,11 @@
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="is_popular"
                                             value="1">
-                                        <label class="form-check-label">Best Selling Product</label>
+                                        <label class="form-check-label">Popular Product</label>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 d-none">
+                                <div class="col-md-6">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="is_recent" value="1">
                                         <label class="form-check-label">Recent Product</label>
@@ -280,59 +299,187 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Company</label>
+                                    <input type="text" name="company" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Category API</label>
+                                    <input type="text" name="category_api" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Product Code API</label>
+                                    <input type="text" name="product_code_api" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Product Name API</label>
+                                    <input type="text" name="product_name_api" class="form-control">
+                                </div>
+
                                 <div class="col-md-12 mb-3">
+                                    <label class="form-label">Full Description</label>
+                                    <textarea name="full_description" class="form-control" rows="3"></textarea>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Short Code</label>
+                                    <input type="text" name="short_code" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Tariff No</label>
                                     <input type="text" name="tariff_no" class="form-control">
                                 </div>
 
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">EAN</label>
+                                    <input type="text" name="ean" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Wash Degrees</label>
                                     <input type="number" name="wash_degrees" class="form-control">
                                 </div>
 
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Gender</label>
-                                    <select name="gender" class="form-control select2">
-                                        <option value="" disabled selected>Select Gender</option>
-                                        <option value="Unisex">Unisex</option>
-                                        <option value="Women's">Women's</option>
-                                        <option value="Men's">Men's</option>
-                                        <option value="Children">Children</option>
-                                        <option value="Unknown">Unknown</option>
-                                    </select>
+                                    <input type="text" name="gender" class="form-control">
                                 </div>
 
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">GSM</label>
                                     <input type="number" name="gsm" class="form-control">
                                 </div>
 
                                 <div class="col-md-12 mb-3">
+                                    <label class="form-label">Composition</label>
+                                    <textarea name="composition" class="form-control" rows="2"></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Specifications</label>
+                                    <textarea name="specifications" class="form-control" rows="2"></textarea>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Colour Code</label>
+                                    <input type="text" name="colour_code" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Colour Name</label>
+                                    <input type="text" name="colour_name_api" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Pantone</label>
+                                    <input type="text" name="pantone" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Hex Code</label>
+                                    <input type="text" name="hex_code" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Size Name API</label>
+                                    <input type="text" name="size_name_api" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Price (Single)</label>
+                                    <input type="number" step="0.01" name="price_single" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Qty (Single)</label>
+                                    <input type="number" name="qty_single" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Price (Pack)</label>
+                                    <input type="number" step="0.01" name="price_pack" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Pack Qty</label>
+                                    <input type="number" name="pack_qty" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Price (Carton)</label>
+                                    <input type="number" step="0.01" name="price_caton" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Carton Qty</label>
+                                    <input type="number" name="carton_qty" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Price (1K)</label>
+                                    <input type="number" step="0.01" name="price_1k" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Quantity API</label>
+                                    <input type="number" name="quantity_api" class="form-control">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">My Price</label>
+                                    <input type="number" step="0.01" name="my_price" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Image</label>
+                                    <input type="file" name="image" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Small Image</label>
+                                    <input type="file" name="small_image" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Colour Image</label>
+                                    <input type="file" name="colour_image" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">SM Colour Image</label>
+                                    <input type="file" name="sm_colour_image" class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Video Link</label>
                                     <input type="text" name="video_link" class="form-control">
                                 </div>
 
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Packaging</label>
                                     <input type="text" name="packaging" class="form-control">
                                 </div>
 
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Country of Origin</label>
                                     <input type="text" name="country_of_origin" class="form-control">
                                 </div>
 
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Gross Weight</label>
                                     <input type="number" step="0.01" name="gross_weight" class="form-control">
                                 </div>
 
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Net Weight</label>
                                     <input type="number" step="0.01" name="net_weight" class="form-control">
                                 </div>
 
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Tax Code</label>
                                     <input type="text" name="tax_code" class="form-control">
                                 </div>
@@ -344,13 +491,16 @@
         </form>
     </div>
     @include('admin.modals.category')
-    @include('admin.modals.company')
+    @include('admin.modals.brand')
+    @include('admin.modals.unit')
+    @include('admin.modals.group')
     @include('admin.modals.tag')
 @endsection
 
 @section('script')
     @include('admin.modals.category_script')
-    @include('admin.modals.company_script')
+    @include('admin.modals.brand_script')
+    @include('admin.modals.unit_script')
     @include('admin.modals.tag_script')
     <script>
         $(document).ready(function() {
@@ -440,9 +590,8 @@
                         showSuccess(res.message);
                         $form[0].reset();
                         $button.prop('disabled', false).html(originalText);
-                        reload();
                     },
-                    error: function(xhr) {
+                    error: function(xhr, status, error) {
                         if (xhr.status === 422) {
                             let firstError = Object.values(xhr.responseJSON.errors)[0][0];
                             showError(firstError);

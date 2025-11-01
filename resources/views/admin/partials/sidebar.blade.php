@@ -99,7 +99,7 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('allApiProducts') }}"
-                                  class="nav-link {{ Route::is('allApiProducts') ? 'active' : '' }}">
+                                  class="nav-link {{ Route::is('allApiProducts') || Route::is('products.edit') || Route::is('product.details') ? 'active' : '' }}">
                                    Products (Api)
                                 </a>
                             </li>
@@ -114,7 +114,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('products.index') }}"
                                   class="nav-link {{ Route::is('products.index') || Route::is('products.edit') || Route::is('product.details') ? 'active' : '' }}">
-                                   Products
+                                   Products (In House)
                                 </a>
                             </li>
 

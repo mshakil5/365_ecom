@@ -16,6 +16,7 @@ use App\Models\Group;
 use App\Models\Unit;
 use App\Models\Size;
 use App\Models\Color;
+use App\Models\Company;
 use App\Models\Type;
 use App\Models\Tag;
 use App\Models\SubCategory;
@@ -29,24 +30,31 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Product::where('product_source', 1)
+            $data = Product::with(['company', 'category'])
+                ->where('product_source', 1)
                 ->latest()
-                ->select('id', 'name', 'code', 'price', 'feature_image', 'company', 'status', 'created_at');
+                ->select('id', 'name', 'product_code', 'price', 'feature_image', 'small_image', 'company_id', 'category_id', 'status', 'created_at');
 
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('feature_image', function ($row) {
                     return $row->feature_image
-                        ? '<img src="'.asset('images/products/'.$row->feature_image).'" class="img-thumbnail">'
+                        ? '<img src="'.asset('images/products/'.$row->feature_image).'" class="img-thumbnail" width="50">'
                         : '';
                 })
                 ->editColumn('status', function ($row) {
-                    return $row->status == 1
+                    return $row->status
                         ? '<span class="badge bg-success">Active</span>'
                         : '<span class="badge bg-danger">Inactive</span>';
                 })
                 ->editColumn('created_at', function ($row) {
-                  return optional($row->created_at)->format('d M, Y');
+                    return optional($row->created_at)->format('d M, Y');
+                })
+                ->addColumn('company_name', function($row) {
+                    return $row->company ? $row->company->name : '';
+                })
+                ->addColumn('category_name', function($row) {
+                    return $row->category ? $row->category->name : '';
                 })
                 ->addColumn('prices', function($row) {
                     $url = route('product_prices.index') . '?product_id=' . $row->id;
@@ -57,9 +65,17 @@ class ProductController extends Controller
                     <div class="dropdown">
                         <button class="btn btn-soft-secondary btn-sm" data-bs-toggle="dropdown"><i class="ri-more-fill"></i></button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="'.route('products.edit', $row->id).'"><i class="ri-pencil-fill me-2"></i>Edit</a></li>
+                            <li>
+                                <a class="dropdown-item" href="'.route('product.details', $row->id).'">
+                                    <i class="ri-eye-fill me-2"></i>View
+                                </a>
+                            </li>
                             <li class="dropdown-divider"></li>
-                            <li><button class="dropdown-item deleteBtn" data-method="DELETE" data-table="#productTable"><i class="ri-delete-bin-fill me-2"></i>Delete</button></li>
+                            <li>
+                                <a class="dropdown-item" href="'.route('products.edit', $row->id).'">
+                                    <i class="ri-pencil-fill me-2"></i>Edit
+                                </a>
+                            </li>
                         </ul>
                     </div>';
                 })
@@ -73,22 +89,124 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::where('status', 1)->orderBy('serial', 'asc')->get();
-        $subCategories = SubCategory::where('status', 1)->orderBy('serial', 'asc')->get();
-        $subSubCategories = SubSubCategory::where('status', 1)->orderBy('serial', 'asc')->get();
-        $brands = Brand::where('status', 1)->latest()->get();
-        $models = ProductModel::where('status', 1)->latest()->get();
-        $groups = Group::where('status', 1)->latest()->get();
-        $units = Unit::where('status', 1)->latest()->get();
+        $companies = Company::where('status', 1)->latest()->get();
         $sizes = Size::where('status', 1)->latest()->get();
         $colors = Color::where('status', 1)->latest()->get();
-        $types = Type::where('status', 1)->latest()->get();
         $tags = Tag::where('status', 1)->latest()->get();
 
-        return view('admin.product.create', compact('categories','brands','models','groups','units','sizes','colors','tags','types'
-        ));
+        return view('admin.product.create', compact('categories', 'companies', 'sizes', 'colors', 'tags'));
     }
 
     public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'product_code' => 'required|string|max:255',
+            'price' => 'nullable|numeric',
+            'full_description' => 'nullable|string',
+            'long_description' => 'nullable|string',
+            'specifications' => 'nullable|string',
+            'feature_image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+            'small_image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+            'category_id' => 'required|integer|exists:categories,id',
+            'company_id' => 'required|integer|exists:companies,id',
+            'tariff_no' => 'nullable|string',
+            'wash_degrees' => 'nullable|integer',
+            'gender' => 'nullable|string',
+            'gsm' => 'nullable|integer',
+            'composition' => 'nullable|string',
+            'packaging' => 'nullable|string',
+            'country_of_origin' => 'nullable|string',
+            'gross_weight' => 'nullable|numeric',
+            'net_weight' => 'nullable|numeric',
+            'tax_code' => 'nullable|string',
+            'video_link' => 'nullable|string',
+            'meta_title' => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'meta_image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+            'is_customizable' => 'nullable|boolean',
+            'is_trending' => 'nullable|boolean',
+            'is_popular' => 'nullable|boolean',
+            'show_in_frontend' => 'nullable|boolean',
+        ]);
+
+        $product = new Product();
+
+        $fields = [
+            'name', 'product_code', 'price', 'full_description',
+            'composition', 'specifications', 'tariff_no', 'wash_degrees', 
+            'gender', 'gsm', 'packaging', 'country_of_origin',
+            'gross_weight', 'net_weight', 'tax_code', 'video_link',
+            'meta_title', 'meta_description', 'meta_keywords',
+            'is_customizable', 'is_trending', 'is_popular', 'show_in_frontend'
+        ];
+
+        foreach ($fields as $field) {
+            if ($request->has($field)) {
+                $product->$field = $request->$field;
+            }
+        }
+
+        $product->category_id = $request->category_id;
+        $product->company_id = $request->company_id;
+        $product->product_source = 1;
+        $product->status = true;
+        $product->created_by = auth()->id();
+
+        $baseSlug = Str::slug($product->name);
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+        $product->slug = $slug;
+
+        if ($request->hasFile('feature_image')) {
+            $uploadedFile = $request->file('feature_image');
+            $filename = mt_rand(10000000, 99999999) . '.webp';
+            $path = public_path('images/products/');
+            if (!file_exists($path)) mkdir($path, 0755, true);
+
+            Image::make($uploadedFile)
+                ->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('webp', 50)
+                ->save($path . $filename);
+
+            $product->feature_image = $filename;
+        }
+
+        if ($request->hasFile('small_image')) {
+            $uploadedFile = $request->file('small_image');
+            $filename = mt_rand(10000000, 99999999) . '.webp';
+            $path = public_path('images/products/');
+            if (!file_exists($path)) mkdir($path, 0755, true);
+
+            Image::make($uploadedFile)
+                ->resize(400, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('webp', 50)
+                ->save($path . $filename);
+
+            $product->small_image = $filename;
+        }
+
+
+        $product->save();
+
+        return response()->json([
+            'message' => 'Product created successfully',
+            'product' => $product
+        ]);
+    }
+
+    public function store2(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -513,8 +631,30 @@ class ProductController extends Controller
                 ->addColumn('category', fn($row) => $row->category?->name ?? '')
                 ->addColumn('company', fn($row) => $row->company?->name ?? '')
                 ->addColumn('image', fn($row) => $row->feature_image ? '<img src="'.$row->feature_image.'" class="img-thumbnail" width="50">' : '')
-                ->addColumn('more', fn($row) => '<a href="'.route('product.details', $row->id).'" class="btn btn-sm btn-info">View</a>')
-                ->rawColumns(['image', 'more'])
+                ->addColumn('prices', function($row) {
+                    $url = route('product_prices.index') . '?product_id=' . $row->id;
+                    return '<a href="'.$url.'" class="btn btn-sm btn-primary"><i class="ri-money-dollar-circle-line"></i></a>';
+                })
+                ->addColumn('action', function($row){
+                    return '
+                    <div class="dropdown">
+                        <button class="btn btn-soft-secondary btn-sm" data-bs-toggle="dropdown"><i class="ri-more-fill"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="'.route('product.details', $row->id).'">
+                                    <i class="ri-eye-fill me-2"></i>View
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="'.route('products.edit', $row->id).'">
+                                    <i class="ri-pencil-fill me-2"></i>Edit
+                                </a>
+                            </li>
+                        </ul>
+                    </div>';
+                })
+                ->rawColumns(['image', 'prices', 'action'])
                 ->make(true);
         }
 

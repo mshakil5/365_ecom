@@ -16,7 +16,7 @@
                   $('#addCategoryModal').modal('hide');
                   form[0].reset();
                   if(response.category) {
-                      let select = $('.category');
+                      let select = $('.category_id');
                       select.append(`<option value="${response.category.id}" selected>${response.category.name}</option>`);
                   }
 

@@ -1,6 +1,6 @@
 <script>
   $(document).ready(function() {
-      $('#newBrand').on('submit', function(e) {
+      $('#newCompany').on('submit', function(e) {
           e.preventDefault();
 
           let form = $(this);
@@ -13,13 +13,13 @@
               processData: false,
               contentType: false,
               success: function(response) {
-                  $('#addBrandModal').modal('hide');
+                  $('#addCompanyModal').modal('hide');
                   form[0].reset();
 
-                  if (response.brand) {
-                      let select = $('.brand_id');
-                      select.append(`<option value="${response.brand.id}" selected>${response.brand.name}</option>`);
-                      select.val(response.brand.id).trigger('change');
+                  if (response.company) {
+                      let select = $('.company_id');
+                      select.append(`<option value="${response.company.id}" selected>${response.company.name}</option>`);
+                      select.val(response.company.id).trigger('change');
                   }
 
                   showSuccess(response.message);

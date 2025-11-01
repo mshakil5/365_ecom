@@ -14,20 +14,21 @@
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0">All Products</h5>
+            <h5 class="mb-0">In House Products</h5>
         </div>
         <div class="card-body">
             <table id="products-table" class="table table-bordered table-striped align-middle">
                 <thead>
                     <tr>
                         <th>Sl</th>
-                        <th>Image</th>
-                        <th>Name</th>
                         <th>Code</th>
-                        <th>Price</th>
+                        <th>Name</th>
+                        <th>Price(£)</th>
+                        <th>Category</th>
                         <th>Company</th>
+                        <th>Image</th>
                         <th>Prices</th>
-                        <th>Action</th>
+                        <th>More</th>
                     </tr>
                 </thead>
             </table>
@@ -45,11 +46,12 @@ $(function () {
         ajax: "{{ route('products.index') }}",
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-            {data: 'feature_image', name: 'feature_image', orderable: false, searchable: false},
+            {data: 'product_code', name: 'product_code'},
             {data: 'name', name: 'name'},
-            {data: 'code', name: 'code'},
             {data: 'price', name: 'price'},
-            {data: 'company', name: 'company'},
+            {data: 'category_name', name: 'category_name'},
+            {data: 'company_name', name: 'company_name'},
+            {data: 'feature_image', name: 'feature_image', orderable: false, searchable: false},
             {data: 'prices', name: 'prices'},
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ]

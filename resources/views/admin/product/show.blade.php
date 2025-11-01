@@ -403,7 +403,7 @@
                                 </div>
                             </div>
                             <div class="col-2 mt-2">
-                              <a href="{{ url()->previous() }}" class="btn btn-light"> Back</a>
+                              <a href="{{ url()->previous() }}" class="btn btn-primary"> Back</a>
                             </div>
                             <!-- end col -->
                         </div>
