@@ -544,14 +544,56 @@
                 const btns = document.querySelectorAll('.pos-btn');
                 btns.forEach(b => {
                     b.addEventListener('click', () => {
-                        btns.forEach(x => x.classList.remove('active'));
-                        b.classList.add('active');
-                        this.state.position = b.getAttribute('data-pos');
-                        // this.customizationData.position = b.getAttribute('data-pos');
+                        btns.forEach(x => x.classList.remove('active','btn-dark'));
+                        b.classList.add('active','btn-dark');
+                        // prefer explicit pos-key if provided
+                        const posKey = b.getAttribute('data-pos-key') || this.slugify(b.getAttribute('data-pos') || '');
+                        const posLabel = b.getAttribute('data-pos') || posKey;
+                        this.state.position = posKey;
+
+                        // If the guideline provides exact coords, store them as a temporary 'lastGuidelineCoord'
+                        const left = b.getAttribute('data-left');
+                        const top = b.getAttribute('data-top');
+                        const view = b.getAttribute('data-view') || b.getAttribute('data-direction') || null;
+
+                        if (view) {
+                            // set app view to match guideline view if provided
+                            this.currentView = view.toLowerCase();
+                            document.querySelectorAll('.view-btns [data-view]').forEach(btn => {
+                                btn.classList.toggle('active', btn.getAttribute('data-view') === this.currentView);
+                            });
+                            document.getElementById('currentViewLabel').textContent = this.capitalize(this.currentView);
+                            this.applyViewBackground();
+                            this.render();
+                        }
+
+                        // store guideline-provided coords so addLayer can use them
+                        if (left && top) {
+                            this._lastGuideline = { leftPct: parseFloat(left), topPct: parseFloat(top) };
+                        } else {
+                            this._lastGuideline = null;
+                        }
+
+                        // show position image and placeholder update (this part already in jQuery section,
+                        // but keep in case user clicks via non-jQuery event)
+                        const imageUrl = b.getAttribute('data-image');
+                        if (imageUrl) {
+                            const imgEl = document.getElementById('positionImage');
+                            if (imgEl) {
+                                imgEl.src = imageUrl;
+                                imgEl.style.display = '';
+                            }
+                            const placeholder = document.getElementById('positionPlaceholder');
+                            if (placeholder) placeholder.style.display = 'none';
+                            const accBtn = document.querySelector('.accordion-button');
+                            if (accBtn) accBtn.textContent = 'Position: ' + posLabel;
+                        }
+
                         this.updateHiddenField();
                     });
                 });
             }
+
 
             bindAddImage() {
                 const input = document.getElementById('addImagesInput');
@@ -681,20 +723,32 @@
                     opacity: 1,
                     borderRadiusPx: 0,
                     bgColor: 'transparent',
-                    zIndex: (this.state.layers.length ? Math.max(...this.state.layers.map(l => l.zIndex || 0)) :
-                        0) + 1,
-                    leftPct: 50,
-                    topPct: 34,
+                    zIndex: (this.state.layers.length ? Math.max(...this.state.layers.map(l => l.zIndex || 0)) : 0) + 1,
+                    leftPct: null,   // will be set below
+                    topPct: null,
                     draggable: true,
                     editable: true,
                     view: this.currentView
                 }, opts);
+
+                // If last guideline clicked provided absolute coords, use them
+                if (this._lastGuideline && typeof this._lastGuideline.leftPct === 'number') {
+                    layer.leftPct = this._lastGuideline.leftPct;
+                    layer.topPct = this._lastGuideline.topPct;
+                } else {
+                    const p = this.positionToCss(layer.pos);
+                    layer.leftPct = layer.leftPct != null ? layer.leftPct : p.left;
+                    layer.topPct = layer.topPct != null ? layer.topPct : p.top;
+                }
+
+                // push into state layers
                 this.state.layers.push(layer);
 
+                // create customizationData object
                 const layerObject = {
                     productId: this.state.product.id,
                     method: this.state.method.id,
-                    position: this.state.position,
+                    position: layer.pos,
                     type: layer.type,
                     data: layer.type === 'text' ? {
                         text: layer.text,
@@ -710,7 +764,10 @@
                         height: layer.heightPx
                     },
                     zIndex: layer.zIndex,
-                    layerId: layer.id
+                    layerId: layer.id,
+                    leftPct: layer.leftPct,
+                    topPct: layer.topPct,
+                    view: layer.view
                 };
 
                 this.customizationData.push(layerObject);
@@ -720,11 +777,13 @@
                 this.updateHiddenField();
                 this.recalcPrice();
 
+                // make sure method is applied
                 const newLayerIndex = this.customizationData.findIndex(l => l.layerId === layer.id);
                 if (newLayerIndex !== -1) {
                     this.customizationData[newLayerIndex].method = this.state.method.id;
                 }
             }
+
 
             removeLayer(id) {
                 this.state.layers = this.state.layers.filter(l => l.id !== id);
@@ -753,9 +812,10 @@
                     this.hideInspector();
                     return;
                 }
+
                 this.inspector.style.display = 'block';
                 this.inspectorContent.innerHTML = ''; // build UI
-                // Common header
+
                 const header = document.createElement('div');
                 header.innerHTML = `<div class="d-flex align-items-center justify-content-between mb-2">
                                         <div><strong>${layer.type === 'image' ? 'Image layer' : 'Text layer'}</strong><div class="small-muted">id: ${layer.id}</div></div>
@@ -763,71 +823,60 @@
                                     </div>`;
                 this.inspectorContent.appendChild(header);
 
-                
-
                 if (layer.type === 'image') {
-                    // image controls: width, height, border-radius, bg color, opacity, rotate
                     const html = document.createElement('div');
                     html.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label small-muted">Width (px)</label>
-                        <input id="insWidth" type="number" class="form-control form-control-sm" value="${layer.widthPx || ''}" min="20">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label small-muted">Height (px) — leave blank to keep aspect</label>
-                        <input id="insHeight" type="number" class="form-control form-control-sm" value="${layer.heightPx || ''}" min="10">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label small-muted">Border radius (px)</label>
-                        <input id="insRadius" type="number" class="form-control form-control-sm" value="${layer.borderRadiusPx || 0}" min="0">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label small-muted">Background color (under image)</label>
-                        <input id="insBgColor" type="color" class="form-control form-control-sm" value="${layer.bgColor && layer.bgColor !== 'transparent' ? layer.bgColor : '#ffffff'}">
-                        <div class="small-muted mt-1">Choose transparent color by setting to white and then selecting transparency in preview is not supported — use 'transparent' in code if needed.</div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label small-muted">Opacity</label>
-                        <input id="insOpacity" type="range" min="0" max="1" step="0.05" value="${layer.opacity}">
-                        <div class="small-muted">Value: <span id="insOpacityVal">${layer.opacity}</span></div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label small-muted">Rotate (degrees)</label>
-                        <input id="insRotate" type="number" class="form-control form-control-sm" value="${layer.rotate || 0}" step="1">
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button id="insApply" class="btn btn-sm btn-primary">Apply</button>
-                        <button id="insDelete" class="btn btn-sm btn-outline-danger">Delete</button>
-                    </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Width (px)</label>
+                            <input id="insWidth" type="number" class="form-control form-control-sm" value="${layer.widthPx || ''}" min="20">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Height (px)</label>
+                            <input id="insHeight" type="number" class="form-control form-control-sm" value="${layer.heightPx || ''}" min="10">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Border radius (px)</label>
+                            <input id="insRadius" type="number" class="form-control form-control-sm" value="${layer.borderRadiusPx || 0}" min="0">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Opacity</label>
+                            <input id="insOpacity" type="range" min="0" max="1" step="0.05" value="${layer.opacity}">
+                            <div class="small-muted">Value: <span id="insOpacityVal">${layer.opacity}</span></div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Rotate (degrees)</label>
+                            <input id="insRotate" type="number" class="form-control form-control-sm" value="${layer.rotate || 0}" step="1">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button id="insApply" class="btn btn-sm btn-primary">Apply</button>
+                            <button id="insDelete" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </div>
                     `;
                     this.inspectorContent.appendChild(html);
 
-                    // wire controls
-                    html.querySelector('#insOpacity').addEventListener('input', (e) => {
-                        html.querySelector('#insOpacityVal').textContent = e.target.value;
+                    // wire events
+                    const opacityInput = html.querySelector('#insOpacity');
+                    const opacityVal = html.querySelector('#insOpacityVal');
+                    opacityInput.addEventListener('input', () => {
+                        opacityVal.textContent = opacityInput.value;
                     });
 
                     html.querySelector('#insApply').addEventListener('click', () => {
-                        const w = parseInt(html.querySelector('#insWidth').value) || null;
-                        const h = parseInt(html.querySelector('#insHeight').value) || null;
-                        layer.widthPx = w;
-                        layer.heightPx = h;
+                        layer.widthPx = parseInt(html.querySelector('#insWidth').value) || null;
+                        layer.heightPx = parseInt(html.querySelector('#insHeight').value) || null;
                         layer.borderRadiusPx = parseInt(html.querySelector('#insRadius').value) || 0;
-                        const bgc = html.querySelector('#insBgColor').value || 'transparent';
-                        layer.bgColor = bgc;
                         layer.opacity = parseFloat(html.querySelector('#insOpacity').value) || 1;
                         layer.rotate = parseFloat(html.querySelector('#insRotate').value) || 0;
 
-                        const layerData = this.customizationData.find(l => l.layerId === layer.id);
-                        if (layerData && layerData.type === 'image') {
-                            layerData.data.width = w;
-                            layerData.data.height = h;
-                            // layerData.method = this.state.method.id;
-                            // layerData.position = this.state.position;
+                        // update customizationData
+                        const cd = this.customizationData.find(l => l.layerId === layer.id);
+                        if (cd && cd.type === 'image') {
+                            cd.data.width = layer.widthPx;
+                            cd.data.height = layer.heightPx;
+                            cd.data.bgColor = undefined; // remove bgColor completely
                         }
 
                         this.render();
-
                         this.updateHiddenField();
                     });
 
@@ -839,75 +888,69 @@
                 } else if (layer.type === 'text') {
                     const html = document.createElement('div');
                     html.innerHTML = `
-                                <div class="mb-2">
-                                    <label class="form-label small-muted">Text</label>
-                                    <input id="insText" type="text" class="form-control form-control-sm" value="${this.escapeHtml(layer.text || '')}">
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small-muted">Font family</label>
-                                    <input id="insFont" type="text" class="form-control form-control-sm" value="${layer.fontFamily || 'Inter, system-ui'}">
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small-muted">Font size (px)</label>
-                                    <input id="insFontSize" type="number" class="form-control form-control-sm" value="${layer.fontSize || 28}" min="6">
-                                </div>
-                                <div class="mb-2 d-flex gap-2">
-                                    <div class="btn-group btn-group-sm" role="group" aria-label="styles">
-                                    <button id="insBold" class="btn btn-outline-secondary ${layer.bold ? 'active' : ''}">B</button>
-                                    <button id="insItalic" class="btn btn-outline-secondary ${layer.italic ? 'active' : ''}">I</button>
-                                    <button id="insUnderline" class="btn btn-outline-secondary ${layer.underline ? 'active' : ''}">U</button>
-                                    </div>
-                                    <input id="insTextColor" type="color" value="${layer.color || '#000000'}" class="form-control form-control-sm" style="max-width:60px">
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small-muted">Background color (behind text)</label>
-                                    <input id="insTextBg" type="color" class="form-control form-control-sm" value="${layer.bgColor && layer.bgColor !== 'transparent' ? layer.bgColor : 'transparent'}">
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small-muted">Opacity</label>
-                                    <input id="insTextOpacity" type="range" min="0" max="1" step="0.05" value="${layer.opacity}">
-                                    <div class="small-muted">Value: <span id="insTextOpacityVal">${layer.opacity}</span></div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small-muted">Rotate (degrees)</label>
-                                    <input id="insTextRotate" type="number" class="form-control form-control-sm" value="${layer.rotate || 0}" step="1">
-                                </div>
-                                <div class="d-flex gap-2">
-                                    <button id="insApplyText" class="btn btn-sm btn-primary">Apply</button>
-                                    <button id="insDeleteText" class="btn btn-sm btn-outline-danger">Delete</button>
-                                </div>
-                                `;
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Text</label>
+                            <input id="insText" type="text" class="form-control form-control-sm" value="${this.escapeHtml(layer.text || '')}">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Font family</label>
+                            <input id="insFont" type="text" class="form-control form-control-sm" value="${layer.fontFamily || 'Inter, system-ui'}">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Font size (px)</label>
+                            <input id="insFontSize" type="number" class="form-control form-control-sm" value="${layer.fontSize || 28}" min="6">
+                        </div>
+                        <div class="mb-2 d-flex gap-2">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button id="insBold" class="btn btn-outline-secondary ${layer.bold ? 'active' : ''}">B</button>
+                                <button id="insItalic" class="btn btn-outline-secondary ${layer.italic ? 'active' : ''}">I</button>
+                                <button id="insUnderline" class="btn btn-outline-secondary ${layer.underline ? 'active' : ''}">U</button>
+                            </div>
+                            <input id="insTextColor" type="color" value="${layer.color || '#000000'}" class="form-control form-control-sm" style="max-width:60px">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Opacity</label>
+                            <input id="insTextOpacity" type="range" min="0" max="1" step="0.05" value="${layer.opacity}">
+                            <div class="small-muted">Value: <span id="insTextOpacityVal">${layer.opacity}</span></div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small-muted">Rotate (degrees)</label>
+                            <input id="insTextRotate" type="number" class="form-control form-control-sm" value="${layer.rotate || 0}" step="1">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button id="insApplyText" class="btn btn-sm btn-primary">Apply</button>
+                            <button id="insDeleteText" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </div>
+                    `;
                     this.inspectorContent.appendChild(html);
 
-                    html.querySelector('#insTextOpacity').addEventListener('input', (e) => {
-                        html.querySelector('#insTextOpacityVal').textContent = e.target.value;
+                    const opacityInput = html.querySelector('#insTextOpacity');
+                    const opacityVal = html.querySelector('#insTextOpacityVal');
+                    opacityInput.addEventListener('input', () => {
+                        opacityVal.textContent = opacityInput.value;
                     });
 
                     html.querySelector('#insApplyText').addEventListener('click', () => {
-                        const newText = html.querySelector('#insText').value;
-                        layer.text = newText;
+                        layer.text = html.querySelector('#insText').value;
                         layer.fontFamily = html.querySelector('#insFont').value || layer.fontFamily;
-                        layer.fontSize = Math.max(6, parseInt(html.querySelector('#insFontSize').value) || layer
-                            .fontSize);
+                        layer.fontSize = Math.max(6, parseInt(html.querySelector('#insFontSize').value) || layer.fontSize);
                         layer.bold = html.querySelector('#insBold').classList.contains('active');
                         layer.italic = html.querySelector('#insItalic').classList.contains('active');
                         layer.underline = html.querySelector('#insUnderline').classList.contains('active');
                         layer.color = html.querySelector('#insTextColor').value || '#000';
-                        layer.bgColor = html.querySelector('#insTextBg').value || 'transparent';
                         layer.opacity = parseFloat(html.querySelector('#insTextOpacity').value) || 1;
                         layer.rotate = parseFloat(html.querySelector('#insTextRotate').value) || 0;
 
-                        const layerData = this.customizationData.find(l => l.layerId === layer.id);
-                        if (layerData && layerData.type === 'text') {
-                            layerData.data.text = newText;
-                            layerData.data.fontFamily = layer.fontFamily;
-                            layerData.data.fontSize = layer.fontSize;
-                            layerData.data.color = layer.color;
-                            layerData.data.bold = layer.bold;
-                            layerData.data.italic = layer.italic;
-                            layerData.data.underline = layer.underline;
-                            // layerData.method = this.state.method.id;
-                            // layerData.position = this.state.position;
+                        const cd = this.customizationData.find(l => l.layerId === layer.id);
+                        if (cd && cd.type === 'text') {
+                            cd.data.text = layer.text;
+                            cd.data.fontFamily = layer.fontFamily;
+                            cd.data.fontSize = layer.fontSize;
+                            cd.data.bold = layer.bold;
+                            cd.data.italic = layer.italic;
+                            cd.data.underline = layer.underline;
+                            cd.data.color = layer.color;
+                            cd.data.bgColor = undefined; // remove bgColor completely
                         }
 
                         this.render();
@@ -920,6 +963,7 @@
                     });
                 }
             }
+
 
             hideInspector() {
                 this.inspector.style.display = 'none';
@@ -1020,54 +1064,31 @@
                 this.setZoom(this.state.zoom);
             }
 
-            positionToCss(posKey) {
+            slugify(s) {
+                if (!s) return '';
+                return String(s).trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g,'');
+            }
+
+            positionToCss(posKeyOrLabel) {
+                // Accept either slug or human label
+                const key = this.slugify(posKeyOrLabel);
+
+                // default map as fallback (same values you had but keys ensure slug use)
                 const map = {
-                    'right-chest': {
-                        left: 70,
-                        top: 34
-                    },
-                    'centre-chest': {
-                        left: 50,
-                        top: 34
-                    },
-                    'left-chest': {
-                        left: 30,
-                        top: 34
-                    },
-                    'top-chest': {
-                        left: 50,
-                        top: 18
-                    },
-                    'centre-back': {
-                        left: 50,
-                        top: 60
-                    },
-                    'top-back': {
-                        left: 50,
-                        top: 10
-                    },
-                    'shoulder-blades': {
-                        left: 50,
-                        top: 45
-                    },
-                    'bottom-back': {
-                        left: 50,
-                        top: 78
-                    },
-                    'left-sleeve': {
-                        left: 12,
-                        top: 45
-                    },
-                    'right-sleeve': {
-                        left: 88,
-                        top: 45
-                    }
+                    'right-chest': { left: 70, top: 34 },
+                    'centre-chest': { left: 50, top: 34 },
+                    'center-chest': { left: 50, top: 34 }, // alias
+                    'left-chest': { left: 30, top: 34 },
+                    'top-chest': { left: 50, top: 18 },
+                    'centre-back': { left: 50, top: 60 },
+                    'top-back': { left: 50, top: 30 },
+                    'shoulder-back': { left: 50, top: 45 },
+                    'bottom-back': { left: 50, top: 78 },
+                    'left-sleeve': { left: 12, top: 45 },
+                    'right-sleeve': { left: 88, top: 45 }
                 };
-                const p = map[posKey] || map['centre-chest'];
-                return {
-                    left: p.left,
-                    top: p.top
-                };
+                const p = map[key] || map['centre-chest'];
+                return { left: p.left, top: p.top };
             }
 
             refreshLayerList() {
@@ -1188,9 +1209,20 @@
 
             onDragEnd() {
                 if (!this._drag.active) return;
+                const layer = this.state.layers.find(l => l.id === this._drag.id);
+                if (layer) {
+                    // persist to customizationData
+                    const cd = this.customizationData.find(x => x.layerId === layer.id);
+                    if (cd) {
+                        cd.leftPct = layer.leftPct;
+                        cd.topPct = layer.topPct;
+                    }
+                }
                 this._drag.active = false;
                 document.body.style.userSelect = '';
+                this.updateHiddenField();
             }
+
 
             _getPointer(ev) {
                 if (ev.touches && ev.touches[0]) return {
