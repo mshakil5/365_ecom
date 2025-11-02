@@ -4,6 +4,9 @@ use App\Http\Controllers\ContactContoller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CustomiserController;
 
 // cache clear
 Route::get('/clear', function() {
@@ -39,16 +42,29 @@ Route::get('/cart/count', [FrontendController::class, 'getCount'])->name('cart.g
 
 Route::post('/cart/add-session', [FrontendController::class, 'addToSession'])->name('cart.addSession');
 
+// product customization start
 Route::get('/customize', [FrontendController::class, 'customize'])->name('customize.index');
+Route::post('/customiser/add-to-session', [CustomiserController::class, 'addToSession'])
+    ->name('customiser.add_to_session');
+// product customization end
 
 Route::get('/about-us', [FrontendController::class, 'aboutUs'])->name('about-us');
 Route::get('/privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms-and-conditions', [FrontendController::class, 'termsAndConditions'])->name('terms-and-conditions');
 Route::get('/frequently-asked-questions', [FrontendController::class, 'frequentlyAskedQuestions'])->name('faq');
 
-Route::put('/cart/store', [FrontendController::class, 'storeCart'])->name('cart.store');
-Route::get('/cart', [FrontendController::class, 'showCart'])->name('cart.index');
-Route::post('/cart/remove', [FrontendController::class, 'removeCartItem'])->name('cart.remove');
+
+
+// Cart list
+Route::put('/cart/store', [CartController::class, 'storeCart'])->name('cart.store');
+Route::get('/cart', [CartController::class, 'showCart'])->name('cart.index');
+Route::post('/cart/update', [CartController::class, 'updateCartItem'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'removeCartItem'])->name('cart.remove');
+// checkout
+Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.store');
+
+
 
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 

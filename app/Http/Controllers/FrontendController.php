@@ -9,6 +9,9 @@ use App\Models\CompanyDetails;
 use SEOMeta;
 use OpenGraph;
 use Twitter;
+use App\Models\Color;
+use App\Models\Size;
+
 use App\Models\Master;
 use App\Models\Contact;
 use App\Models\ContactEmail;
@@ -293,27 +296,71 @@ class FrontendController extends Controller
         if (!is_array($cart)) {
             $cart = json_decode($cart, true) ?: [];
         }
-
-        $count = 0;
-        foreach ($cart as $item) {
-            $count += $item['quantity'] ?? 0;
-        }
+        $count = count($cart);
 
         return response()->json(['count' => $count]);
     }
+
 
     public function customize(Request $request)
     {
         $encodedId = $request->query('product');
         $productId = intval(base64_decode($encodedId));
         $cart = session()->get('cart', []);
+
+        // Group by size_id for this product
+        $sizeWiseData = collect($cart)
+            ->where('product_id', (string)$productId)
+            ->groupBy('size_id')
+            ->map(function ($items, $sizeId) {
+                $sizeName = Size::find($sizeId)?->name ?? 'N/A';
+                $qty = collect($items)->sum('quantity');
+                return [
+                    'size_id' => $sizeId,
+                    'size_name' => $sizeName,
+                    'quantity' => $qty,
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        // Total qty
+        $totalQty = collect($sizeWiseData)->sum('quantity');
+
+        $product = Product::with(['images'])->findOrFail($productId);
+        $sizes = collect($cart)
+            ->where('product_id', (string)$productId)
+            ->pluck('size_id')
+            ->unique()
+            ->values()
+            ->toArray();
+
+        $sizeNames = Size::whereIn('id', $sizes)->pluck('name')->toArray();
+
+        $colors = collect($cart)
+            ->where('product_id', (string)$productId)
+            ->pluck('color_id')
+            ->unique()
+            ->values()
+            ->toArray();
+
+        // get first color id
+        $firstColorId = $colors[0] ?? null;
+
+        $colorName = null;
+
+        if ($firstColorId) {
+            $colorName = Color::where('id', $firstColorId)->value('name');
+        }
+
+
         $totalQty = collect($cart)
         ->where('product_id', (string)$productId)
         ->sum(function($item) { return (int)$item['quantity']; });
 
-        $product = Product::with('images')->findOrFail($productId);
 
         $images = [];
+        $guidelines = Guideline::latest()->get();
         foreach (['front', 'back', 'left', 'right'] as $type) {
             $img = $product->images->firstWhere('image_type', 'front');
             $images[$type] = $img 
@@ -324,43 +371,20 @@ class FrontendController extends Controller
         $dataProduct = [
             'id' => $product->id,
             'name' => $product->name,
-            'price' => $product->price,  
+            'price' => $product->price,
             'image' => $product->feature_image,
             'img' => $images,
             'baseWidthCm' => 30,
             'quantity' => $totalQty,
+            'sizes' => $sizeWiseData, // now contains name + qty per size
+            'colorID' => $firstColorId, // now contains name + qty per size
+            'colorName' => $colorName, // now contains name + qty per size
         ];
 
-        $guidelines = Guideline::latest()->get();
+
+
 
         return view('frontend.product.customize', compact('dataProduct', 'guidelines', 'cart'));
-    }
-
-    public function storeCart(Request $request)
-    {
-        $request->session()->put('cart', $request->input('cart'));
-
-        return response()->json(['success' => true]);
-
-    }
-
-    public function showCart(Request $request)
-    {
-        $cart = $request->session()->get('cart', []);
-        if (!is_array($cart)) $cart = [];
-
-        return view('frontend.cart', compact('cart'));
-    }
-
-    public function removeCartItem(Request $request)
-    {
-        $cart = session()->get('cart', []);
-        if(isset($cart[$request->key])) {
-            unset($cart[$request->key]);
-            session(['cart' => $cart]);
-        }
-
-        return response()->json(['success' => true]);
     }
 
 
