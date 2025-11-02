@@ -1,272 +1,10 @@
 @extends('frontend.pages.master')
 
 @section('content')
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('resources/frontend/css/customization.css') }}">
 
-    <style>
-        :root {
-            --black: #0b0b0b;
-            --red: #dc2026;
-            --white: #ffffff;
-            --muted: #8a8a8a;
-            --panel: #111217;
-        }
-
-        html,
-        body {
-            height: 100%
-        }
-
-        body {
-            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-            background: var(--white);
-            color: #222;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .top-strip {
-            background: var(--black);
-            color: var(--white);
-            padding: 6px 0;
-            font-size: 14px;
-        }
-
-        .top-strip .item {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            justify-content: center;
-        }
-
-        .top-strip i {
-            color: var(--red);
-        }
-
-        .progress-wrapper {
-            background: #fff;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .checkout-progress {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .stage {
-            text-align: center;
-            color: #333;
-            width: 190px;
-        }
-
-        .stage .circle {
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #111;
-            color: #fff;
-            border: 3px solid #222;
-            margin: 0 auto 8px;
-        }
-
-        .stage.active .circle {
-            background: var(--red);
-            border-color: var(--red);
-        }
-
-        .stage.complete .circle {
-            background: #198754;
-            border-color: #198754;
-        }
-
-        .main {
-            padding: 22px 0;
-        }
-
-        .card-panel {
-            border-radius: 10px;
-            background: #fff;
-            border: 1px solid #e9e9e9;
-            padding: 14px;
-        }
-
-        .card-panel-dark {
-            border-radius: 10px;
-            background: var(--panel);
-            color: var(--white);
-            padding: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .preview-shell {
-            background: #f7f7f7;
-            border-radius: 10px;
-            padding: 12px;
-            min-height: 520px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .preview-canvas {
-            width: 320px;
-            height: 420px;
-            position: relative;
-            border-radius: 10px;
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 18px 40px rgba(13, 20, 30, 0.08);
-            transform-origin: center center;
-        }
-
-        .layer-item {
-            position: absolute;
-            transform-origin: center center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: auto;
-            cursor: grab;
-            background: transparent;
-            overflow: visible;
-        }
-
-        .layer-item img {
-            max-width: 100%;
-            max-height: 100%;
-            display: block;
-            user-select: none;
-            -webkit-user-drag: none;
-        }
-
-        .layer-text {
-            white-space: nowrap;
-            display: inline-block;
-            padding: 2px 4px;
-        }
-
-        .option-card {
-            border-radius: 8px;
-            border: 1px solid #ececec;
-            padding: 10px;
-            cursor: pointer;
-            transition: all .12s ease;
-            background: #fff;
-        }
-
-        .option-card.active {
-            border-color: var(--red);
-            box-shadow: 0 8px 24px rgba(220, 32, 38, 0.08);
-            transform: translateY(-4px);
-        }
-
-        .small-muted {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .toolbar {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .zoom-controls {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .loader-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(11, 11, 11, 0.6);
-            color: #fff;
-            z-index: 999;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            border-radius: 10px;
-        }
-
-        .inspector {
-            margin-top: 12px;
-            background: #fff;
-            border-radius: 8px;
-            padding: 10px;
-            border: 1px solid #eee;
-        }
-
-        .inspector h6 {
-            margin: 0 0 8px 0;
-            font-size: 14px;
-        }
-
-        @media (max-width:991px) {
-            .preview-shell {
-                min-height: 420px;
-            }
-
-            .preview-canvas {
-                width: 260px;
-                height: 360px;
-            }
-        }
-
-        @media (max-width:575px) {
-            .preview-shell {
-                min-height: 360px;
-                padding: 8px;
-            }
-
-            .preview-canvas {
-                width: 220px;
-                height: 300px;
-            }
-
-            .stage {
-                width: 130px;
-                font-size: 12px;
-            }
-        }
-
-        .btn-red {
-            background: var(--red);
-            color: #fff;
-            border: none;
-        }
-
-        .btn-red:hover {
-            background: #b51f31;
-        }
-
-        .layer-item.selected {
-            outline: 3px dashed rgba(220, 32, 38, 0.45);
-        }
-
-        .list-group-item.active {
-            background: linear-gradient(90deg, rgba(220, 32, 38, 0.08), rgba(220, 32, 38, 0.02));
-            border-color: #f0c0c2;
-        }
-
-        .view-btns .btn {
-            min-width: 76px;
-        }
-    </style>
 
     <div class="breadcrumb-section">
         <div class="breadcrumb-wrapper">
@@ -312,12 +50,29 @@
                                                 <div class="me-2">
                                                     <img src="{{ $dataProduct['image'] }}" alt="{{ $dataProduct['name'] }}"
                                                         class="img-fluid"
-                                                        style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                                        style="width: 100px; height: 120px; object-fit: cover; border-radius: 4px;">
                                                 </div>
                                                 <div>
                                                     <div class="fw-bold">{{ $dataProduct['name'] }}</div>
                                                     <div class="small-muted">From £{{ number_format($dataProduct['price'] ?? $dataProduct['price'] ?? 0, 2) }}</div>
                                                     <div class="small-muted">Qty: {{ $dataProduct['quantity'] }}</div>
+                                                    <div class="small-muted">
+                                                        Size:
+                                                        @if(!empty($dataProduct['sizes']))
+                                                            @foreach($dataProduct['sizes'] as $s)
+                                                                    {{ $s['size_name'] }},
+                                                                    <input type="hidden" name="size_id[]" value="{{ $s['size_id'] }}">
+                                                            @endforeach
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </div>
+                                                    <div class="small-muted">
+                                                        Color: {{ $dataProduct['colorName'] }}
+                                                        <input type="hidden" name="colorID" value="{{ $dataProduct['colorID'] }}">
+                                                    </div>
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -378,11 +133,14 @@
                                                 <div class="row g-2 mb-3">
                                                     @foreach ($guidelines as $guideline)
                                                         <div class="col-6 col-md-4 col-lg-3 mb-2">
+
                                                             <button class="btn btn-outline-dark w-100 pos-btn"
                                                                 data-pos="{{ $guideline->position }}"
-                                                                data-image="{{ asset('images/guidelines/' . $guideline->image) }}">
+                                                                data-image="{{ asset('images/guidelines/' . $guideline->image) }}"
+                                                                data-direction="{{ $guideline->direction }}">
                                                                 {{ $guideline->position }}
                                                             </button>
+
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -407,9 +165,8 @@
                                 <h6>4. Upload / Add layers</h6>
                                 <div class="row g-2">
                                     <div class="col-md-6">
-                                        <label class="form-label">Add image(s)</label>
-                                        <input class="form-control" id="addImagesInput" type="file" accept="image/*"
-                                            multiple>
+                                        <label class="form-label">Add image</label>
+                                        <input class="form-control" id="addImagesInput" type="file" accept="image/*">
                                         <div class="small-muted mt-1">Supported: PNG, JPG. Max per file: 6 MB.</div>
                                     </div>
 
@@ -447,7 +204,7 @@
                                         <div class="d-flex gap-2 align-items-center mt-2">
                                             <input id="textColorInput" type="color" value="#000000"
                                                 title="Text color">
-                                            <div class="d-flex gap-1 ms-2">
+                                            <div class="d-flex gap-1 ms-2 d-none">
                                                 <button class="btn btn-sm btn-outline-dark color-swatch"
                                                     data-color="#000000" style="background:#000;color:#fff"></button>
                                                 <button class="btn btn-sm btn-outline-dark color-swatch"
@@ -460,8 +217,6 @@
                                             <button id="addTextBtn" class="btn btn-red btn-sm ms-auto">Add Text</button>
                                         </div>
 
-                                        <div class="small-muted mt-2">You can add multiple images and text layers. Use the
-                                            Layers panel below to edit/delete specific layers.</div>
                                     </div>
                                 </div>
                             </div>
@@ -476,7 +231,6 @@
                                     <button id="deleteLayerBtn" class="btn btn-outline-danger btn-sm ms-auto"
                                         title="Delete selected layer"><i class="bi bi-trash"></i> Delete</button>
                                 </div>
-                                <div class="small-muted mt-2">Select a layer from the list to edit or delete it.</div>
                             </div>
                             <input type="hidden" id="customizationData" name="customization_data">
 
@@ -554,10 +308,20 @@
                             <div class="mt-2 text-white">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="small-muted">Quantity: <span class="fw-bold">{{ $dataProduct['quantity'] ?? 1 }}</span></div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-white">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div class="small-muted">Total: <span id="totalPrice" class="fw-bold">£0.00</span></div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="d-flex gap-2 mt-3">
+                            <button id="saveContinueBtn" class="btn btn-success btn-sm">Save & Continue Shopping</button>
+                            <button id="saveCheckoutBtn" class="btn btn-primary btn-sm">Save & Checkout</button>
+                        </div>
+
 
                     </div>
                 </div>
@@ -567,7 +331,6 @@
     </main>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <script>
@@ -637,7 +400,7 @@
                 this.cleanupArray();
                 const dataString = JSON.stringify(this.customizationData);
                 document.getElementById('customizationData').value = dataString;
-                console.log('Customization Data (Array):', this.customizationData);
+                // console.log('Customization Data (Array):', this.customizationData);
             }
 
           recalcPrice() {
@@ -666,16 +429,16 @@
               
               document.getElementById('totalPrice').textContent = '£' + total.toFixed(2);
               
-              console.log('Price Calculation:', {
-                  basePrice,
-                  quantity,
-                  printLayersCount,
-                  embroideryLayersCount,
-                  baseTotal,
-                  printTotal,
-                  embroideryTotal,
-                  total
-              });
+            //   console.log('Price Calculation:', {
+            //       basePrice,
+            //       quantity,
+            //       printLayersCount,
+            //       embroideryLayersCount,
+            //       baseTotal,
+            //       printTotal,
+            //       embroideryTotal,
+            //       total
+            //   });
           }
 
             cleanupArray() {
@@ -697,7 +460,6 @@
                 this.bindDownloadPng();
                 this.bindQtyAndPricing();
                 this.initTooltips();
-                this.initLayerDragHandlers();
                 this.bindViewButtons();
 
                 $('#boldToggle,#italicToggle,#underlineToggle').on('click', function() {
@@ -994,70 +756,48 @@
                 // Common header
                 const header = document.createElement('div');
                 header.innerHTML = `<div class="d-flex align-items-center justify-content-between mb-2">
-        <div><strong>${layer.type === 'image' ? 'Image layer' : 'Text layer'}</strong><div class="small-muted">id: ${layer.id}</div></div>
-        <div><small class="text-muted">view: ${this.capitalize(layer.view)}</small></div>
-      </div>`;
+                                        <div><strong>${layer.type === 'image' ? 'Image layer' : 'Text layer'}</strong><div class="small-muted">id: ${layer.id}</div></div>
+                                        <div><small class="text-muted">view: ${this.capitalize(layer.view)}</small></div>
+                                    </div>`;
                 this.inspectorContent.appendChild(header);
 
-                // Editable toggles (lock draggable / lock edit)
-                const toggles = document.createElement('div');
-                toggles.className = 'mb-2 d-flex gap-2';
-                toggles.innerHTML = `
-        <div class="form-check form-switch">
-          <input class="form-check-input" id="insLockDrag" type="checkbox" ${!layer.draggable ? 'checked' : ''}>
-          <label class="form-check-label small-muted" for="insLockDrag">Lock position</label>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" id="insLockEdit" type="checkbox" ${!layer.editable ? 'checked' : ''}>
-          <label class="form-check-label small-muted" for="insLockEdit">Lock edit</label>
-        </div>`;
-                this.inspectorContent.appendChild(toggles);
-
-                // wire toggles
-                toggles.querySelector('#insLockDrag').addEventListener('change', (e) => {
-                    layer.draggable = !e.target.checked; // checked means locked -> draggable=false
-                });
-                toggles.querySelector('#insLockEdit').addEventListener('change', (e) => {
-                    layer.editable = !e.target.checked;
-                    // disable edit/remove buttons in layer list for this layer
-                    this.render();
-                });
+                
 
                 if (layer.type === 'image') {
                     // image controls: width, height, border-radius, bg color, opacity, rotate
                     const html = document.createElement('div');
                     html.innerHTML = `
-          <div class="mb-2">
-            <label class="form-label small-muted">Width (px)</label>
-            <input id="insWidth" type="number" class="form-control form-control-sm" value="${layer.widthPx || ''}" min="20">
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Height (px) — leave blank to keep aspect</label>
-            <input id="insHeight" type="number" class="form-control form-control-sm" value="${layer.heightPx || ''}" min="10">
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Border radius (px)</label>
-            <input id="insRadius" type="number" class="form-control form-control-sm" value="${layer.borderRadiusPx || 0}" min="0">
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Background color (under image)</label>
-            <input id="insBgColor" type="color" class="form-control form-control-sm" value="${layer.bgColor && layer.bgColor !== 'transparent' ? layer.bgColor : '#ffffff'}">
-            <div class="small-muted mt-1">Choose transparent color by setting to white and then selecting transparency in preview is not supported — use 'transparent' in code if needed.</div>
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Opacity</label>
-            <input id="insOpacity" type="range" min="0" max="1" step="0.05" value="${layer.opacity}">
-            <div class="small-muted">Value: <span id="insOpacityVal">${layer.opacity}</span></div>
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Rotate (degrees)</label>
-            <input id="insRotate" type="number" class="form-control form-control-sm" value="${layer.rotate || 0}" step="1">
-          </div>
-          <div class="d-flex gap-2">
-            <button id="insApply" class="btn btn-sm btn-primary">Apply</button>
-            <button id="insDelete" class="btn btn-sm btn-outline-danger">Delete</button>
-          </div>
-        `;
+                    <div class="mb-2">
+                        <label class="form-label small-muted">Width (px)</label>
+                        <input id="insWidth" type="number" class="form-control form-control-sm" value="${layer.widthPx || ''}" min="20">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small-muted">Height (px) — leave blank to keep aspect</label>
+                        <input id="insHeight" type="number" class="form-control form-control-sm" value="${layer.heightPx || ''}" min="10">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small-muted">Border radius (px)</label>
+                        <input id="insRadius" type="number" class="form-control form-control-sm" value="${layer.borderRadiusPx || 0}" min="0">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small-muted">Background color (under image)</label>
+                        <input id="insBgColor" type="color" class="form-control form-control-sm" value="${layer.bgColor && layer.bgColor !== 'transparent' ? layer.bgColor : '#ffffff'}">
+                        <div class="small-muted mt-1">Choose transparent color by setting to white and then selecting transparency in preview is not supported — use 'transparent' in code if needed.</div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small-muted">Opacity</label>
+                        <input id="insOpacity" type="range" min="0" max="1" step="0.05" value="${layer.opacity}">
+                        <div class="small-muted">Value: <span id="insOpacityVal">${layer.opacity}</span></div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small-muted">Rotate (degrees)</label>
+                        <input id="insRotate" type="number" class="form-control form-control-sm" value="${layer.rotate || 0}" step="1">
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button id="insApply" class="btn btn-sm btn-primary">Apply</button>
+                        <button id="insDelete" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </div>
+                    `;
                     this.inspectorContent.appendChild(html);
 
                     // wire controls
@@ -1097,44 +837,44 @@
                 } else if (layer.type === 'text') {
                     const html = document.createElement('div');
                     html.innerHTML = `
-          <div class="mb-2">
-            <label class="form-label small-muted">Text</label>
-            <input id="insText" type="text" class="form-control form-control-sm" value="${this.escapeHtml(layer.text || '')}">
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Font family</label>
-            <input id="insFont" type="text" class="form-control form-control-sm" value="${layer.fontFamily || 'Inter, system-ui'}">
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Font size (px)</label>
-            <input id="insFontSize" type="number" class="form-control form-control-sm" value="${layer.fontSize || 28}" min="6">
-          </div>
-          <div class="mb-2 d-flex gap-2">
-            <div class="btn-group btn-group-sm" role="group" aria-label="styles">
-              <button id="insBold" class="btn btn-outline-secondary ${layer.bold ? 'active' : ''}">B</button>
-              <button id="insItalic" class="btn btn-outline-secondary ${layer.italic ? 'active' : ''}">I</button>
-              <button id="insUnderline" class="btn btn-outline-secondary ${layer.underline ? 'active' : ''}">U</button>
-            </div>
-            <input id="insTextColor" type="color" value="${layer.color || '#000000'}" class="form-control form-control-sm" style="max-width:60px">
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Background color (behind text)</label>
-            <input id="insTextBg" type="color" class="form-control form-control-sm" value="${layer.bgColor && layer.bgColor !== 'transparent' ? layer.bgColor : '#ffffff'}">
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Opacity</label>
-            <input id="insTextOpacity" type="range" min="0" max="1" step="0.05" value="${layer.opacity}">
-            <div class="small-muted">Value: <span id="insTextOpacityVal">${layer.opacity}</span></div>
-          </div>
-          <div class="mb-2">
-            <label class="form-label small-muted">Rotate (degrees)</label>
-            <input id="insTextRotate" type="number" class="form-control form-control-sm" value="${layer.rotate || 0}" step="1">
-          </div>
-          <div class="d-flex gap-2">
-            <button id="insApplyText" class="btn btn-sm btn-primary">Apply</button>
-            <button id="insDeleteText" class="btn btn-sm btn-outline-danger">Delete</button>
-          </div>
-        `;
+                                <div class="mb-2">
+                                    <label class="form-label small-muted">Text</label>
+                                    <input id="insText" type="text" class="form-control form-control-sm" value="${this.escapeHtml(layer.text || '')}">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small-muted">Font family</label>
+                                    <input id="insFont" type="text" class="form-control form-control-sm" value="${layer.fontFamily || 'Inter, system-ui'}">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small-muted">Font size (px)</label>
+                                    <input id="insFontSize" type="number" class="form-control form-control-sm" value="${layer.fontSize || 28}" min="6">
+                                </div>
+                                <div class="mb-2 d-flex gap-2">
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="styles">
+                                    <button id="insBold" class="btn btn-outline-secondary ${layer.bold ? 'active' : ''}">B</button>
+                                    <button id="insItalic" class="btn btn-outline-secondary ${layer.italic ? 'active' : ''}">I</button>
+                                    <button id="insUnderline" class="btn btn-outline-secondary ${layer.underline ? 'active' : ''}">U</button>
+                                    </div>
+                                    <input id="insTextColor" type="color" value="${layer.color || '#000000'}" class="form-control form-control-sm" style="max-width:60px">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small-muted">Background color (behind text)</label>
+                                    <input id="insTextBg" type="color" class="form-control form-control-sm" value="${layer.bgColor && layer.bgColor !== 'transparent' ? layer.bgColor : '#ffffff'}">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small-muted">Opacity</label>
+                                    <input id="insTextOpacity" type="range" min="0" max="1" step="0.05" value="${layer.opacity}">
+                                    <div class="small-muted">Value: <span id="insTextOpacityVal">${layer.opacity}</span></div>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small-muted">Rotate (degrees)</label>
+                                    <input id="insTextRotate" type="number" class="form-control form-control-sm" value="${layer.rotate || 0}" step="1">
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button id="insApplyText" class="btn btn-sm btn-primary">Apply</button>
+                                    <button id="insDeleteText" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </div>
+                                `;
                     this.inspectorContent.appendChild(html);
 
                     html.querySelector('#insTextOpacity').addEventListener('input', (e) => {
@@ -1185,28 +925,6 @@
                 this.selectedLayerId = null;
                 Array.from(this.previewCanvas.querySelectorAll('.layer-item.selected')).forEach(n => n.classList.remove(
                     'selected'));
-            }
-
-            showLayerEditor(id) {
-                const layer = this.state.layers.find(l => l.id === id);
-                if (!layer) return;
-                if (!layer.editable) {
-                    alert('This layer is locked for editing');
-                    return;
-                }
-                // keep existing prompt-based editor for quick changes, but inspector covers most now
-                if (layer.type === 'text') {
-                    const newText = prompt('Edit text', layer.text);
-                    if (newText === null) return;
-                    layer.text = newText;
-                    this.render();
-                } else {
-                    const newW = prompt('Width in px', layer.widthPx || 120);
-                    if (newW !== null) layer.widthPx = Math.max(20, parseInt(newW) || 120);
-                    const newRotate = prompt('Rotate degrees (-180..180)', layer.rotate || 0);
-                    if (newRotate !== null) layer.rotate = parseFloat(newRotate) || 0;
-                    this.render();
-                }
             }
 
             setZoom(z) {
@@ -1352,62 +1070,73 @@
 
             refreshLayerList() {
                 this.layersList.innerHTML = '';
-                const layers = (this.state.layers || []).slice().filter(l => l.view === this.currentView).sort((a, b) =>
-                    (b.zIndex || 0) - (a.zIndex || 0));
+
+                // gather all layers across views, sort by zIndex desc
+                const layers = (this.state.layers || []).slice().sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+
                 layers.forEach(l => {
                     const li = document.createElement('li');
                     li.className = 'list-group-item d-flex justify-content-between align-items-center';
                     li.setAttribute('data-id', l.id);
-                    const title = (l.type === 'image') ? `Image (${l.pos})` :
-                        `Text: "${(l.text || '').slice(0,30)}" (${l.pos})`;
-                    // If not editable, disable edit/remove buttons
-                    const disabledAttr = l.editable ? '' : 'disabled';
-                    li.innerHTML = `<div><strong style="display:block">${title}</strong><small class="text-muted">${l.type} · z:${l.zIndex||0}</small></div>
-                        <div class="btn-group btn-group-sm" role="group">
-                          <button class="btn btn-outline-secondary edit-layer" title="Edit" ${disabledAttr}>Edit</button>
-                          <button class="btn btn-outline-danger remove-layer" title="Remove" ${disabledAttr}>Del</button>
-                        </div>`;
+
+                    const viewLabel = (l.view || 'front');
+                    const viewBadge = `<span class="badge bg-secondary ms-2 text-uppercase" style="font-size:10px">${viewLabel}</span>`;
+
+                    const title = (l.type === 'image') ? `Image · ${l.pos}` :
+                        `Text: "${(l.text || '').slice(0,30)}" · ${l.pos}`;
+
+                    // show view badge and layer type
+                    li.innerHTML = `<div style="min-width:0">
+                                        <strong style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${title}</strong>
+                                        <small class="text-muted">${l.type} · z:${l.zIndex||0} ${viewBadge}</small>
+                                    </div>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-outline-secondary inspect-layer" title="Inspect">Inspect</button>
+                                    <button class="btn btn-outline-danger remove-layer" title="Remove">Del</button>
+                                    </div>`;
+
                     this.layersList.appendChild(li);
 
-                    li.querySelector('.edit-layer').addEventListener('click', (e) => {
+                    // inspect button
+                    li.querySelector('.inspect-layer').addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const layer = this.state.layers.find(x => x.id === l.id);
-                        if (!layer.editable) {
-                            alert('Layer is locked for editing');
-                            return;
+                        // ensure preview switches to the layer's view
+                        if (l.view && l.view !== this.currentView) {
+                            this.currentView = l.view;
+                            // activate view button
+                            document.querySelectorAll('.view-btns [data-view]').forEach(b => b.classList.toggle('active', b.getAttribute('data-view') === this.currentView));
+                            document.getElementById('currentViewLabel').textContent = this.capitalize(this.currentView);
+                            this.applyViewBackground();
+                            this.render();
                         }
-                        this.showLayerEditor(l.id);
+                        this.selectLayer(l.id);
                     });
+
+                    // remove button
                     li.querySelector('.remove-layer').addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const layer = this.state.layers.find(x => x.id === l.id);
-                        if (!layer.editable) {
+                        if (!l.editable) {
                             alert('Layer is locked for editing');
                             return;
                         }
                         if (!confirm('Delete this layer?')) return;
                         this.removeLayer(l.id);
                     });
+
+                    // clicking the li selects and switches preview
+                    li.addEventListener('click', () => {
+                        if (l.view && l.view !== this.currentView) {
+                            this.currentView = l.view;
+                            document.querySelectorAll('.view-btns [data-view]').forEach(b => b.classList.toggle('active', b.getAttribute('data-view') === this.currentView));
+                            document.getElementById('currentViewLabel').textContent = this.capitalize(this.currentView);
+                            this.applyViewBackground();
+                            this.render();
+                        }
+                        this.selectLayer(l.id);
+                    });
                 });
             }
 
-            initLayerDragHandlers() {
-                this._drag = {
-                    active: false,
-                    id: null,
-                    startX: 0,
-                    startY: 0,
-                    initLeftPct: 0,
-                    initTopPct: 0,
-                    rect: null
-                };
-                document.addEventListener('mousemove', (ev) => this.onDragMove(ev));
-                document.addEventListener('mouseup', () => this.onDragEnd());
-                document.addEventListener('touchmove', (ev) => this.onDragMove(ev), {
-                    passive: false
-                });
-                document.addEventListener('touchend', () => this.onDragEnd());
-            }
 
             startDrag(ev, layerId) {
                 ev.preventDefault();
@@ -1487,13 +1216,11 @@
             document.getElementById('zoomLevel').value = Math.round(app.state.zoom * 100) + '%';
 
             $('.pos-btn').click(function() {
-                // Remove active from all buttons
+                // Remove active styles from all pos buttons and add to clicked
                 $('.pos-btn').removeClass('active btn-dark').addClass('btn-outline-dark');
-
-                // Add active to clicked button
                 $(this).addClass('active btn-dark').removeClass('btn-outline-dark');
 
-                // Show image
+                // Show image and placeholder hide
                 const imageUrl = $(this).data('image');
                 $('#positionImage').attr('src', imageUrl).show();
                 $('#positionPlaceholder').hide();
@@ -1501,9 +1228,99 @@
                 // Update accordion title
                 const positionName = $(this).data('pos');
                 $('.accordion-button').text('Position: ' + positionName);
+
+                // If guideline carries a direction, switch view to that
+                const direction = $(this).data('direction');
+                if (direction) {
+                    // normalize direction to lower-case and map to the view button names if needed
+                    const view = String(direction).toLowerCase();
+                    // set the app current view and update UI
+                    if (window.customiserApp) {
+                        window.customiserApp.currentView = view;
+                        document.querySelectorAll('.view-btns [data-view]').forEach(b => b.classList.toggle('active', b.getAttribute('data-view') === view));
+                        document.getElementById('currentViewLabel').textContent = window.customiserApp.capitalize(view);
+                        window.customiserApp.applyViewBackground();
+                        window.customiserApp.render();
+                    }
+                }
             });
 
+
             $('.pos-btn').first().click();
+
+
+            // Helper: build sizes array for server. Adjust as you need per your size UI.
+            function buildSizesPayload() {
+                // If your product has sizes pick from UI; fallback to single size 0 with quantity state.pricing.quantity
+                const qty = window.customiserApp ? (window.customiserApp.state.quantity || 1) : 1;
+                return [{
+                    size_id: 0,      // adapt if you have a size selector; else 0
+                    quantity: qty,
+                    ean: null
+                }];
+            }
+
+            function sendCustomizationToSession(shippingAction) {
+
+
+                // Collect size IDs from hidden inputs (Blade generated)
+                const sizeIDs = Array.from(document.querySelectorAll('input[name="size_id[]"]'))
+                    .map(el => el.value);
+
+                // Get color ID
+                const colorID = document.querySelector('input[name="colorID"]')?.value || null;
+
+                const payload = {
+                    product_id: window.customiserApp.state.product.id || '{{ $dataProduct["id"] ?? 0 }}',
+                    product_name: window.customiserApp.state.product.name || '{{ $dataProduct["name"] ?? '' }}',
+                    product_image: window.customiserApp.state.product.img ? (window.customiserApp.state.product.img.front || '') : '{{ $dataProduct["image"] ?? '' }}',
+                    color_id: colorID,
+                    size_ids: sizeIDs,
+                    sizes: buildSizesPayload(),
+                    customization_data: window.customiserApp.customizationData || [],
+                    action: shippingAction // 'checkout' or 'continue'
+                };
+
+                // send via AJAX
+                $.ajax({
+                    url: '{{ route("customiser.add_to_session") }}', 
+                    method: 'POST',
+                    data: JSON.stringify(payload),
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success(resp) {
+
+                        if (resp && resp.success) {
+                            if (shippingAction === 'checkout') {
+                                window.location.href = '{{ route("checkout.store") }}';
+                            } else {
+                                window.location.href = '{{ route("home") }}'; 
+                            }
+                        } else {
+                            alert('Failed to save. Please try again.');
+                        }
+                    },
+                    error(xhr) {
+                        console.error(xhr);
+                        alert('An error occurred while saving the customization.');
+                    }
+                });
+            }
+
+            $('#saveContinueBtn').on('click', function() {
+                sendCustomizationToSession('continue');
+            });
+
+            $('#saveCheckoutBtn').on('click', function() {
+                sendCustomizationToSession('checkout');
+            });
+
+
+
+
+
 
         });
     </script>
