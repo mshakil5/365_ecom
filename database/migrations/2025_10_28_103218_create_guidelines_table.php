@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('guidelines', function (Blueprint $table) {
             $table->id();
             $table->string('position')->unique();
+            $table->string('direction')->nullable();
             $table->string('image');
             $table->timestamps();
         });

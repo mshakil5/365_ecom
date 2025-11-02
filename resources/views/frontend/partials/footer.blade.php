@@ -127,7 +127,7 @@
     <i class="fa fa-whatsapp"></i>
 </a>
 
-<a href="{{ route('cart.index') }}" class="material-addtocart offcanvas-toggle cartBtn">
+<a href="{{ route('cart.index') }}" class="material-addtocart">
     <i class="fa fa-shopping-cart"></i>
     <span class="header-action-icon-item-count cartCount">0</span>
 </a>

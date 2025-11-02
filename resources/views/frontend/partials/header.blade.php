@@ -143,7 +143,7 @@
                     </div>
 
                     <div class="mobile-header--right">
-                        <a href="{{ route('cart.index') }}" class="mobile-action-icon-link cartBtn mx-2"
+                        <a href="{{ route('cart.index') }}" class="mobile-action-icon-link mx-2"
                             aria-label="Go to cart">
                             <i class="icon-shopping-cart" style="color: #fff;"></i>
                             <span class="mobile-action-icon-item-count cartCount">0</span>
@@ -190,7 +190,7 @@
             <!-- Start Header Action Icon -->
             <ul class="mobile-action-icon">
                 <li class="mobile-action-icon-item">
-                    <a href="{{ route('cart.index') }}" class="mobile-action-icon-link cartBtn" aria-label="Cart">
+                    <a href="{{ route('cart.index') }}" class="mobile-action-icon-link" aria-label="Cart">
                         <i class="icon-shopping-cart"></i>
                         <span class="mobile-action-icon-item-count cartCount">0</span>
                     </a>

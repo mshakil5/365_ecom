@@ -21,6 +21,8 @@ class CartController extends Controller
     public function showCart(Request $request)
     {
         $sessionCart = $request->session()->get('cart', []);
+
+        // dd($sessionCart);
         if (!is_array($sessionCart)) $sessionCart = [];
 
         // Gather unique product ids to avoid N+1

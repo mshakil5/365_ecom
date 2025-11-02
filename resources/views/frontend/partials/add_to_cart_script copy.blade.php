@@ -48,27 +48,27 @@
             $('.offcanvas-overlay').hide();
         });
 
-        $(document).on('click', '.cartBtn', function(e) {
-            // localStorage.removeItem('cart');
-            e.preventDefault();
-            var cartlist = JSON.parse(localStorage.getItem('cart')) || [];
-            // console.log(JSON.parse(localStorage.getItem('cart')));
+        // $(document).on('click', '.cartBtn', function(e) {
+        //     // localStorage.removeItem('cart');
+        //     e.preventDefault();
+        //     var cartlist = JSON.parse(localStorage.getItem('cart')) || [];
+        //     // console.log(JSON.parse(localStorage.getItem('cart')));
 
-            cartlist = cartlist.filter(item => item.productId);
-            localStorage.setItem('cart', JSON.stringify(cartlist));
+        //     cartlist = cartlist.filter(item => item.productId);
+        //     localStorage.setItem('cart', JSON.stringify(cartlist));
 
-            $.ajax({
-                url: "{{ route('cart.store') }}",
-                method: "PUT",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    cart: JSON.stringify(cartlist)
-                },
-                success: function() {
-                    window.location.href = "{{ route('cart.index') }}";
-                }
-            });
-        });
+        //     $.ajax({
+        //         url: "{{ route('cart.store') }}",
+        //         method: "PUT",
+        //         data: {
+        //             _token: "{{ csrf_token() }}",
+        //             cart: JSON.stringify(cartlist)
+        //         },
+        //         success: function() {
+        //             window.location.href = "{{ route('cart.index') }}";
+        //         }
+        //     });
+        // });
 
         updateCartCount();
     });
