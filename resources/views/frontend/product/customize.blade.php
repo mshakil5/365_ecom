@@ -138,12 +138,14 @@
                                                                 data-pos="{{ $guideline->position }}"
                                                                 data-image="{{ asset('images/guidelines/' . $guideline->image) }}"
                                                                 data-direction="{{ $guideline->direction }}">
-                                                                {{ $guideline->position }}
+                                                                {{ $guideline->position }} <!-- Position values are like : Left Sleeve, Right Sleeve, Top Chest, Center Chest, Right Chest, Left Chest, Top Back, Bottom Back, Shoulder Back, Center Back -->
                                                             </button>
 
                                                         </div>
                                                     @endforeach
                                                 </div>
+
+                                                
 
                                                 <!-- Position image -->
                                                 <div class="text-center">
@@ -187,7 +189,7 @@
 
                                             <div class="input-group input-group-sm" style="max-width:140px">
                                                 <input id="fontSizeInput" type="number" class="form-control"
-                                                    value="28" min="8" max="200">
+                                                    value="18" min="8" max="200">
                                                 <span class="input-group-text">px</span>
                                             </div>
 
@@ -859,7 +861,7 @@
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label small-muted">Background color (behind text)</label>
-                                    <input id="insTextBg" type="color" class="form-control form-control-sm" value="${layer.bgColor && layer.bgColor !== 'transparent' ? layer.bgColor : '#ffffff'}">
+                                    <input id="insTextBg" type="color" class="form-control form-control-sm" value="${layer.bgColor && layer.bgColor !== 'transparent' ? layer.bgColor : 'transparent'}">
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label small-muted">Opacity</label>
@@ -1087,11 +1089,11 @@
 
                     // show view badge and layer type
                     li.innerHTML = `<div style="min-width:0">
-                                        <strong style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${title}</strong>
+                                        <strong style="display:block;color:#000000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${title}</strong>
                                         <small class="text-muted">${l.type} · z:${l.zIndex||0} ${viewBadge}</small>
                                     </div>
                                     <div class="btn-group btn-group-sm" role="group">
-                                    <button class="btn btn-outline-secondary inspect-layer" title="Inspect">Inspect</button>
+                                    <button class="btn btn-outline-secondary inspect-layer d-none" title="Inspect">Inspect</button>
                                     <button class="btn btn-outline-danger remove-layer" title="Remove">Del</button>
                                     </div>`;
 
@@ -1294,7 +1296,7 @@
 
                         if (resp && resp.success) {
                             if (shippingAction === 'checkout') {
-                                window.location.href = '{{ route("checkout.store") }}';
+                                window.location.href = '{{ route("checkout") }}';
                             } else {
                                 window.location.href = '{{ route("home") }}'; 
                             }

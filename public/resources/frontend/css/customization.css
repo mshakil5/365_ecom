@@ -260,4 +260,54 @@
         .view-btns .btn {
             min-width: 76px;
         }
+
+
+
+
+        
+    /* --- Cart page styles (move to your CSS file in production) --- */
+    .cart-page { padding: 30px 0; }
+    .cart-header { text-align: center; margin-bottom: 24px; }
+    .cart-wrapper { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+
+    /* Left area (items) & right area (summary) */
+    .cart-items { flex: 1 1 640px; min-width: 300px; }
+    .cart-summary { width: 340px; min-width: 260px; }
+
+    /* Desktop table view */
+    .cart-table { width: 100%; border-collapse: collapse; }
+    .cart-table thead th { text-align: left; padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #e6e6e6; }
+    .cart-table tbody td { padding: 12px 8px; vertical-align: middle; border-bottom: 1px solid #f1f1f1; }
+    .product-thumb { width: 92px; height: 92px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
+    .product-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; display:block; color:#222; }
+    .product-meta { font-size: 13px; color: #666; line-height:1.35; }
+    .qty-control { display: flex; align-items: center; gap: 8px; }
+    .qty-btn { width:28px; height:28px; border-radius:6px; border:1px solid #ddd; background:#fff; cursor:pointer; }
+    .qty-input { width:56px; padding:6px 8px; border:1px solid #ddd; border-radius:6px; text-align:center; }
+
+    /* Remove / small action */
+    .btn-remove { background:#ea1c26; color:#fff; border:0; padding:8px 10px; border-radius:6px; cursor:pointer; }
+    .btn-update { background:#2d72ff; color:#fff; border:0; padding:8px 10px; border-radius:6px; cursor:pointer; }
+
+    /* Summary */
+    .summary-card { border:1px solid #e6e6e6; padding:18px; border-radius:10px; background:#fff; position:sticky; top:18px; }
+    .summary-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #f2f2f2; }
+    .summary-row:last-child { border-bottom:none; }
+    .checkout-btn { display:block; width:100%; background:#ea1c26; color:#fff; padding:12px; border-radius:8px; text-align:center; font-weight:700; text-decoration:none; margin-top:12px; }
+
+    /* Customization preview */
+    .customization-list { margin-top:8px; padding-left: 14px; font-size:13px; color:#444; }
+    .custom-preview { display:flex; gap:8px; align-items:center; margin-top:6px; }
+    .custom-preview img { width:64px; height:64px; object-fit:contain; border-radius:6px; border:1px solid #eee; }
+
+    /* Mobile: stacked cards */
+    @media (max-width: 900px) {
+    .cart-wrapper { flex-direction:column; }
+    .cart-summary { width:100%; position:relative; order:2; }
+    .cart-items { order:1; }
+    .cart-table, .cart-table thead { display:none; }
+    .cart-row { display:flex; gap:12px; padding:12px; border:1px solid #f0f0f0; border-radius:10px; margin-bottom:12px; background:#fff; align-items:flex-start; }
+    .cart-row .product-info { flex:1; }
+    .summary-card { position:static; }
+    }
         
