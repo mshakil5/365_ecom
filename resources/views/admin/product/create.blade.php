@@ -68,52 +68,6 @@
                                     onchange="previewImage(event, '#preview-image')">
                                 <img id="preview-image" src="#" alt="" class="img-thumbnail rounded mt-3">
                             </div>
-
-                            <h5 class="fs-14 mb-1 d-none">Product Gallery</h5>
-                            <p class="text-muted d-none">Add Product Gallery Images.</p>
-
-                            <div class="dropzone d-none" id="product-gallery-dropzone">
-                                <div class="fallback">
-                                    <input name="file" type="file" multiple="multiple">
-                                </div>
-                                <div class="dz-message needsclick">
-                                    <div class="mb-3">
-                                        <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
-                                    </div>
-                                    <h5>Drop files here or click to upload.</h5>
-                                </div>
-                            </div>
-
-                            <ul class="list-unstyled mb-0 d-none" id="dropzone-preview">
-                                <li class="mt-2" id="dropzone-preview-list">
-                                    <div class="border rounded">
-                                        <div class="d-flex p-2 align-items-center">
-                                            <div class="flex-shrink-0 me-3">
-                                                <div class="avatar-sm bg-light rounded">
-                                                    <img data-dz-thumbnail class="img-fluid rounded d-block" src="#"
-                                                        alt="Product-Image" />
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="pt-1">
-                                                    <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
-                                                    <p class="fs-13 text-muted mb-0" data-dz-size></p>
-                                                    <strong class="error text-danger" data-dz-errormessage></strong>
-                                                </div>
-                                            </div>
-                                            <div class="flex-shrink-0 ms-3 d-flex flex-column">
-                                                <select class="form-select form-select-sm mb-2" name="colors[]">
-                                                    <option value="">No color</option>
-                                                    @foreach ($colors as $color)
-                                                        <option value="{{ $color->id }}">{{ $color->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
                         </div>
                     </div>
 
@@ -354,57 +308,6 @@
     @include('admin.modals.tag_script')
     <script>
         $(document).ready(function() {
-            loadOptions('category', null, $('.category'));
-
-            function loadOptions(type, id, target) {
-                $.ajax({
-                    url: "{{ route('get.data') }}",
-                    type: "GET",
-                    data: {
-                        type: type,
-                        id: id
-                    },
-                    success: function(res) {
-                        let options =
-                            `<option value="">Select ${type.charAt(0).toUpperCase() + type.slice(1)}</option>`;
-                        res.forEach(item => {
-                            options += `<option value="${item.id}">${item.name}</option>`;
-                        });
-                        target.html(options);
-                    }
-                });
-            }
-
-            $(document).on('change', '.category', function() {
-                let id = $(this).val();
-                let $row = $(this).closest('.category-row');
-                loadOptions('subcategory', id, $row.find('.subcategory'));
-                $row.find('.subsubcategory').html('<option value="">Select Sub Sub Category</option>');
-            });
-
-            $(document).on('change', '.subcategory', function() {
-                let id = $(this).val();
-                let $row = $(this).closest('.category-row');
-                loadOptions('subsubcategory', id, $row.find('.subsubcategory'));
-            });
-
-            $(document).on('click', '.add-row', function() {
-                let newRow = $('.category-row:first').clone();
-                newRow.find('select').val('');
-                newRow.find('.subcategory, .subsubcategory').html('<option value="">Select</option>');
-                newRow.find('.col-md-1').html(`
-                    <button type="button" class="btn btn-danger remove-row">
-                        <i class="ri-delete-bin-6-line"></i>
-                    </button>
-                `);
-
-                $('#category-container').append(newRow);
-                loadOptions('category', null, newRow.find('.category')); // move this inside correctly
-            });
-
-            $(document).on('click', '.remove-row', function() {
-                $(this).closest('.category-row').remove();
-            });
 
             $('#product-form').on('submit', function(e) {
                 e.preventDefault();
@@ -455,29 +358,6 @@
                 });
             });
 
-        });
-    </script>
-
-    <script>
-        Dropzone.autoDiscover = false;
-
-        var dropzonePreviewNode = document.querySelector("#dropzone-preview-list");
-        dropzonePreviewNode.id = "";
-        var previewTemplate = dropzonePreviewNode.parentNode.innerHTML;
-        dropzonePreviewNode.parentNode.removeChild(dropzonePreviewNode);
-
-        var dropzone = new Dropzone("#product-gallery-dropzone", {
-            url: "#",
-            method: "post",
-            previewTemplate: previewTemplate,
-            previewsContainer: "#dropzone-preview",
-            autoProcessQueue: false,
-            addRemoveLinks: false,
-            acceptedFiles: "image/*",
-            init: function() {
-                this.on("addedfile", function(file) {});
-                this.on("removedfile", function(file) {});
-            }
         });
     </script>
 @endsection

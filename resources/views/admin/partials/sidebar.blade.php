@@ -87,19 +87,19 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') || Route::is('guidelines.index') ? 'active' : '' }}"
+                    <a class="nav-link menu-link {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('products.variants.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') || Route::is('guidelines.index') ? 'active' : '' }}"
                       href="#sidebarAllProducts" data-bs-toggle="collapse" role="button"
                       aria-expanded="true" aria-controls="sidebarAllProducts">
                         <i class="ri-shopping-bag-3-line"></i> <span>Product Management</span>
                     </a>
 
-                    <div class="collapse menu-dropdown {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') || Route::is('guidelines.index') ? 'show' : '' }}"
+                    <div class="collapse menu-dropdown {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('products.variants.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') || Route::is('guidelines.index') ? 'show' : '' }}"
                         id="sidebarAllProducts">
                         <ul class="nav nav-sm flex-column">
 
                             <li class="nav-item">
                                 <a href="{{ route('allApiProducts') }}"
-                                  class="nav-link {{ Route::is('allApiProducts') || Route::is('products.edit') || Route::is('product.details') ? 'active' : '' }}">
+                                  class="nav-link {{ Route::is('allApiProducts') || Route::is('products.edit') || Route::is('product.details') || Route::is('products.variants.edit') ? 'active' : '' }}">
                                    Products (Api)
                                 </a>
                             </li>
@@ -113,7 +113,7 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('products.index') }}"
-                                  class="nav-link {{ Route::is('products.index') || Route::is('products.edit') || Route::is('product.details') ? 'active' : '' }}">
+                                  class="nav-link {{ Route::is('products.index') || Route::is('products.edit') || Route::is('product.details') || Route::is('products.variants.edit') ? 'active' : '' }}">
                                    Products (In House)
                                 </a>
                             </li>

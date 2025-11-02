@@ -24,6 +24,7 @@ use App\Models\SubSubCategory;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
 
 class ProductController extends Controller
 {
@@ -68,6 +69,12 @@ class ProductController extends Controller
                             <li>
                                 <a class="dropdown-item" href="'.route('product.details', $row->id).'">
                                     <i class="ri-eye-fill me-2"></i>View
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="'.route('products.variants.edit', $row->id).'">
+                                    <i class="ri-stack-fill me-2"></i>Variant Edit
                                 </a>
                             </li>
                             <li class="dropdown-divider"></li>
@@ -325,18 +332,9 @@ class ProductController extends Controller
     {
         $categories = Category::where('status', 1)->orderBy('serial', 'asc')->get();
         $companies = Company::where('status', 1)->latest()->get();
-        $sizes = Size::where('status', 1)->latest()->get();
-        $colors = Color::where('status', 1)->latest()->get();
         $tags = Tag::where('status', 1)->latest()->get();
 
-        return view('admin.product.edit', compact(
-            'product', 
-            'categories', 
-            'companies', 
-            'sizes', 
-            'colors', 
-            'tags'
-        ));
+        return view('admin.product.edit', compact('product', 'categories', 'companies', 'tags'));
     }
 
     public function update(Request $request, $id)
@@ -435,6 +433,141 @@ class ProductController extends Controller
             'message' => 'Product updated successfully',
             'product' => $product
         ]);
+    }
+
+    public function editVariants(Product $product)
+    {
+        $colors = Color::where('status', 1)->latest()->get();
+        $sizes = Size::where('status', 1)->latest()->get();
+        $variants = $product->variants()->with(['color', 'size'])->get();
+        $productImages = $product->images()->with('color')->get();
+
+        return view('admin.product.variants', compact('product', 'colors', 'sizes', 'variants', 'productImages'
+        ));
+    }
+
+    public function updateVariants(Request $request, Product $product)
+    {
+        $request->validate([
+            'variants' => 'required|array',
+            'variants.*.color_id' => 'nullable|exists:colors,id',
+            'variants.*.size_id' => 'nullable|exists:sizes,id',
+            'variants.*.variant_short_code' => 'nullable|string',
+            'variants.*.short_code' => 'nullable|string',
+            'variants.*.ean' => 'nullable|string|unique:product_variants,ean', // Added unique validation
+            'variants.*.price_single' => 'nullable|numeric',
+            'variants.*.qty_single' => 'nullable|integer',
+            'variants.*.price_pack' => 'nullable|numeric',
+            'variants.*.pack_qty' => 'nullable|integer',
+            'variants.*.price_carton' => 'nullable|numeric',
+            'variants.*.carton_qty' => 'nullable|integer',
+            'variants.*.price_1k' => 'nullable|numeric',
+            'variants.*.quantity' => 'nullable|integer',
+            'variants.*.my_price' => 'nullable|numeric',
+            'variants.*.stock_quantity' => 'nullable|integer',
+            'variants.*.is_active' => 'boolean',
+            'images' => 'nullable|array',
+            'images.*.color_id' => 'nullable|exists:colors,id',
+            'images.*.image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+            'images.*.image_type' => 'nullable|string|in:model,front,back,swatch,general,right,left',
+            'images.*.is_primary' => 'boolean',
+            'images.*.sort_order' => 'nullable|integer',
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'exists:product_images,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $existingVariantIds = $product->variants()->pluck('id')->toArray();
+            $submittedVariantIds = [];
+
+            foreach ($request->variants as $variantData) {
+                if (!empty($variantData['ean'])) {
+                    $existingVariant = ProductVariant::where('ean', $variantData['ean'])
+                        ->when(isset($variantData['id']), function($query) use ($variantData) {
+                            return $query->where('id', '!=', $variantData['id']);
+                        })
+                        ->first();
+                    
+                    if ($existingVariant) {
+                        throw new \Exception("EAN '{$variantData['ean']}' is already assigned to another variant.");
+                    }
+                }
+
+                $variant = ProductVariant::updateOrCreate(
+                    [
+                        'product_id' => $product->id,
+                        'color_id' => $variantData['color_id'] ?? null,
+                        'size_id' => $variantData['size_id'] ?? null,
+                    ],
+                    [
+                        'variant_short_code' => $variantData['variant_short_code'] ?? null,
+                        'short_code' => $variantData['short_code'] ?? null,
+                        'ean' => $variantData['ean'] ?? null,
+                        'price_single' => $variantData['price_single'] ?? null,
+                        'qty_single' => $variantData['qty_single'] ?? null,
+                        'price_pack' => $variantData['price_pack'] ?? null,
+                        'pack_qty' => $variantData['pack_qty'] ?? null,
+                        'price_carton' => $variantData['price_carton'] ?? null,
+                        'carton_qty' => $variantData['carton_qty'] ?? null,
+                        'price_1k' => $variantData['price_1k'] ?? null,
+                        'quantity' => $variantData['quantity'] ?? null,
+                        'my_price' => $variantData['my_price'] ?? null,
+                        'stock_quantity' => $variantData['stock_quantity'] ?? 0,
+                        'is_active' => $variantData['is_active'] ?? true,
+                    ]
+                );
+                $submittedVariantIds[] = $variant->id;
+            }
+
+            $variantsToDelete = array_diff($existingVariantIds, $submittedVariantIds);
+            if (!empty($variantsToDelete)) {
+                ProductVariant::whereIn('id', $variantsToDelete)->delete();
+            }
+
+            if ($request->has('delete_images')) {
+                foreach ($request->delete_images as $imageId) {
+                    $image = ProductImage::find($imageId);
+                    if ($image && file_exists(public_path($image->image_path))) {
+                        unlink(public_path($image->image_path));
+                    }
+                    ProductImage::where('id', $imageId)->delete();
+                }
+            }
+
+            if ($request->has('images')) {
+                foreach ($request->images as $imageData) {
+                    if (isset($imageData['image']) && $imageData['image']->isValid()) {
+                        $imagePath = $this->saveUploadedImage(
+                            $imageData['image'], 
+                            'product_images', 
+                            800
+                        );
+
+                        DB::table('product_images')->insert([
+                            'product_id' => $product->id,
+                            'color_id' => $imageData['color_id'] ?? null,
+                            'image_path' => $imagePath,
+                            'image_type' => $imageData['image_type'] ?? 'general',
+                            'is_primary' => $imageData['is_primary'] ?? false,
+                            'sort_order' => $imageData['sort_order'] ?? 1,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Product variants and images updated successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function update2(Request $request, $id)
@@ -736,6 +869,12 @@ class ProductController extends Controller
                             <li>
                                 <a class="dropdown-item" href="'.route('product.details', $row->id).'">
                                     <i class="ri-eye-fill me-2"></i>View
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="'.route('products.variants.edit', $row->id).'">
+                                    <i class="ri-stack-fill me-2"></i>Variant Edit
                                 </a>
                             </li>
                             <li class="dropdown-divider"></li>

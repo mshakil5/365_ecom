@@ -120,6 +120,9 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::post('/store-product', [ProductController::class, 'store'])->name('store.product');
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/product/{id}', [ProductController::class, 'update'])->name('update.product');
+
+    Route::get('/products/{product}/variants', [ProductController::class, 'editVariants'])->name('products.variants.edit');
+    Route::put('/products/{product}/variants', [ProductController::class, 'updateVariants'])->name('products.variants.update');
     
     Route::get('/get-data', [ProductController::class, 'getData'])->name('get.data');
 
