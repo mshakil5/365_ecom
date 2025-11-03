@@ -38,6 +38,11 @@
             let selectedColorId = $('input[name="color"]:checked').val();
             let sizes = getSelectedSizes();
 
+            if (selectedColorId.length === 0) {
+                toastr.warning("Please select a color.");
+                return;
+            }
+
             if (sizes.length === 0) {
                 toastr.warning("Please select quantity.");
                 return;
