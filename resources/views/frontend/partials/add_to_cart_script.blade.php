@@ -38,7 +38,7 @@
             let selectedColorId = $('input[name="color"]:checked').val();
             let sizes = getSelectedSizes();
 
-            if (selectedColorId.length === 0) {
+            if (!selectedColorId) {
                 toastr.warning("Please select a color.");
                 return;
             }
@@ -47,6 +47,7 @@
                 toastr.warning("Please select quantity.");
                 return;
             }
+
 
             $.ajax({
                 url: "{{ route('cart.addSession') }}",
