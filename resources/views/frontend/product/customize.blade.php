@@ -48,9 +48,18 @@
                                             data-product='@json($dataProduct)'>
                                             <div class="d-flex align-items-center">
                                                 <div class="me-2">
-                                                    <img src="{{ $dataProduct['image'] }}" alt="{{ $dataProduct['name'] }}"
-                                                        class="img-fluid"
-                                                        style="width: 100px; height: 120px; object-fit: cover; border-radius: 4px;">
+                                                    @if (!empty($dataProduct['img']['front']))
+                                                        <img src="{{ $dataProduct['img']['front'] }}" 
+                                                            alt="{{ $dataProduct['name'] }}"
+                                                            class="img-fluid"
+                                                            style="width: 100px; height: 120px; object-fit: cover; border-radius: 4px;">
+                                                    @else
+                                                        <img src="{{ $dataProduct['image'] }}" 
+                                                            alt="{{ $dataProduct['name'] }}"
+                                                            class="img-fluid"
+                                                            style="width: 100px; height: 120px; object-fit: cover; border-radius: 4px;">
+                                                    @endif
+
                                                 </div>
                                                 <div>
                                                     <div class="fw-bold">{{ $dataProduct['name'] }}</div>

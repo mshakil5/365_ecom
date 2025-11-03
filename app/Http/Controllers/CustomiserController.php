@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CustomiserController extends Controller
@@ -13,8 +14,19 @@ class CustomiserController extends Controller
 
         $productId = (string) ($data['product_id'] ?? '');
         $productName = $data['product_name'] ?? '';
-        $productImage = $data['product_image'] ?? '';
         $colorId = (string) ($data['color_id'] ?? '0');
+
+        
+        $product = Product::with('images')->findOrFail($productId);
+
+        $productImage = $product->images()
+            ->where([
+                ['image_type', '=', 'front'],
+                ['color_id', '=', $colorId],
+            ])
+            ->latest('id')
+            ->value('image_path') ?? $data['product_image'];
+
 
         $sizes = $data['sizes'] ?? [];
         $sizeIdsFromPayload = $data['size_ids'] ?? [];

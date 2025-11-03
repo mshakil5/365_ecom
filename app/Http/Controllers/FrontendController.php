@@ -266,6 +266,19 @@ class FrontendController extends Controller
 
         foreach ($request->sizes as $size) {
             $key = $request->product_id . '_' . ($request->color_id ?? 0) . '_' . $size['size_id'];
+
+            $product = Product::with('images')->findOrFail($request->color_id);
+
+            $productImage = $product->images()
+            ->where([
+                ['image_type', '=', 'front'],
+                ['color_id', '=', $request->color_id],
+            ])
+            ->latest('id')
+            ->value('image_path') ?? $request->product_image;
+
+
+
             if(isset($cart[$key]) && is_array($cart[$key])) {
                 $cart[$key]['quantity'] += $size['quantity'];
             } else {
@@ -275,7 +288,7 @@ class FrontendController extends Controller
                     'size_id' => $size['size_id'],
                     'quantity' => $size['quantity'],
                     'product_name' => $request->product_name,
-                    'product_image' => $request->product_image,
+                    'product_image' => $productImage ?? $request->product_image,
                     'ean' => $size['ean'] ?? null
                 ];
             }
@@ -372,8 +385,8 @@ class FrontendController extends Controller
                 ? $img->image_path
                 : 'https://placehold.co/400x300?bg=ccc&color=000&text=' . ucfirst($type);
         }
-        
 
+        
         $dataProduct = [
             'id' => $product->id,
             'name' => $product->name,

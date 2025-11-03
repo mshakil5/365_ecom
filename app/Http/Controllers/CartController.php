@@ -22,7 +22,6 @@ class CartController extends Controller
     {
         $sessionCart = $request->session()->get('cart', []);
 
-        // dd($sessionCart);
         if (!is_array($sessionCart)) $sessionCart = [];
 
         // Gather unique product ids to avoid N+1
