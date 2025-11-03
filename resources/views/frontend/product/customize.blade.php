@@ -1075,17 +1075,17 @@
 
                 // default map as fallback (same values you had but keys ensure slug use)
                 const map = {
-                    'right-chest': { left: 70, top: 34 },
+                    'right-chest': { left: 35, top: 26 },
                     'centre-chest': { left: 50, top: 34 },
                     'center-chest': { left: 50, top: 34 }, // alias
-                    'left-chest': { left: 30, top: 34 },
-                    'top-chest': { left: 50, top: 18 },
+                    'left-chest': { left: 65, top: 26 },
+                    'top-chest': { left: 50, top: 30 },
                     'centre-back': { left: 50, top: 60 },
                     'top-back': { left: 50, top: 30 },
                     'shoulder-back': { left: 50, top: 45 },
                     'bottom-back': { left: 50, top: 78 },
-                    'left-sleeve': { left: 12, top: 45 },
-                    'right-sleeve': { left: 88, top: 45 }
+                    'left-sleeve': { left: 50, top: 25 },
+                    'right-sleeve': { left: 60, top: 25 }
                 };
                 const p = map[key] || map['centre-chest'];
                 return { left: p.left, top: p.top };

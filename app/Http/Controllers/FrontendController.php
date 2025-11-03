@@ -357,16 +357,22 @@ class FrontendController extends Controller
         $totalQty = collect($cart)
         ->where('product_id', (string)$productId)
         ->sum(function($item) { return (int)$item['quantity']; });
+        $guidelines = Guideline::latest()->get();
 
 
         $images = [];
-        $guidelines = Guideline::latest()->get();
         foreach (['front', 'back', 'left', 'right'] as $type) {
-            $img = $product->images->firstWhere('image_type', 'front');
-            $images[$type] = $img 
-                ? $img->image_path 
+            $img = $product->images()
+                ->where('image_type', $type)
+                ->where('color_id', $firstColorId)
+                ->orderByDesc('id')
+                ->first();
+
+            $images[$type] = $img
+                ? $img->image_path
                 : 'https://placehold.co/400x300?bg=ccc&color=000&text=' . ucfirst($type);
         }
+        
 
         $dataProduct = [
             'id' => $product->id,
