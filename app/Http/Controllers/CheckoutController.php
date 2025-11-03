@@ -303,4 +303,14 @@ class CheckoutController extends Controller
         return view('frontend.order.cancel');
     }
 
+    public function showInvoice(Order $order)
+    {
+        $order->load('orderDetails');
+
+        $html = view('frontend.order.invoice', compact('order'))->render();
+
+        return response($html)
+            ->header('Content-Type', 'text/html');
+    }
+
 }

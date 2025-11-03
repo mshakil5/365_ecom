@@ -66,6 +66,7 @@ Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout
 Route::post('/checkout/process', [CheckoutController::class, 'processOrder'])->name('checkout.process');
 Route::get('/order/success/{order_id}', [CheckoutController::class, 'orderSuccess'])->name('order.success');
 Route::get('/order/cancel', [CheckoutController::class, 'orderCancel'])->name('order.cancel');
+Route::get('/order/{order}/invoice', [CheckoutController::class, 'showInvoice'])->name('order.invoice');
 
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
