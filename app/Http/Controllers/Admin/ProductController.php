@@ -440,8 +440,10 @@ class ProductController extends Controller
         $colors = Color::where('status', 1)->latest()->get();
         $sizes = Size::where('status', 1)->latest()->get();
         $variants = $product->variants()->with(['color', 'size'])->get();
-        $productImages = $product->images()->with('color')->get();
-
+        $productImages = $product->images()
+        ->with('color')
+        ->get()
+        ->unique('color_id');
         return view('admin.product.variants', compact('product', 'colors', 'sizes', 'variants', 'productImages'
         ));
     }
@@ -538,14 +540,26 @@ class ProductController extends Controller
 
             if ($request->has('images')) {
                 foreach ($request->images as $imageData) {
+                    $colorId = $imageData['color_id'] ?? null;
+                    $imageType = $imageData['image_type'] ?? 'general';
+
+                    $exists = ProductImage::where('product_id', $product->id)
+                        ->where('color_id', $colorId)
+                        ->where('image_type', $imageType)
+                        ->exists();
+
+                    if ($exists) {
+                        throw new \Exception("An image of type '{$imageType}' already exists for this color.");
+                    }
+
                     if (isset($imageData['image']) && $imageData['image']->isValid()) {
                         $imagePath = $this->saveUploadedImage($imageData['image'], 'product_images', 800);
 
                         ProductImage::create([
                             'product_id' => $product->id,
-                            'color_id' => $imageData['color_id'] ?? null,
+                            'color_id' => $colorId,
                             'image_path' => $imagePath,
-                            'image_type' => $imageData['image_type'] ?? 'general',
+                            'image_type' => $imageType,
                             'sort_order' => $imageData['sort_order'] ?? 1,
                         ]);
                     }

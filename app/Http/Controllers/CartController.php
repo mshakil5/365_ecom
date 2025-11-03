@@ -41,12 +41,23 @@ class CartController extends Controller
             $subtotal = $price * $quantity;
             $total += $subtotal;
 
+            $frontImage = null;
+            if ($product) {
+                $colorId = $item['color_id'] ?? null;
+                $frontImageRow = $product->images()
+                    ->where('image_type', 'front')
+                    ->when($colorId, fn($q) => $q->where('color_id', $colorId))
+                    ->latest()
+                    ->first();
+                $frontImage = $frontImageRow->image_path ?? null;
+            }
+
             $cartItems[] = [
                 'key' => $key,
                 'product_id' => $pid,
                 'product' => $product, // may be null
                 'product_name' => $item['product_name'] ?? ($product->name ?? 'Unknown Product'),
-                'product_image' => $item['product_image'] ?? ($product->feature_image ?? null),
+                'product_image' => $frontImage ?? ($item['product_image'] ?? $product->feature_image ?? null),
                 'ean' => $item['ean'] ?? null,
                 'size_id' => $item['size_id'] ?? null,
                 'color_id' => $item['color_id'] ?? null,

@@ -4,6 +4,9 @@
 
 @section('content')
     <div class="container-fluid">
+          <div class="col-2 mb-2">
+            <a href="{{ url()->previous() }}" class="btn btn-primary"> Back</a>
+          </div>
         <form id="product-form" action="{{ route('update.product', $product->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')

@@ -17,6 +17,7 @@ class CheckoutController extends Controller
     {
         $sessionCart = $request->session()->get('cart', []);
 
+        // dd($sessionCart);
         if (!is_array($sessionCart) || empty($sessionCart)) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
@@ -36,12 +37,23 @@ class CheckoutController extends Controller
             $subtotal = $price * $quantity;
             $total += $subtotal;
 
+            $frontImage = null;
+            if ($product) {
+                $colorId = $item['color_id'] ?? null;
+                $frontImageRow = $product->images()
+                    ->where('image_type', 'front')
+                    ->when($colorId, fn($q) => $q->where('color_id', $colorId))
+                    ->latest()
+                    ->first();
+                $frontImage = $frontImageRow->image_path ?? null;
+            }
+
             $cartItems[] = [
                 'key' => $key,
                 'product_id' => $pid,
                 'product' => $product,
                 'product_name' => $item['product_name'] ?? ($product->name ?? 'Unknown Product'),
-                'product_image' => $item['product_image'] ?? ($product->feature_image ?? null),
+                'product_image' => $frontImage ?? ($item['product_image'] ?? $product->feature_image ?? null),
                 'ean' => $item['ean'] ?? null,
                 'size_id' => $item['size_id'] ?? null,
                 'color_id' => $item['color_id'] ?? null,
@@ -135,7 +147,6 @@ class CheckoutController extends Controller
             });
         }
 
-        // Validate billing address if different
         if ($request->is_billing_same == '0') {
             $validator->sometimes([
                 'billing_first_name', 
@@ -155,7 +166,6 @@ class CheckoutController extends Controller
     {
         $subtotal = 0;
         
-        // Calculate subtotal from cart items
         foreach ($request->cart_items as $item) {
             $subtotal += $item['subtotal'];
         }
@@ -176,12 +186,12 @@ class CheckoutController extends Controller
 
     protected function calculateShipping($shippingMethod, $subtotal)
     {
-        if ($shippingMethod === '0') { // Ship
+        if ($shippingMethod === '0') {
             if ($subtotal < 50) return 5.99;
             if ($subtotal < 100) return 3.99;
             return 0;
         }
-        return 0; // Pickup
+        return 0;
     }
 
     protected function createOrder(Request $request, $totals)
@@ -201,7 +211,6 @@ class CheckoutController extends Controller
         $order->postcode = $request->postcode;
         $order->order_notes = $request->order_notes;
         
-        // Billing address
         if ($request->is_billing_same == '1') {
             $order->billing_full_name = $request->first_name;
             $order->billing_company_name = $request->company_name;
@@ -261,25 +270,23 @@ class CheckoutController extends Controller
                     ->skip($itemIndex)
                     ->first();
 
-                if ($orderDetail) {
-                    foreach ($item['customization'] as $customization) {
-                        $orderCustomization = new OrderCustomisation();
-                        $orderCustomization->order_details_id = $orderDetail->id;
-                        $orderCustomization->product_id = $item['product_id'] ?? null;
-                        $orderCustomization->customization_type = $customization['type'] ?? 'text';
-                        $orderCustomization->method = $customization['method'] ?? '';
-                        $orderCustomization->position = $customization['position'] ?? '';
-                        
-                        if (isset($customization['type']) && $customization['type'] === 'text') {
-                            $orderCustomization->text_content = $customization['data']['text'] ?? '';
-                            $orderCustomization->font_family = $customization['data']['fontFamily'] ?? '';
-                            $orderCustomization->font_size = $customization['data']['fontSize'] ?? '';
-                        } elseif (isset($customization['type']) && $customization['type'] === 'image') {
-                            $orderCustomization->image_url = $customization['data']['src'] ?? '';
-                        }
-                        
-                        $orderCustomization->save();
-                    }
+                if (!$orderDetail) continue;
+
+                foreach ($item['customization'] as $customization) {
+                    $orderCustomization = new OrderCustomisation();
+                    $orderCustomization->order_details_id = $orderDetail->id;
+                    $orderCustomization->product_id = $item['product_id'] ?? null;
+                    $orderCustomization->size_id = $item['size_id'] ?? null;
+                    $orderCustomization->color_id = $item['color_id'] ?? null;
+                    $orderCustomization->customization_type = $customization['type'] ?? 'text';
+                    $orderCustomization->method = $customization['method'] ?? '';
+                    $orderCustomization->position = $customization['position'] ?? '';
+                    $orderCustomization->z_index = $customization['zIndex'] ?? null;
+                    $orderCustomization->layer_id = $customization['layerId'] ?? null;
+
+                    $orderCustomization->data = json_encode($customization['data'] ?? []);
+
+                    $orderCustomization->save();
                 }
             }
         }

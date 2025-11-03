@@ -396,10 +396,12 @@
                                             <div class="small">EAN: <strong>{{ $item['ean'] }}</strong></div>
                                         @endif
                                         @if ($item['size_id'])
-                                            <div class="small">Size: <strong>{{ $item['size_id'] }}</strong></div>
+                                        @php $size = \App\Models\Size::find($item['size_id']); @endphp
+                                            <div class="small">Size: <strong>{{ $size ? $size->name : $item['size_id'] }}</strong></div>
                                         @endif
                                         @if ($item['color_id'])
-                                            <div class="small">Color: <strong>{{ $item['color_id'] }}</strong></div>
+                                        @php $color = \App\Models\Color::find($item['color_id']); @endphp
+                                            <div class="small">Color: <strong>{{ $color ? $color->name : $item['color_id'] }}</strong></div>
                                         @endif
 
                                         @if (!empty($item['customization']))
@@ -463,10 +465,22 @@
                         </div>
                     </div>
 
+                     <!-- Terms and Conditions -->
+                    <div class="mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="termsCheck">
+                            <label class="form-check-label small" for="termsCheck">
+                                I agree to the <a href="{{ route('terms-and-conditions') }}">Terms & Conditions</a> and <a
+                                    href="{{ route('privacy-policy') }}">Privacy Policy</a>
+                            </label>
+                        </div>
+                        <span class="error text-danger" id="terms-error"></span>
+                    </div>
+
                     <div class="payment-methods mt-4">
                         <h5 class="mb-3">Payment Method</h5>
                         <div class="accordion" id="paymentAccordion">
-                            <div class="accordion-item">
+                            <div class="accordion-item d-none">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseCard">
@@ -484,7 +498,7 @@
                             </div>
 
                             <!-- PayPal -->
-                            <div class="accordion-item">
+                            <div class="accordion-item d-none">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapsePayPal">
@@ -502,7 +516,7 @@
                             </div>
 
                             <!-- Bank Transfer -->
-                            <div class="accordion-item">
+                            <div class="accordion-item d-none">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseBank">
@@ -537,18 +551,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Terms and Conditions -->
-                    <div class="mt-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="termsCheck">
-                            <label class="form-check-label small" for="termsCheck">
-                                I agree to the <a href="{{ route('terms-and-conditions') }}">Terms & Conditions</a> and <a
-                                    href="{{ route('privacy-policy') }}">Privacy Policy</a>
-                            </label>
-                        </div>
-                        <span class="error text-danger" id="terms-error"></span>
                     </div>
                 </div>
             </div>
@@ -810,143 +812,155 @@
 @section('script')
 
 <script>
-  $(document).ready(function() {
-    $('#payWithCard, #payWithPayPal, #payWithBank, #payWithCash').on('click', function(e) {
-        e.preventDefault();
-        let paymentMethod;
-        const btnId = $(this).attr('id');
+$(document).ready(function() {
+  $('#payWithCard, #payWithPayPal, #payWithBank, #payWithCash').on('click', function(e) {
+      e.preventDefault();
+      let paymentMethod;
+      const btnId = $(this).attr('id');
 
-        if (btnId === 'payWithCard') paymentMethod = 'stripe';
-        else if (btnId === 'payWithPayPal') paymentMethod = 'paypal';
-        else if (btnId === 'payWithBank') paymentMethod = 'bank_transfer';
-        else if (btnId === 'payWithCash') paymentMethod = 'cash_on_delivery';
+      if (btnId === 'payWithCard') paymentMethod = 'stripe';
+      else if (btnId === 'payWithPayPal') paymentMethod = 'paypal';
+      else if (btnId === 'payWithBank') paymentMethod = 'bank_transfer';
+      else if (btnId === 'payWithCash') paymentMethod = 'cash_on_delivery';
 
-        if (!validateForm()) return false;
+      if (!validateForm()) return false;
 
-        $('#loader').show();
-        $(this).prop('disabled', true);
+      $('#loader').show();
+      $(this).prop('disabled', true);
 
-        const formData = {
-            shipping_method: $('#shippingMethod').val(),
-            first_name: $('#first_name').val(),
-            company_name: $('#company_name').val(),
-            email: $('#email').val(),
-            phone: $('#phone').val(),
-            address_first_line: $('#address_first_line').val(),
-            address_second_line: $('#address_second_line').val(),
-            city: $('#city').val(),
-            postcode: $('#postcode').val(),
-            order_notes: $('#order_notes').val(),
-            is_billing_same: $('#is_billing_same').val(),
-            billing_first_name: $('#billing_first_name').val() || $('#first_name').val(),
-            billing_company_name: $('#billing_company_name').val() || $('#company_name').val(),
-            billing_phone: $('#billing_phone').val() || $('#phone').val(),
-            billing_address_first_line: $('#billing_address_first_line').val() || $('#address_first_line').val(),
-            billing_address_second_line: $('#billing_address_second_line').val() || $('#address_second_line').val(),
-            billing_address_third_line: $('#billing_address_third_line').val() || $('#address_third_line').val(),
-            billing_city: $('#billing_city').val() || $('#city').val(),
-            billing_postcode: $('#billing_postcode').val() || $('#postcode').val(),
-            payment_method: paymentMethod,
-            cart_items: @json($cartItems),
-            subtotal: {{ $total }},
-            shipping_charge: parseFloat($('#shipping-charge').text().replace('£','')),
-            vat_amount: parseFloat($('#vat-charge').text().replace('£','')),
-            total_amount: parseFloat($('#total-amount').text().replace('£','')),
-            _token: '{{ csrf_token() }}'
-        };
+      const formData = {
+          shipping_method: $('#shippingMethod').val(),
+          first_name: $('#first_name').val(),
+          company_name: $('#company_name').val(),
+          email: $('#email').val(),
+          phone: $('#phone').val(),
+          address_first_line: $('#address_first_line').val(),
+          address_second_line: $('#address_second_line').val(),
+          city: $('#city').val(),
+          postcode: $('#postcode').val(),
+          order_notes: $('#order_notes').val(),
+          is_billing_same: $('#is_billing_same').val(),
+          billing_first_name: $('#billing_first_name').val() || $('#first_name').val(),
+          billing_company_name: $('#billing_company_name').val() || $('#company_name').val(),
+          billing_phone: $('#billing_phone').val() || $('#phone').val(),
+          billing_address_first_line: $('#billing_address_first_line').val() || $('#address_first_line').val(),
+          billing_address_second_line: $('#billing_address_second_line').val() || $('#address_second_line').val(),
+          billing_address_third_line: $('#billing_address_third_line').val() || $('#address_third_line').val(),
+          billing_city: $('#billing_city').val() || $('#city').val(),
+          billing_postcode: $('#billing_postcode').val() || $('#postcode').val(),
+          payment_method: paymentMethod,
+          cart_items: @json($cartItems),
+          subtotal: {{ $total }},
+          shipping_charge: parseFloat($('#shipping-charge').text().replace('£','')),
+          vat_amount: parseFloat($('#vat-charge').text().replace('£','')),
+          total_amount: parseFloat($('#total-amount').text().replace('£','')),
+          _token: '{{ csrf_token() }}'
+      };
 
-        $.ajax({
-            url: "{{ route('checkout.process') }}",
-            type: "POST",
-            data: JSON.stringify(formData),
-            contentType: "application/json",
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            success: function(result) {
-                $('#loader').hide();
-                $('#' + btnId).prop('disabled', false);
+      $.ajax({
+          url: "{{ route('checkout.process') }}",
+          type: "POST",
+          data: JSON.stringify(formData),
+          contentType: "application/json",
+          headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          },
+          success: function(result) {
 
-                if (result.success && result.redirect_url) {
-                    window.location.href = result.redirect_url;
-                } else if (result.errors) {
-                    // Clear previous errors
-                    $('.error').text('');
-                    $('.form-control').removeClass('is-invalid');
+              $('#loader').hide();
+              $('#' + btnId).prop('disabled', false);
 
-                    // Show validation errors
-                    $.each(result.errors, function(field, messages) {
-                        $('#' + field + '-error').text(messages[0]); // first error only
-                        $('#' + field).addClass('is-invalid');
-                    });
-                } else {
-                    alert(result.message || 'Error processing your order.');
-                }
-            },
-            error: function(xhr) {
-                $('#loader').hide();
-                $('#' + btnId).prop('disabled', false);
+              if (result.success && result.redirect_url) {
+                  window.location.href = result.redirect_url;
+              } else if (result.errors) {
+                     setTimeout(scrollToTop, 0);
+                     $('html, body').animate({ scrollTop: 0 }, 'fast');
+                  // Clear previous errors
+                  $('.error').text('');
+                  $('.form-control').removeClass('is-invalid');
 
-                if (xhr.status === 422) {
-                    // Laravel validation errors
-                    var errors = xhr.responseJSON.errors;
-                    $('.error').text('');
-                    $('.form-control').removeClass('is-invalid');
-                    $.each(errors, function(field, messages) {
-                        $('#' + field + '-error').text(messages[0]);
-                        $('#' + field).addClass('is-invalid');
-                    });
-                } else {
-                    // Other errors
-                    alert('Unexpected error occurred. Check console for details.');
-                    console.error(xhr.responseText);
-                }
-            }
-        });
+                  // Show validation errors
+                  $.each(result.errors, function(field, messages) {
+                      $('#' + field + '-error').text(messages[0]); // first error only
+                      $('#' + field).addClass('is-invalid');
+                  });
+              } else {
+                  alert(result.message || 'Error processing your order.');
+                   setTimeout(scrollToTop, 0);
+              }
+          },
+          error: function(xhr) {
 
-    });
+              $('#loader').hide();
+              $('#' + btnId).prop('disabled', false);
 
-    function validateForm() {
-        let isValid = true;
-        $('.error').text('');
-        $('.form-control').removeClass('is-invalid');
+              if (xhr.status === 422) {
+                    setTimeout(scrollToTop, 0); 
+                  // Laravel validation errors
+                  var errors = xhr.responseJSON.errors;
+                  $('.error').text('');
+                  $('.form-control').removeClass('is-invalid');
+                  $.each(errors, function(field, messages) {
+                      $('#' + field + '-error').text(messages[0]);
+                      $('#' + field).addClass('is-invalid');
+                  });
+              } else {
+                  // Other errors
+                  alert('Unexpected error occurred. Check console for details.');
+                   setTimeout(scrollToTop, 0); 
+                  console.error(xhr.responseText);
+              }
+          }
+      });
 
-        if ($('#shippingMethod').val() === '0') {
-            const fields = [
-                {id: 'first_name', message: 'Full name is required'},
-                {id: 'email', message: 'Valid email is required'},
-                {id: 'phone', message: 'Phone number is required'},
-                {id: 'address_first_line', message: 'Address line 1 is required'},
-                {id: 'city', message: 'City is required'},
-                {id: 'postcode', message: 'Postcode is required'}
-            ];
+  });
 
-            $.each(fields, function(_, field) {
-                if (!$('#'+field.id).val().trim()) {
-                    $('#'+field.id+'-error').text(field.message);
-                    $('#'+field.id).addClass('is-invalid');
-                    isValid = false;
-                }
-            });
+  function scrollToTop() {
+      setTimeout(function() {
+          $('html, body').animate({ scrollTop: 0 }, 'fast');
+      }, 50);
+  }
 
-            const email = $('#email').val();
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (email && !emailRegex.test(email)) {
-                $('#email-error').text('Please enter a valid email address');
-                $('#email').addClass('is-invalid');
-                isValid = false;
-            }
-        }
+  function validateForm() {
+      let isValid = true;
+      $('.error').text('');
+      $('.form-control').removeClass('is-invalid');
 
-        if (!$('#termsCheck').is(':checked')) {
-            $('#terms-error').text('You must accept the terms and conditions');
-            isValid = false;
-        }
+      if ($('#shippingMethod').val() === '0') {
+          const fields = [
+              {id: 'first_name', message: 'Full name is required'},
+              {id: 'email', message: 'Valid email is required'},
+              {id: 'phone', message: 'Phone number is required'},
+              {id: 'address_first_line', message: 'Address line 1 is required'},
+              {id: 'city', message: 'City is required'},
+              {id: 'postcode', message: 'Postcode is required'}
+          ];
 
-        return isValid;
-    }
+          $.each(fields, function(_, field) {
+              if (!$('#'+field.id).val().trim()) {
+                  $('#'+field.id+'-error').text(field.message);
+                  $('#'+field.id).addClass('is-invalid');
+                  isValid = false;
+              }
+          });
+
+          const email = $('#email').val();
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (email && !emailRegex.test(email)) {
+              $('#email-error').text('Please enter a valid email address');
+              $('#email').addClass('is-invalid');
+              isValid = false;
+          }
+      }
+
+      if (!$('#termsCheck').is(':checked')) {
+          $('#terms-error').text('You must accept the terms and conditions');
+          isValid = false;
+      }
+
+      return isValid;
+  }
 });
-
 </script>
 
 @endsection

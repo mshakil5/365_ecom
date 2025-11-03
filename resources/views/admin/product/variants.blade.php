@@ -13,7 +13,7 @@
 
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Product Variants</h5>
+                <h5 class="mb-0">{{ $product->name }} Variants</h5>
                 <button type="button" class="btn btn-sm btn-success" id="add-variant">
                     <i class="ri-add-line"></i> Add Variant
                 </button>
@@ -416,7 +416,7 @@
                     showSuccess(res.message);
                     $button.prop('disabled', false).html(originalText);
                     setTimeout(() => {
-                        window.location.href = document.referrer || '/';
+                        location.reload();
                     }, 1000);
                 },
                 error: function(xhr) {
