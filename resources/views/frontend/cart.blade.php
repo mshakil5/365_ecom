@@ -36,7 +36,7 @@
                     <tr data-key="{{ $item['key'] }}" class="cart-item-row">
                         <td>
                             <a href="{{ $item['product'] ? route('product.show', $item['product']->slug) : '#' }}">
-                                <img src="{{ $item['product_image'] }}" alt="{{ $item['product_name'] }}" class="product-thumb">
+                                <img src="{{ asset(''.$item['product_image']) }}" alt="{{ $item['product_name'] }}" class="product-thumb">
                             </a>
                         </td>
                         <td>

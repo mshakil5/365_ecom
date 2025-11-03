@@ -188,6 +188,8 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::delete('product-price/{id}', [ProductPriceController::class, 'destroy'])->name('product_prices.destroy');
     Route::post('product-price/toggle-status', [ProductPriceController::class, 'toggleStatus'])->name('product_prices.toggleStatus');
 
+    Route::get('/product-price/by-product/{id}', [ProductPriceController::class, 'getByProduct']);
+
     // Guidelines
     Route::get('/guidelines', [GuidelineController::class, 'index'])->name('guidelines.index');
     Route::post('/guidelines', [GuidelineController::class, 'store'])->name('guidelines.store');
