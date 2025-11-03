@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\SectorController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\GuidelineController;
+use App\Http\Controllers\Admin\OrderController;
 
 Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], function(){
     Route::get('/dashboard', [HomeController::class, 'adminHome'])->name('admin.dashboard');
@@ -219,4 +220,8 @@ Route::group(['prefix' =>'admin/', 'middleware' => ['auth', 'is_admin']], functi
     Route::get('/purchase', [StockController::class, 'purchase'])->name('purchase');
 
     Route::get('/clean-db', [HomeController::class, 'cleanDB']);
+
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('orders/{order}/change-status', [OrderController::class, 'changeStatus'])->name('orders.changeStatus');
+    Route::get('orders/{order}/details', [OrderController::class, 'show'])->name('orders.details');
 });

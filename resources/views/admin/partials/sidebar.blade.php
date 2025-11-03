@@ -87,6 +87,32 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->is('admin/orders*') ? 'active' : '' }}" href="#sidebarOrders" data-bs-toggle="collapse" role="button"
+                      aria-expanded="{{ request()->is('admin/orders*') ? 'true':'false' }}" aria-controls="sidebarOrders">
+                        <i class="ri-file-list-3-line"></i> <span>Orders</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ request()->is('admin/orders*') ? 'show' : '' }}" id="sidebarOrders">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('orders.index') }}" class="nav-link {{ request('status')==null ? 'active':'' }}">All Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('orders.index', ['status'=>'pending']) }}" class="nav-link {{ request('status')=='pending' ? 'active':'' }}">Pending</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('orders.index', ['status'=>'processing']) }}" class="nav-link {{ request('status')=='processing' ? 'active':'' }}">Processing</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('orders.index', ['status'=>'completed']) }}" class="nav-link {{ request('status')=='completed' ? 'active':'' }}">Completed</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('orders.index', ['status'=>'cancelled']) }}" class="nav-link {{ request('status')=='cancelled' ? 'active':'' }}">Cancelled</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link menu-link {{ Route::is('allApiProducts') || Route::is('api_products.index') || Route::is('products.index') || Route::is('create.product') || Route::is('product_prices.index') || Route::is('products.edit') || Route::is('products.variants.edit') || Route::is('product.details') || Route::is('allcategory') || Route::is('subcategories.index') || Route::is('subsubcategories.index') || Route::is('companies.index') || Route::is('tags.index') || Route::is('sizes.index') || Route::is('colors.index') || Route::is('allsector') || Route::is('guidelines.index') ? 'active' : '' }}"
                       href="#sidebarAllProducts" data-bs-toggle="collapse" role="button"
                       aria-expanded="true" aria-controls="sidebarAllProducts">
