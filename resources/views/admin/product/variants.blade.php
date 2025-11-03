@@ -126,7 +126,6 @@
                                     <p class="card-text small">
                                         <strong>Color:</strong> {{ $image->color->name ?? 'No Color' }}<br>
                                         <strong>Type:</strong> {{ $image->image_type }}<br>
-                                        <strong>Primary:</strong> {{ $image->is_primary ? 'Yes' : 'No' }}
                                     </p>
                                     <div class="d-flex justify-content-between">
                                         <button type="button" class="btn btn-sm btn-outline-warning edit-image" 
@@ -200,12 +199,6 @@
                             <option value="right">Right</option>
                             <option value="left">Left</option>
                         </select>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="edit_is_primary" value="1">
-                            <label class="form-check-label">Primary Image</label>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -324,14 +317,6 @@
                                 <img src="" alt="Preview" class="img-thumbnail" style="max-height: 100px;">
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label d-block">Primary Image</label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" 
-                                    name="images[${imageIndex}][is_primary]" value="1">
-                                <label class="form-check-label">Yes</label>
-                            </div>
-                        </div>
                     </div>
                     <button type="button" class="btn btn-sm btn-danger mt-2 remove-image">
                         <i class="ri-delete-bin-line"></i> Remove
@@ -366,12 +351,10 @@
             const imageId = $(this).data('image-id');
             const colorId = $(this).data('color-id');
             const imageType = $(this).data('image-type');
-            const isPrimary = $(this).data('is-primary');
             
             $('#edit_image_id').val(imageId);
             $('#edit_color_id').val(colorId || '');
             $('#edit_image_type').val(imageType);
-            $('#edit_is_primary').prop('checked', isPrimary == 1);
             
             currentEditingImage = $(this).closest('.existing-image');
             editImageModal.show();
@@ -381,20 +364,18 @@
             const imageId = $('#edit_image_id').val();
             const colorId = $('#edit_color_id').val();
             const imageType = $('#edit_image_type').val();
-            const isPrimary = $('#edit_is_primary').prop('checked') ? 1 : 0;
-            
+
             if (currentEditingImage) {
-                currentEditingImage.find('.card-text strong:contains("Color")').parent().html(`<strong>Color:</strong> ${$('#edit_color_id option:selected').text() || 'No Color'}`);
-                currentEditingImage.find('.card-text strong:contains("Type")').parent().html(`<strong>Type:</strong> ${imageType}`);
-                currentEditingImage.find('.card-text strong:contains("Primary")').parent().html(`<strong>Primary:</strong> ${isPrimary ? 'Yes' : 'No'}`);
-                
-                // Update data attributes
+                currentEditingImage.find('.card-text').html(`
+                    <strong>Color:</strong> ${$('#edit_color_id option:selected').text() || 'No Color'}<br>
+                    <strong>Type:</strong> ${imageType}
+                `);
+
                 currentEditingImage.find('.edit-image')
                     .data('color-id', colorId)
-                    .data('image-type', imageType)
-                    .data('is-primary', isPrimary);
+                    .data('image-type', imageType);
             }
-            
+
             editImageModal.hide();
             showSuccess('Image details updated successfully');
         });
@@ -439,14 +420,26 @@
                     }, 1000);
                 },
                 error: function(xhr) {
-                    if (xhr.status === 422) {
-                        let firstError = Object.values(xhr.responseJSON.errors)[0][0];
-                        showError(firstError);
+                    let msg = "Something went wrong!";
+
+                    if (xhr.responseJSON) {
+                        if (xhr.status === 422 && xhr.responseJSON.errors) {
+                            msg = Object.values(xhr.responseJSON.errors)[0][0];
+                        }
+                        else if (xhr.responseJSON.error) {
+                            msg = xhr.responseJSON.error;
+                        }
+                        else if (xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                    } else if (xhr.responseText) {
+                        msg = xhr.responseText;
                     } else {
-                        showError(xhr.responseJSON?.message ?? "Something went wrong!");
+                        msg = `${xhr.status} ${xhr.statusText}`;
                     }
+                    showError(msg);
                     $button.prop('disabled', false).html(originalText);
-                    console.error(xhr.responseText);
+                    console.error('AJAX error:', xhr);
                 }
             });
         });

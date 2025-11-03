@@ -454,7 +454,7 @@ class ProductController extends Controller
             'variants.*.size_id' => 'nullable|exists:sizes,id',
             'variants.*.variant_short_code' => 'nullable|string',
             'variants.*.short_code' => 'nullable|string',
-            'variants.*.ean' => 'nullable|string|unique:product_variants,ean', // Added unique validation
+            'variants.*.ean' => 'nullable|string',
             'variants.*.price_single' => 'nullable|numeric',
             'variants.*.qty_single' => 'nullable|integer',
             'variants.*.price_pack' => 'nullable|numeric',
@@ -462,7 +462,7 @@ class ProductController extends Controller
             'variants.*.price_carton' => 'nullable|numeric',
             'variants.*.carton_qty' => 'nullable|integer',
             'variants.*.price_1k' => 'nullable|numeric',
-            'variants.*.quantity' => 'nullable|integer',
+            'variants.*.quantity' => 'nullable',
             'variants.*.my_price' => 'nullable|numeric',
             'variants.*.stock_quantity' => 'nullable|integer',
             'variants.*.is_active' => 'boolean',
@@ -470,7 +470,6 @@ class ProductController extends Controller
             'images.*.color_id' => 'nullable|exists:colors,id',
             'images.*.image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
             'images.*.image_type' => 'nullable|string|in:model,front,back,swatch,general,right,left',
-            'images.*.is_primary' => 'boolean',
             'images.*.sort_order' => 'nullable|integer',
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'exists:product_images,id',
@@ -483,24 +482,26 @@ class ProductController extends Controller
 
             foreach ($request->variants as $variantData) {
                 if (!empty($variantData['ean'])) {
-                    $existingVariant = ProductVariant::where('ean', $variantData['ean'])
-                        ->when(isset($variantData['id']), function($query) use ($variantData) {
-                            return $query->where('id', '!=', $variantData['id']);
+                    $eanExists = ProductVariant::where('ean', $variantData['ean'])
+                        ->where('product_id', $product->id)
+                        ->when(isset($variantData['id']), function ($q) use ($variantData) {
+                            $q->where('id', '!=', $variantData['id']);
                         })
-                        ->first();
-                    
-                    if ($existingVariant) {
-                        throw new \Exception("EAN '{$variantData['ean']}' is already assigned to another variant.");
+                        ->exists();
+
+                    if ($eanExists) {
+                        throw new \Exception("EAN '{$variantData['ean']}' is already used by another variant.");
                     }
                 }
 
                 $variant = ProductVariant::updateOrCreate(
                     [
+                        'id' => $variantData['id'] ?? null,
+                    ],
+                    [
                         'product_id' => $product->id,
                         'color_id' => $variantData['color_id'] ?? null,
                         'size_id' => $variantData['size_id'] ?? null,
-                    ],
-                    [
                         'variant_short_code' => $variantData['variant_short_code'] ?? null,
                         'short_code' => $variantData['short_code'] ?? null,
                         'ean' => $variantData['ean'] ?? null,
@@ -531,28 +532,21 @@ class ProductController extends Controller
                     if ($image && file_exists(public_path($image->image_path))) {
                         unlink(public_path($image->image_path));
                     }
-                    ProductImage::where('id', $imageId)->delete();
+                    $image->delete();
                 }
             }
 
             if ($request->has('images')) {
                 foreach ($request->images as $imageData) {
                     if (isset($imageData['image']) && $imageData['image']->isValid()) {
-                        $imagePath = $this->saveUploadedImage(
-                            $imageData['image'], 
-                            'product_images', 
-                            800
-                        );
+                        $imagePath = $this->saveUploadedImage($imageData['image'], 'product_images', 800);
 
-                        DB::table('product_images')->insert([
+                        ProductImage::create([
                             'product_id' => $product->id,
                             'color_id' => $imageData['color_id'] ?? null,
                             'image_path' => $imagePath,
                             'image_type' => $imageData['image_type'] ?? 'general',
-                            'is_primary' => $imageData['is_primary'] ?? false,
                             'sort_order' => $imageData['sort_order'] ?? 1,
-                            'created_at' => now(),
-                            'updated_at' => now(),
                         ]);
                     }
                 }
@@ -560,10 +554,7 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'Product variants and images updated successfully'
-            ]);
-
+            return response()->json(['message' => 'Product variants and images updated successfully']);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
