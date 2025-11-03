@@ -151,8 +151,7 @@
                                     <div class="product-variable-color">
                                         @foreach ($colors as $color)
                                             <label>
-                                                <input type="radio" name="color" value="{{ $color->id }}"
-                                                    {{ $loop->first ? 'checked' : '' }}>
+                                                <input type="radio" name="color" value="{{ $color->id }}">
                                                 <span class="product-color" title="{{ $color->name ?? 'Color' }}"
                                                     style="background-color: {{ $color->hex ?? '#ccc' }};">
                                                 </span>
