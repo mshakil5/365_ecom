@@ -33,11 +33,11 @@
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label>Short Description</label>
-                                    <textarea class="form-control ckeditor-classic" id="short_description" name="short_description"></textarea>
+                                    <textarea class="form-control summernote" id="short_description" name="short_description"></textarea>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label>Long Description</label>
-                                    <textarea class="form-control ckeditor-classic" id="long_description" name="long_description"></textarea>
+                                    <textarea class="form-control summernote" id="long_description" name="long_description"></textarea>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label>Meta Title</label>
@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label>Meta Description</label>
-                                    <textarea class="form-control ckeditor-classic" id="meta_description" name="meta_description"></textarea>
+                                    <textarea class="form-control summernote" id="meta_description" name="meta_description"></textarea>
                                 </div>
                                 <div class="col-12 mb-3">
                                     <label>Meta Keywords</label>

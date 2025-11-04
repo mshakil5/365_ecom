@@ -13,11 +13,8 @@
                 {{-- ORDER PRODUCTS --}}
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <h5 class="card-title flex-grow-1 mb-0">Order #{{ $order->order_number }}</h5>
-
-                        <div class="me-3">
-                            <span class="badge bg-primary">{{ ucfirst($order->status) }}</span>
-                        </div>
+                        <h5 class="card-title flex-grow-1 mb-0">Order #{{ $order->order_number }}<span
+                                class="badge badge-label bg-primary">{{ ucfirst($order->status) }}</span></h5>
 
                         <div class="flex-shrink-0">
                             <a href="{{ route('order.invoice', $order->id) }}" target="_blank"
@@ -212,37 +209,37 @@
                 </div>
 
                 {{-- Shipping Address --}}
-              @if($order->shipping_method == 1)
-                  {{-- Pickup Information --}}
-                  <div class="card mb-3">
-                      <div class="card-header">
-                          <h5 class="card-title mb-0">Pickup Information</h5>
-                      </div>
-                      <div class="card-body">
-                          @php
-                              $company = App\Models\CompanyDetails::first();
-                          @endphp
-                          <p><strong>Pickup Method:</strong> In Store</p>
-                          <p><strong>Store Name:</strong> {{ $company->company_name ?? 'Our Store' }}</p>
-                          <p><strong>Store Address:</strong> {{ $company->address1 ?? '' }}</p>
-                          <p><strong>Store Hours:</strong> {{ $company->opening_time ?? 'Mon-Fri 9am-6pm' }}</p>
-                          <p><strong>Contact Phone:</strong> {{ $company->phone ?? '' }}</p>
-                      </div>
-                  </div>
-              @else
-                  {{-- Shipping Address --}}
-                  <div class="card mb-3">
-                      <div class="card-header">
-                          <h5 class="card-title mb-0">Shipping Address</h5>
-                      </div>
-                      <div class="card-body">
-                          <p>{{ $order->full_name }}</p>
-                          <p>{{ $order->address_first_line }} {{ $order->address_second_line }}
-                              {{ $order->address_third_line }}</p>
-                          <p>{{ $order->city }} - {{ $order->postcode }}</p>
-                      </div>
-                  </div>
-              @endif
+                @if ($order->shipping_method == 1)
+                    {{-- Pickup Information --}}
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Pickup Information</h5>
+                        </div>
+                        <div class="card-body">
+                            @php
+                                $company = App\Models\CompanyDetails::first();
+                            @endphp
+                            <p><strong>Pickup Method:</strong> In Store</p>
+                            <p><strong>Store Name:</strong> {{ $company->company_name ?? 'Our Store' }}</p>
+                            <p><strong>Store Address:</strong> {{ $company->address1 ?? '' }}</p>
+                            <p><strong>Store Hours:</strong> {{ $company->opening_time ?? 'Mon-Fri 9am-6pm' }}</p>
+                            <p><strong>Contact Phone:</strong> {{ $company->phone ?? '' }}</p>
+                        </div>
+                    </div>
+                @else
+                    {{-- Shipping Address --}}
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Shipping Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ $order->full_name }}</p>
+                            <p>{{ $order->address_first_line }} {{ $order->address_second_line }}
+                                {{ $order->address_third_line }}</p>
+                            <p>{{ $order->city }} - {{ $order->postcode }}</p>
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Payment Details --}}
                 <div class="card mb-3">

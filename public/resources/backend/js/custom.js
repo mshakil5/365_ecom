@@ -56,6 +56,17 @@ $(document).ready(function () {
   $('.select2').select2({
       width: '100%'
   });
+
+  //summernote
+  $('.summernote').summernote({
+      height: 200,
+      toolbar: [
+          ['style', ['bold', 'italic', 'underline', 'clear']],
+          ['font', ['fontname', 'fontsize', 'color']], // <-- include fontname here
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['insert', ['link', 'picture']]
+      ]
+  });
 });
 
 // Global remove button handler

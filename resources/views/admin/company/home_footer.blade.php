@@ -32,7 +32,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>Home Footer <span class="text-danger">*</span></label>
-                                        <textarea name="footer_content" class="form-control ckeditor-classic @error('footer_content') is-invalid @enderror"
+                                        <textarea name="footer_content" class="form-control summernote @error('footer_content') is-invalid @enderror"
                                             rows="4">{!! $companyDetails->footer_content !!}</textarea>
                                     </div>
                                 </div>

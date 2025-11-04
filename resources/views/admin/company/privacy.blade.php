@@ -32,7 +32,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>Privacy Policy <span class="text-danger">*</span></label>
-                                        <textarea name="privacy_policy" class="form-control ckeditor-classic @error('privacy_policy') is-invalid @enderror"
+                                        <textarea name="privacy_policy" class="form-control summernote @error('privacy_policy') is-invalid @enderror"
                                             rows="4">{!! $companyDetails->privacy_policy !!}</textarea>
                                     </div>
                                 </div>

@@ -34,17 +34,17 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Full Description</label>
-                                <textarea name="full_description" class="form-control ckeditor-classic" rows="3"></textarea>
+                                <textarea name="full_description" class="form-control summernote" rows="3"></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Composition</label>
-                                <textarea name="composition" class="form-control ckeditor-classic"></textarea>
+                                <textarea name="composition" class="form-control summernote"></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Specifications</label>
-                                <textarea name="specifications" class="form-control ckeditor-classic"></textarea>
+                                <textarea name="specifications" class="form-control summernote"></textarea>
                             </div>
                         </div>
                     </div>

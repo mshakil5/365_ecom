@@ -33,7 +33,7 @@
                                     <div class="form-group">
                                         <label>Terms and Conditions <span class="text-danger">*</span></label>
                                         <textarea name="terms_and_conditions"
-                                            class="form-control ckeditor-classic @error('terms_and_conditions') is-invalid @enderror" rows="4">{!! $companyDetails->terms_and_conditions !!}</textarea>
+                                            class="form-control summernote @error('terms_and_conditions') is-invalid @enderror" rows="4">{!! $companyDetails->terms_and_conditions !!}</textarea>
                                     </div>
                                 </div>
                             </div>

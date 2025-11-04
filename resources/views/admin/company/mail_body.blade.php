@@ -32,7 +32,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>Mail Body <span class="text-danger">*</span></label>
-                                        <textarea name="mail_body" class="form-control ckeditor-classic @error('mail_body') is-invalid @enderror"
+                                        <textarea name="mail_body" class="form-control summernote @error('mail_body') is-invalid @enderror"
                                             rows="4">{!! $companyDetails->mail_body !!}</textarea>
                                     </div>
                                 </div>

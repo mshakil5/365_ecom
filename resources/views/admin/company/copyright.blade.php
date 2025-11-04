@@ -32,7 +32,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label>Copyright <span class="text-danger">*</span></label>
-                                        <textarea name="copyright" class="form-control ckeditor-classic @error('copyright') is-invalid @enderror"
+                                        <textarea name="copyright" class="form-control summernote @error('copyright') is-invalid @enderror"
                                             rows="4">{!! $companyDetails->copyright !!}</textarea>
                                     </div>
                                 </div>

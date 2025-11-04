@@ -37,17 +37,17 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Full Description</label>
-                                <textarea name="full_description" class="form-control ckeditor-classic" rows="3">{{ old('full_description', $product->full_description) }}</textarea>
+                                <textarea name="full_description" class="form-control summernote" rows="3">{{ old('full_description', $product->full_description) }}</textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Composition</label>
-                                <textarea name="composition" class="form-control ckeditor-classic">{{ old('composition', $product->composition) }}</textarea>
+                                <textarea name="composition" class="form-control summernote">{{ old('composition', $product->composition) }}</textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Specifications</label>
-                                <textarea name="specifications" class="form-control ckeditor-classic">{{ old('specifications', $product->specifications) }}</textarea>
+                                <textarea name="specifications" class="form-control summernote">{{ old('specifications', $product->specifications) }}</textarea>
                             </div>
                         </div>
                     </div>

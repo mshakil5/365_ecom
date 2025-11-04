@@ -27,7 +27,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Answer <span class="text-danger">*</span></label>
-                                <textarea id="answer" name="answer" class="form-control ckeditor-classic"></textarea>
+                                <textarea id="answer" name="answer" class="form-control summernote"></textarea>
                             </div>
                             <div class="mb-3 text-end">
                                 <button type="button" id="addBtn" class="btn btn-primary" value="Create">Create</button>
