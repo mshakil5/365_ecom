@@ -105,6 +105,7 @@
                 $('#addBtn').val('Create').text('Create');
                 $('#addThisFormContainer').show(300);
                 $('#newBtn').hide();
+                $("#answer").summernote('code', '');
             });
 
             $('#FormCloseBtn').click(function() {
@@ -118,14 +119,12 @@
             // Create / Update
             $('#addBtn').click(function() {
 
-                editors.forEach((editor, id) => {
-                    document.getElementById(id).value = editor.getData();
-                });
                 var btn = this;
                 var url = $(btn).val() === 'Create' ? "{{ route('faq.store') }}" :
                     "{{ route('faq.update') }}";
                 var form = document.getElementById('createThisForm');
                 var fd = new FormData(form);
+                fd.append("answer", $("#answer").summernote('code'));
                 if ($(btn).val() !== 'Create') fd.append('id', $('#codeid').val());
 
                 $.ajax({
@@ -158,7 +157,7 @@
                 $.get("{{ url('/admin/faq') }}/" + id + "/edit", {}, function(res) {
                     $('#codeid').val(res.id);
                     $('#question').val(res.question);
-                    if (editors.has('answer')) editors.get('answer').setData(res.answer);
+                    $("#answer").summernote('code', res.answer);
                     $('#cardTitle').text('Update FAQ');
                     $('#addBtn').val('Update').text('Update');
                     $('#addThisFormContainer').show(300);
