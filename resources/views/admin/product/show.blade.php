@@ -327,7 +327,7 @@
                                                                             {{ $variant->stock_quantity }}
                                                                         </span>
                                                                     </td>
-                                                                    <td>${{ number_format($variant->price_single ?? $product->price, 2) }}
+                                                                    <td>£{{ number_format($variant->price_single ?? $product->price, 2) }}
                                                                     </td>
                                                                     <td>
                                                                         <span

@@ -3,7 +3,9 @@
 
 @section('content')
     <div class="container-fluid">
-
+        <div class="col-2 mb-3">
+            <a href="{{ url()->previous() }}" class="btn btn-primary">Back</a>
+        </div>
         <div class="row">
             {{-- LEFT SIDE: Products & Order Status --}}
             <div class="col-xl-9">
@@ -83,7 +85,7 @@
                                                                                     data-bs-target="#collapse{{ $detail->id }}{{ $index }}"
                                                                                     aria-expanded="false"
                                                                                     aria-controls="collapse{{ $detail->id }}{{ $index }}">
-                                                                                    {{ ucfirst($c->method ?? 'N/A') }}
+                                                                                    {{ ucfirst($c->method ?? '') }}
                                                                                     @if ($c->position)
                                                                                         - {{ $c->position }}
                                                                                     @endif
@@ -101,11 +103,11 @@
                                                                                             <strong>Text:</strong>
                                                                                             {{ $data['text'] }}<br>
                                                                                             <strong>Font:</strong>
-                                                                                            {{ $data['fontFamily'] ?? 'N/A' }}<br>
+                                                                                            {{ $data['fontFamily'] ?? '' }}<br>
                                                                                             <strong>Size:</strong>
-                                                                                            {{ $data['fontSize'] ?? 'N/A' }}<br>
+                                                                                            {{ $data['fontSize'] ?? '' }}<br>
                                                                                             <strong>Color:</strong>
-                                                                                            {{ $data['color'] ?? 'N/A' }}
+                                                                                            {{ $data['color'] ?? '' }}
                                                                                         </div>
                                                                                     @endif
 
@@ -114,13 +116,13 @@
                                                                                         <div class="mb-2">
                                                                                             {!! '<img src="' . $data['src'] . '" alt="Custom Image" style="max-height:100px;">' !!}<br>
                                                                                             <strong>Method:</strong>
-                                                                                            {{ $c->method ?? 'N/A' }}<br>
+                                                                                            {{ $c->method ?? '' }}<br>
                                                                                             <strong>Position:</strong>
-                                                                                            {{ $c->position ?? 'N/A' }}<br>
+                                                                                            {{ $c->position ?? '' }}<br>
                                                                                             <strong>Z-Index:</strong>
-                                                                                            {{ $c->z_index ?? 'N/A' }}<br>
+                                                                                            {{ $c->z_index ?? '' }}<br>
                                                                                             <strong>Layer ID:</strong>
-                                                                                            {{ $c->layer_id ?? 'N/A' }}
+                                                                                            {{ $c->layer_id ?? '' }}
                                                                                         </div>
                                                                                     @endif
                                                                                 </div>
@@ -138,9 +140,9 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>${{ number_format($detail->price, 2) }}</td>
+                                            <td>£{{ number_format($detail->price, 2) }}</td>
                                             <td>{{ $detail->quantity }}</td>
-                                            <td class="fw-medium text-end">${{ number_format($detail->subtotal, 2) }}</td>
+                                            <td class="fw-medium text-end">£{{ number_format($detail->subtotal, 2) }}</td>
                                         </tr>
                                     @endforeach
 
@@ -152,21 +154,21 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>Sub Total :</td>
-                                                        <td class="text-end">${{ number_format($order->subtotal, 2) }}</td>
+                                                        <td class="text-end">£{{ number_format($order->subtotal, 2) }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Shipping Charge :</td>
                                                         <td class="text-end">
-                                                            ${{ number_format($order->shipping_charge, 2) }}</td>
+                                                            £{{ number_format($order->shipping_charge, 2) }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>VAT ({{ $order->vat_percent }}%) :</td>
-                                                        <td class="text-end">${{ number_format($order->vat_amount, 2) }}
+                                                        <td class="text-end">£{{ number_format($order->vat_amount, 2) }}
                                                         </td>
                                                     </tr>
                                                     <tr class="border-top border-top-dashed">
                                                         <th scope="row">Total :</th>
-                                                        <th class="text-end">${{ number_format($order->total_amount, 2) }}
+                                                        <th class="text-end">£{{ number_format($order->total_amount, 2) }}
                                                         </th>
                                                     </tr>
                                                 </tbody>
@@ -190,9 +192,9 @@
                         <h5 class="card-title mb-0">Customer Details</h5>
                     </div>
                     <div class="card-body">
-                        <p><strong>{{ $order->full_name }}</strong></p>
-                        <p>{{ $order->email }}</p>
-                        <p>{{ $order->phone }}</p>
+                        <p><strong>{{ $order->full_name ?? $order->billing_full_name }}</strong></p>
+                        <p>{{ $order->email ?? $order->billing_email }}</p>
+                        <p>{{ $order->phone ?? $order->billing_phone }}</p>
                     </div>
                 </div>
 
@@ -210,17 +212,37 @@
                 </div>
 
                 {{-- Shipping Address --}}
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Shipping Address</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>{{ $order->full_name }}</p>
-                        <p>{{ $order->address_first_line }} {{ $order->address_second_line }}
-                            {{ $order->address_third_line }}</p>
-                        <p>{{ $order->city }} - {{ $order->postcode }}</p>
-                    </div>
-                </div>
+              @if($order->shipping_method == 1)
+                  {{-- Pickup Information --}}
+                  <div class="card mb-3">
+                      <div class="card-header">
+                          <h5 class="card-title mb-0">Pickup Information</h5>
+                      </div>
+                      <div class="card-body">
+                          @php
+                              $company = App\Models\CompanyDetails::first();
+                          @endphp
+                          <p><strong>Pickup Method:</strong> In Store</p>
+                          <p><strong>Store Name:</strong> {{ $company->company_name ?? 'Our Store' }}</p>
+                          <p><strong>Store Address:</strong> {{ $company->address1 ?? '' }}</p>
+                          <p><strong>Store Hours:</strong> {{ $company->opening_time ?? 'Mon-Fri 9am-6pm' }}</p>
+                          <p><strong>Contact Phone:</strong> {{ $company->phone ?? '' }}</p>
+                      </div>
+                  </div>
+              @else
+                  {{-- Shipping Address --}}
+                  <div class="card mb-3">
+                      <div class="card-header">
+                          <h5 class="card-title mb-0">Shipping Address</h5>
+                      </div>
+                      <div class="card-body">
+                          <p>{{ $order->full_name }}</p>
+                          <p>{{ $order->address_first_line }} {{ $order->address_second_line }}
+                              {{ $order->address_third_line }}</p>
+                          <p>{{ $order->city }} - {{ $order->postcode }}</p>
+                      </div>
+                  </div>
+              @endif
 
                 {{-- Payment Details --}}
                 <div class="card mb-3">
@@ -229,7 +251,7 @@
                     </div>
                     <div class="card-body">
                         <p>Method: {{ ucfirst(str_replace('_', ' ', $order->payment_method)) }}</p>
-                        <p>Total Amount: ${{ number_format($order->total_amount, 2) }}</p>
+                        <p>Total Amount: £{{ number_format($order->total_amount, 2) }}</p>
                     </div>
                 </div>
             </div>

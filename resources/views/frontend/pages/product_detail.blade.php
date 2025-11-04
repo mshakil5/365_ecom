@@ -1,6 +1,7 @@
 @extends('frontend.pages.master')
 
 @section('content')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
 
     <div class="breadcrumb-section">
         <div class="breadcrumb-wrapper">
@@ -27,17 +28,21 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="product-details-gallery-area d-flex align-items-center flex-row-reverse">
+                    <div class="product-details-gallery-area d-flex align-items-center flex-row-reverse" data-aos="fade-up"  data-aos-delay="0">
                         <div class="product-large-image product-large-image-vertical ml-15">
                             @foreach ($product->images as $image)
-                                <div class="product-image-large-single zoom-image-hover">
+                                <div class="product-image-large-single">
+                                  <a href="{{ $image->image_path }}" data-fancybox="product-gallery" data-caption="{{ $product->name }}">
                                     <img src="{{ $image->image_path }}" alt="{{ $product->name }}"
                                         class="{{ $image->is_primary ? 'main-image' : '' }}">
+                                  </a>
                                 </div>
                             @endforeach
                             @if ($product->feature_image && !$product->images->contains('image_path', $product->feature_image))
-                                <div class="product-image-large-single zoom-image-hover">
+                                <div class="product-image-large-single">
+                                    <a href="{{ $product->feature_image }}" data-fancybox="product-gallery" data-caption="{{ $product->name }}">
                                     <img src="{{ $product->feature_image }}" alt="{{ $product->name }}" class="main-image">
+                                    </a>
                                 </div>
                             @endif
                         </div>
@@ -62,7 +67,7 @@
                         <div class="product-details-text">
                             <h4 class="title">{{ $product->name }}</h4>
                             <div class="price">
-                                {{-- <del>$49.99</del> --}}
+                                {{-- <del>£49.99</del> --}}
                                 £{{ number_format($product->price, 2) }} <span class="text-black">excl VAT</span>
                             </div>
                             <p class="product-meta small mt-2">
@@ -611,5 +616,28 @@
             });
         });
     </script>
+
+@endsection
+
+@section('script')
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('[data-fancybox="product-gallery"]').fancybox({
+        buttons: [
+            "zoom",
+            "share",
+            "slideShow",
+            "fullScreen",
+            "thumbs",
+            "close"
+        ],
+        animationEffect: "fade",
+        transitionEffect: "slide",
+        loop: true
+    });
+});
+</script>
 
 @endsection

@@ -41,7 +41,7 @@ $(document).ready(function(){
         ajax: "{{ route('allApiProducts') }}",
         columns: [
             {data:'DT_RowIndex', name:'DT_RowIndex', orderable:false, searchable:false},
-            {data:'code', name:'code'},
+            {data:'product_code', name:'product_code'},
             {data:'name', name:'name'},
             {data:'price', name:'price'},
             {data:'category', name:'category'},

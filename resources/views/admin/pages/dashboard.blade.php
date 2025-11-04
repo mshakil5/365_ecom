@@ -11,7 +11,7 @@
                             <div class="col-12">
                                 <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                                     <div class="flex-grow-1">
-                                        <h4 class="fs-16 mb-1">Good Morning, Anna!</h4>
+                                        <h4 class="fs-16 mb-1">Good Morning, {{ auth()->user()->name }}!</h4>
                                         <p class="text-muted mb-0">Here's what's happening with your store
                                             today.</p>
                                     </div>
@@ -72,7 +72,7 @@
                                         </div>
                                         <div class="d-flex align-items-end justify-content-between mt-4">
                                             <div>
-                                                <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span class="counter-value"
+                                                <h4 class="fs-22 fw-semibold ff-secondary mb-4">£<span class="counter-value"
                                                         data-target="559.25">0</span>k
                                                 </h4>
                                                 <a href="#" class="text-decoration-underline">View net
@@ -170,7 +170,7 @@
                                         </div>
                                         <div class="d-flex align-items-end justify-content-between mt-4">
                                             <div>
-                                                <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span
+                                                <h4 class="fs-22 fw-semibold ff-secondary mb-4">£<span
                                                         class="counter-value" data-target="165.89">0</span>k
                                                 </h4>
                                                 <a href="#" class="text-decoration-underline">Withdraw money</a>
@@ -232,7 +232,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$29.00</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£29.00</h5>
                                                             <span class="text-muted">Price</span>
                                                         </td>
                                                         <td>
@@ -244,7 +244,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$1,798</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£1,798</h5>
                                                             <span class="text-muted">Amount</span>
                                                         </td>
                                                     </tr>
@@ -265,7 +265,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$85.20</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£85.20</h5>
                                                             <span class="text-muted">Price</span>
                                                         </td>
                                                         <td>
@@ -279,7 +279,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$2982</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£2982</h5>
                                                             <span class="text-muted">Amount</span>
                                                         </td>
                                                     </tr>
@@ -300,7 +300,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$14.00</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£14.00</h5>
                                                             <span class="text-muted">Price</span>
                                                         </td>
                                                         <td>
@@ -312,7 +312,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$1120</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£1120</h5>
                                                             <span class="text-muted">Amount</span>
                                                         </td>
                                                     </tr>
@@ -333,7 +333,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$127.50</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£127.50</h5>
                                                             <span class="text-muted">Price</span>
                                                         </td>
                                                         <td>
@@ -347,7 +347,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$7140</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£7140</h5>
                                                             <span class="text-muted">Amount</span>
                                                         </td>
                                                     </tr>
@@ -368,7 +368,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$54</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£54</h5>
                                                             <span class="text-muted">Price</span>
                                                         </td>
                                                         <td>
@@ -380,7 +380,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <h5 class="fs-14 my-1 fw-normal">$3996</h5>
+                                                            <h5 class="fs-14 my-1 fw-normal">£3996</h5>
                                                             <span class="text-muted">Amount</span>
                                                         </td>
                                                     </tr>
@@ -465,7 +465,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <span class="text-muted">$541200</span>
+                                                            <span class="text-muted">£541200</span>
                                                         </td>
                                                         <td>
                                                             <h5 class="fs-14 mb-0">32%<i
@@ -497,7 +497,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <span class="text-muted">$75030</span>
+                                                            <span class="text-muted">£75030</span>
                                                         </td>
                                                         <td>
                                                             <h5 class="fs-14 mb-0">79%<i
@@ -530,7 +530,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <span class="text-muted">$45600</span>
+                                                            <span class="text-muted">£45600</span>
                                                         </td>
                                                         <td>
                                                             <h5 class="fs-14 mb-0">90%<i
@@ -562,7 +562,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <span class="text-muted">$29456</span>
+                                                            <span class="text-muted">£29456</span>
                                                         </td>
                                                         <td>
                                                             <h5 class="fs-14 mb-0">40%<i
@@ -594,7 +594,7 @@
                                                             <span class="text-muted">Stock</span>
                                                         </td>
                                                         <td>
-                                                            <span class="text-muted">$11260</span>
+                                                            <span class="text-muted">£11260</span>
                                                         </td>
                                                         <td>
                                                             <h5 class="fs-14 mb-0">57%<i
@@ -681,7 +681,7 @@
                                                         </td>
                                                         <td>Clothes</td>
                                                         <td>
-                                                            <span class="text-success">$109.00</span>
+                                                            <span class="text-success">£109.00</span>
                                                         </td>
                                                         <td>Zoetic Fashion</td>
                                                         <td>
@@ -709,7 +709,7 @@
                                                         </td>
                                                         <td>Kitchen Storage</td>
                                                         <td>
-                                                            <span class="text-success">$149.00</span>
+                                                            <span class="text-success">£149.00</span>
                                                         </td>
                                                         <td>Micro Design</td>
                                                         <td>
@@ -737,7 +737,7 @@
                                                         </td>
                                                         <td>Bike Accessories</td>
                                                         <td>
-                                                            <span class="text-success">$215.00</span>
+                                                            <span class="text-success">£215.00</span>
                                                         </td>
                                                         <td>Nesta Technologies</td>
                                                         <td>
@@ -765,7 +765,7 @@
                                                         </td>
                                                         <td>Furniture</td>
                                                         <td>
-                                                            <span class="text-success">$199.00</span>
+                                                            <span class="text-success">£199.00</span>
                                                         </td>
                                                         <td>Syntyce Solutions</td>
                                                         <td>
@@ -793,7 +793,7 @@
                                                         </td>
                                                         <td>Bags and Wallets</td>
                                                         <td>
-                                                            <span class="text-success">$330.00</span>
+                                                            <span class="text-success">£330.00</span>
                                                         </td>
                                                         <td>iTest Factory</td>
                                                         <td>
@@ -1297,7 +1297,7 @@
                                         <img src="{{ asset('resources') }}/backend/images/giftbox.png" alt="">
                                         <div class="mt-4">
                                             <h5>Invite New Seller</h5>
-                                            <p class="text-muted lh-base">Refer a new seller to us and earn $100
+                                            <p class="text-muted lh-base">Refer a new seller to us and earn £100
                                                 per refer.</p>
                                             <button type="button" class="btn btn-primary btn-label rounded-pill"><i
                                                     class="ri-mail-fill label-icon align-middle rounded-pill fs-16 me-2"></i>

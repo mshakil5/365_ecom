@@ -64,6 +64,8 @@
                     toastr.success("Product added to cart!");
                     console.log('Session cart:', res.cart);
                     updateCartCount();
+                    $('input[name="color"]').prop('checked', false);
+                    $('.qty-input').val(0);
 
                     if (action === 'cart') {
                         $('#product-name').text(productName);
@@ -72,7 +74,7 @@
                         $('.offcanvas-overlay').show();
                     } else if (action === 'customize') {
                         setTimeout(() => {
-                            const encodedId = btoa(productId); // Base64 encode
+                            const encodedId = btoa(productId);
                             window.location.href = "/customize?product=" +
                             encodedId;
                         }, 500);
@@ -84,31 +86,11 @@
             });
         });
 
-        $(document).on('click', '.cart-delete-btn', function(e) {
-            e.preventDefault();
-            let row = $(this).closest('tr');
-            row.remove();
-
-            let total = 0;
-            $('.item-subtotal').each(function() {
-                total += parseFloat($(this).text());
-            });
-
-            $('#cart-total').text('£' + total.toFixed(2));
-            updateCartCount();
-
-            if($('.table-cart tbody tr').length === 0){
-                $('#checkout-wrapper').hide();
-                $('.table-cart tbody').html('<tr><td colspan="5" class="text-center">Cart is empty</td></tr>');
-            }
-        });
-
         $('.offcanvas-close, .offcanvas-overlay').on('click', function() {
             $('#offcanvas').removeClass('show');
             $('.offcanvas-overlay').hide();
         });
 
-        // Plus/Minus buttons for quantity
         $('.plus-btn').on('click', function() {
             const input = $(this).prev('.qty-input');
             input.val(parseInt(input.val() || 0) + 1);
@@ -121,7 +103,6 @@
             }
         });
 
-        // Initial cart count on page load
         updateCartCount();
     });
 </script>

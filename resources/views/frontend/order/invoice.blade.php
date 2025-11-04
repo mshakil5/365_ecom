@@ -164,7 +164,7 @@
                             </td>
                             <td class="text-center">{{ $detail->quantity }}</td>
                             <td class="text-center">£{{ number_format($detail->price, 2) }}</td>
-                            <td class="text-right">£{{ number_format($detail->subtotal, 2) }}</td>
+                            <td class="text-center">£{{ number_format($detail->subtotal, 2) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

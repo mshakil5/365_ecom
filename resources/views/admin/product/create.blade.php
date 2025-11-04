@@ -101,7 +101,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                
+
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label">Company <span class="text-danger">*</span>
                                         <button type="button" class="btn btn-sm badge rounded-pill bg-success"
@@ -157,7 +157,8 @@
 
                                 <div class="col-md-6">
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" name="show_in_frontend" value="1" checked>
+                                        <input class="form-check-input" type="checkbox" name="show_in_frontend"
+                                            value="1" checked>
                                         <label class="form-check-label">Show on Frontend</label>
                                     </div>
                                 </div>
@@ -326,12 +327,6 @@
                 `);
 
                 var formData = new FormData($form[0]);
-
-                dropzone.files.forEach(function(file, index) {
-                    var color = $(file.previewElement).find('select[name="colors[]"]').val() || '';
-                    formData.append(`gallery_images[${index}][file]`, file);
-                    formData.append(`gallery_images[${index}][color]`, color);
-                });
 
                 $.ajax({
                     url: $form.attr('action'),

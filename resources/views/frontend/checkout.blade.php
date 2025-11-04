@@ -205,169 +205,177 @@
     <div class="container checkout-page py-4">
         <div class="row">
             <div class="col-lg-8">
-                <div class="option-container mb-4">
-                    <h2 class="checkout-title">Delivery</h2>
-                    <label class="option" id="delivery-pickup" onclick="showSection('pickup', this)">
-                        <div>
-                            <input type="radio" name="shipping" class="customRadioButton" style="width: 7%">
-                            <span>Pickup In Store</span>
-                        </div>
-                        <i class="fa fa-home px-4" style="font-size: 24px; color: #007bff; margin-left: auto;"></i>
-                    </label>
-                    <label class="option selected" id="delivery-ship" onclick="showSection('ship', this)">
-                        <div>
-                            <input type="radio" name="shipping" class="customRadioButton" style="width: 7%" checked>
-                            <span>Ship</span>
-                        </div>
-                        <i class="fa fa-truck px-4" style="font-size: 24px; color: #007bff; margin-left: auto;"></i>
-                    </label>
-                    <span class="error text-danger" id="shipping-error" style="display: none;">Please select a delivery
-                        option.</span>
-                </div>
-
-                <input type="hidden" id="shippingMethod" name="shippingMethod" value="0">
-
-                <div id="shippingDetails" class="mt-2">
-                    <h2 class="checkout-title">Delivery Address</h2>
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>Full Name (Required)</label>
-                            <input class="form-control" id="first_name" type="text" placeholder="" maxlength="64"
-                                value="{{ Auth::user()->name ?? '' }}">
-                            <span class="error text-danger" id="first_name-error"></span>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Company Name</label>
-                            <input class="form-control" id="company_name" type="text" placeholder=""
-                                value="{{ Auth::user()->company_name ?? '' }}">
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <label>Email (Required)</label>
-                            <input type="email" id="email" name="email" class="form-control" placeholder=""
-                                value="{{ Auth::user()->email ?? '' }}">
-                            <span class="error text-danger" id="email-error"></span>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Phone (Required)</label>
-                            <input class="form-control" id="phone" type="tel" placeholder="" maxlength="15"
-                                value="{{ Auth::user()->phone ?? '' }}">
-                            <span class="error text-danger" id="phone-error"></span>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 1 (Required)</label>
-                            <input class="form-control" type="text" placeholder="" id="address_first_line"
-                                maxlength="128" minlength="3" value="{{ Auth::user()->address_first_line ?? '' }}">
-                            <span class="error text-danger" id="address_first_line-error"></span>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 2</label>
-                            <input class="form-control" type="text" placeholder="" id="address_second_line"
-                                value="{{ Auth::user()->address_second_line ?? '' }}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 3</label>
-                            <input class="form-control" type="text" placeholder="" id="address_third_line"
-                                value="{{ Auth::user()->address_third_line ?? '' }}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>City (Required)</label>
-                            <input class="form-control" type="text" placeholder="" id="city" maxlength="128"
-                                value="{{ Auth::user()->city ?? '' }}">
-                            <span class="error text-danger" id="city-error"></span>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Postcode (Required)</label>
-                            <input class="form-control" type="text" placeholder="" id="postcode" minlength="2"
-                                maxlength="10" value="{{ Auth::user()->postcode ?? '' }}">
-                            <span class="error text-danger" id="postcode-error"></span>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <label>Order Notes (Optional)</label>
-                            <textarea class="form-control" id="order_notes" rows="3" placeholder="Any special instructions..."></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pickup Details -->
-                <div class="row my-3" id="pickupDetails" style="display: none;">
-                    <div class="col-md-12">
-                        <h2 class="checkout-title">Pickup Location</h2>
-                        <div class="p-3 border rounded">
-                            <p><strong>{{ $company->company_name ?? 'Our Store' }}</strong></p>
-                            <p><strong>Address:</strong> {{ $company->address1 ?? '' }}</p>
-                            <p><strong>Hours:</strong> {{ $company->opening_time ?? 'Mon-Fri 9am-6pm' }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Billing Address -->
-                <div class="option-container mb-3">
-                    <h2 class="checkout-title">Billing Address</h2>
-                    <div id="shippingOptions">
-                        <label class="option selected mb-2" onclick="toggleDiffAddress('sameasshipping')">
+                <div class="summary-card">
+                    <div class="option-container mb-4">
+                        <h2 class="checkout-title">Delivery</h2>
+                        <label class="option" id="delivery-pickup" onclick="showSection('pickup', this)">
                             <div>
-                                <input type="radio" name="differentAddress" class="customRadioButton"
-                                    value="sameasshipping" style="width: 7%" checked>
-                                <span>Same As Delivery Address</span>
+                                <input type="radio" name="shipping" class="customRadioButton" style="width: 7%">
+                                <span>Pickup In Store</span>
                             </div>
                             <i class="fa fa-home px-4" style="font-size: 24px; color: #007bff; margin-left: auto;"></i>
                         </label>
-                        <label class="option" onclick="toggleDiffAddress('differentaddress')">
+                        <label class="option selected" id="delivery-ship" onclick="showSection('ship', this)">
                             <div>
-                                <input type="radio" name="differentAddress" class="customRadioButton"
-                                    value="differentaddress" style="width: 7%">
-                                <input type="hidden" id="is_billing_same" name="is_billing_same" value="1">
-                                <span>Use Different Billing Address</span>
+                                <input type="radio" name="shipping" class="customRadioButton" style="width: 7%" checked>
+                                <span>Ship</span>
                             </div>
-                            <i class="fa fa-home px-4" style="font-size: 24px; color: #007bff; margin-left: auto;"></i>
+                            <i class="fa fa-truck px-4" style="font-size: 24px; color: #007bff; margin-left: auto;"></i>
                         </label>
+                        <span class="error text-danger" id="shipping-error" style="display: none;">Please select a delivery
+                            option.</span>
                     </div>
 
-                    <div id="diffAddress" style="display: none;">
-                        <div class="row mt-3">
+                    <input type="hidden" id="shippingMethod" name="shippingMethod" value="0">
+
+                    <div id="shippingDetails" class="mt-2">
+                        <h2 class="checkout-title">Delivery Address</h2>
+                        <div class="row">
                             <div class="col-md-6 form-group">
                                 <label>Full Name (Required)</label>
-                                <input class="form-control" type="text" placeholder="" id="billing_first_name"
-                                    maxlength="64">
-                                <span class="error text-danger" id="billing_first_name-error"></span>
+                                <input class="form-control" id="first_name" type="text" placeholder="" maxlength="64"
+                                    value="{{ Auth::user()->name ?? '' }}">
+                                <span class="error text-danger" id="first_name-error"></span>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Company Name</label>
-                                <input class="form-control" type="text" placeholder="" id="billing_company_name">
+                                <input class="form-control" id="company_name" type="text" placeholder=""
+                                    value="{{ Auth::user()->company_name ?? '' }}">
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>Email (Required)</label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder=""
+                                    value="{{ Auth::user()->email ?? '' }}">
+                                <span class="error text-danger" id="email-error"></span>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Phone (Required)</label>
-                                <input class="form-control" id="billing_phone" type="tel" placeholder=""
-                                    maxlength="15">
-                                <span class="error text-danger" id="billing_phone-error"></span>
+                                <input class="form-control" id="phone" type="tel" placeholder="" maxlength="15"
+                                    value="{{ Auth::user()->phone ?? '' }}">
+                                <span class="error text-danger" id="phone-error"></span>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Address Line 1 (Required)</label>
-                                <input class="form-control" type="text" placeholder=""
-                                    id="billing_address_first_line" maxlength="128" minlength="3">
-                                <span class="error text-danger" id="billing_address_first_line-error"></span>
+                                <input class="form-control" type="text" placeholder="" id="address_first_line"
+                                    maxlength="128" minlength="3" value="{{ Auth::user()->address_first_line ?? '' }}">
+                                <span class="error text-danger" id="address_first_line-error"></span>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Address Line 2</label>
-                                <input class="form-control" type="text" placeholder=""
-                                    id="billing_address_second_line">
+                                <input class="form-control" type="text" placeholder="" id="address_second_line"
+                                    value="{{ Auth::user()->address_second_line ?? '' }}">
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Address Line 3</label>
-                                <input class="form-control" type="text" placeholder=""
-                                    id="billing_address_third_line">
+                                <input class="form-control" type="text" placeholder="" id="address_third_line"
+                                    value="{{ Auth::user()->address_third_line ?? '' }}">
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>City (Required)</label>
-                                <input class="form-control" id="billing_city" type="text" placeholder=""
-                                    maxlength="128">
-                                <span class="error text-danger" id="billing_city-error"></span>
+                                <input class="form-control" type="text" placeholder="" id="city" maxlength="128"
+                                    value="{{ Auth::user()->city ?? '' }}">
+                                <span class="error text-danger" id="city-error"></span>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Postcode (Required)</label>
-                                <input class="form-control" id="billing_postcode" type="text" placeholder=""
-                                    minlength="2" maxlength="10">
-                                <span class="error text-danger" id="billing_postcode-error"></span>
+                                <input class="form-control" type="text" placeholder="" id="postcode" minlength="2"
+                                    maxlength="10" value="{{ Auth::user()->postcode ?? '' }}">
+                                <span class="error text-danger" id="postcode-error"></span>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>Order Notes (Optional)</label>
+                                <textarea class="form-control" id="order_notes" rows="3" placeholder="Any special instructions..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pickup Details -->
+                    <div class="row my-3" id="pickupDetails" style="display: none;">
+                        <div class="col-md-12">
+                            <h2 class="checkout-title">Pickup Location</h2>
+                            <div class="p-3 border rounded">
+                                <p><strong>{{ $company->company_name ?? 'Our Store' }}</strong></p>
+                                <p><strong>Address:</strong> {{ $company->address1 ?? '' }}</p>
+                                <p><strong>Hours:</strong> {{ $company->opening_time ?? 'Mon-Fri 9am-6pm' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Billing Address -->
+                    <div class="option-container mb-3">
+                        <h2 class="checkout-title">Billing Address</h2>
+<div id="shippingOptions">
+        <label class="option selected mb-2" onclick="handleBillingOptionClick('sameasshipping')">
+            <div>
+                <input type="radio" name="differentAddress" class="customRadioButton"
+                    value="sameasshipping" style="width: 7%" checked>
+                <span>Same As Delivery Address</span>
+            </div>
+            <i class="fa fa-home px-4" style="font-size: 24px; color: #007bff; margin-left: auto;"></i>
+        </label>
+        <label class="option" onclick="handleBillingOptionClick('differentaddress')">
+            <div>
+                <input type="radio" name="differentAddress" class="customRadioButton"
+                    value="differentaddress" style="width: 7%">
+                <input type="hidden" id="is_billing_same" name="is_billing_same" value="1">
+                <span>Use Different Billing Address</span>
+            </div>
+            <i class="fa fa-home px-4" style="font-size: 24px; color: #007bff; margin-left: auto;"></i>
+        </label>
+    </div>
+
+                        <div id="diffAddress" style="display: none;">
+                            <div class="row mt-3">
+                                <div class="col-md-6 form-group">
+                                    <label>Full Name (Required)</label>
+                                    <input class="form-control" type="text" placeholder="" id="billing_first_name"
+                                        maxlength="64">
+                                    <span class="error text-danger" id="billing_first_name-error"></span>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Company Name</label>
+                                    <input class="form-control" type="text" placeholder="" id="billing_company_name">
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <label>Email (Required)</label>
+                                    <input type="email" id="billing_email" name="billing_email" class="form-control" placeholder=""
+                                        value="{{ Auth::user()->email ?? '' }}">
+                                    <span class="error text-danger" id="billing_email-error"></span>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Phone (Required)</label>
+                                    <input class="form-control" id="billing_phone" type="tel" placeholder=""
+                                        maxlength="15">
+                                    <span class="error text-danger" id="billing_phone-error"></span>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Address Line 1 (Required)</label>
+                                    <input class="form-control" type="text" placeholder=""
+                                        id="billing_address_first_line" maxlength="128" minlength="3">
+                                    <span class="error text-danger" id="billing_address_first_line-error"></span>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Address Line 2</label>
+                                    <input class="form-control" type="text" placeholder=""
+                                        id="billing_address_second_line">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Address Line 3</label>
+                                    <input class="form-control" type="text" placeholder=""
+                                        id="billing_address_third_line">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>City (Required)</label>
+                                    <input class="form-control" id="billing_city" type="text" placeholder=""
+                                        maxlength="128">
+                                    <span class="error text-danger" id="billing_city-error"></span>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Postcode (Required)</label>
+                                    <input class="form-control" id="billing_postcode" type="text" placeholder=""
+                                        minlength="2" maxlength="10">
+                                    <span class="error text-danger" id="billing_postcode-error"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -396,12 +404,14 @@
                                             <div class="small">EAN: <strong>{{ $item['ean'] }}</strong></div>
                                         @endif
                                         @if ($item['size_id'])
-                                        @php $size = \App\Models\Size::find($item['size_id']); @endphp
-                                            <div class="small">Size: <strong>{{ $size ? $size->name : $item['size_id'] }}</strong></div>
+                                            @php $size = \App\Models\Size::find($item['size_id']); @endphp
+                                            <div class="small">Size:
+                                                <strong>{{ $size ? $size->name : $item['size_id'] }}</strong></div>
                                         @endif
                                         @if ($item['color_id'])
-                                        @php $color = \App\Models\Color::find($item['color_id']); @endphp
-                                            <div class="small">Color: <strong>{{ $color ? $color->name : $item['color_id'] }}</strong></div>
+                                            @php $color = \App\Models\Color::find($item['color_id']); @endphp
+                                            <div class="small">Color:
+                                                <strong>{{ $color ? $color->name : $item['color_id'] }}</strong></div>
                                         @endif
 
                                         @if (!empty($item['customization']))
@@ -465,7 +475,7 @@
                         </div>
                     </div>
 
-                     <!-- Terms and Conditions -->
+                    <!-- Terms and Conditions -->
                     <div class="mt-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="termsCheck">
@@ -582,15 +592,49 @@
             const shippingDetails = document.getElementById('shippingDetails');
             const pickupDetails = document.getElementById('pickupDetails');
             const shippingMethodInput = document.getElementById('shippingMethod');
+            const sameAsShippingOption = document.querySelector('input[value="sameasshipping"]').closest('.option');
+            const differentAddressOption = document.querySelector('input[value="differentaddress"]').closest('.option');
 
             if (type === 'ship') {
                 shippingDetails.style.display = 'block';
                 pickupDetails.style.display = 'none';
                 shippingMethodInput.value = '0';
+                
+                // Enable both options for shipping
+                sameAsShippingOption.classList.remove('disabled');
+                sameAsShippingOption.style.pointerEvents = 'auto';
+                sameAsShippingOption.style.opacity = '1';
+                sameAsShippingOption.querySelector('input').disabled = false;
+                
+                differentAddressOption.classList.remove('disabled');
+                differentAddressOption.style.pointerEvents = 'auto';
+                differentAddressOption.style.opacity = '1';
+                differentAddressOption.querySelector('input').disabled = false;
+                
+                // Auto switch back to "Same As Delivery Address" for shipping
+                toggleDiffAddress('sameasshipping');
+                updateBillingOptionUI('sameasshipping');
+                
             } else {
                 shippingDetails.style.display = 'none';
                 pickupDetails.style.display = 'block';
                 shippingMethodInput.value = '1';
+                
+                // Disable "Same As Delivery Address" option for pickup
+                sameAsShippingOption.classList.add('disabled');
+                sameAsShippingOption.style.pointerEvents = 'none';
+                sameAsShippingOption.style.opacity = '0.6';
+                sameAsShippingOption.querySelector('input').disabled = true;
+                
+                // Ensure "Use Different Billing Address" is enabled and selected
+                differentAddressOption.classList.remove('disabled');
+                differentAddressOption.style.pointerEvents = 'auto';
+                differentAddressOption.style.opacity = '1';
+                differentAddressOption.querySelector('input').disabled = false;
+                
+                // Force "Use Different Billing Address" for pickup
+                toggleDiffAddress('differentaddress');
+                updateBillingOptionUI('differentaddress');
             }
 
             updateTotals();
@@ -599,6 +643,12 @@
         function toggleDiffAddress(value) {
             const diffAddress = document.getElementById('diffAddress');
             const isBillingSame = document.getElementById('is_billing_same');
+            const shippingMethod = document.getElementById('shippingMethod').value;
+
+            // Prevent switching to "Same As Delivery Address" for pickup
+            if (shippingMethod === '1' && value === 'sameasshipping') {
+                return; // Do nothing, keep it on different address
+            }
 
             if (value === 'differentaddress') {
                 diffAddress.style.display = 'block';
@@ -607,6 +657,43 @@
                 diffAddress.style.display = 'none';
                 isBillingSame.value = '1';
             }
+        }
+
+        function handleBillingOptionClick(value) {
+            const shippingMethod = document.getElementById('shippingMethod').value;
+            
+            // Prevent any action if pickup is selected and user tries to click "Same As Delivery Address"
+            if (shippingMethod === '1' && value === 'sameasshipping') {
+                return; // Do nothing
+            }
+            
+            // For shipping method or "differentaddress" click, proceed normally
+            toggleDiffAddress(value);
+            updateBillingOptionUI(value);
+        }
+
+        function updateBillingOptionUI(selectedValue) {
+            const billingOptions = document.querySelectorAll('#shippingOptions .option');
+            const shippingMethod = document.getElementById('shippingMethod').value;
+            
+            billingOptions.forEach(option => {
+                option.classList.remove('selected');
+                const radio = option.querySelector('input[name="differentAddress"]');
+                
+                // For pickup, always select "differentaddress" regardless of user click
+                if (shippingMethod === '1') {
+                    if (radio.value === 'differentaddress') {
+                        option.classList.add('selected');
+                        radio.checked = true;
+                    }
+                } else {
+                    // For shipping, respect user selection
+                    if (radio.value === selectedValue) {
+                        option.classList.add('selected');
+                        radio.checked = true;
+                    }
+                }
+            });
         }
 
         function updateTotals() {
@@ -636,331 +723,197 @@
 
             document.getElementById('summary-subtotal').textContent = '{{ $currency }}' + subtotal.toFixed(2);
         }
-
-        // document.getElementById('payWithCard')?.addEventListener('click', processOrder);
-        // document.getElementById('payWithPayPal')?.addEventListener('click', processOrder);
-        // document.getElementById('payWithBank')?.addEventListener('click', processOrder);
-        // document.getElementById('payWithCash')?.addEventListener('click', processOrder);
-
-
-        // async function processOrder(e, paymentMethod = null) {
-        //     e.preventDefault();
-
-        //     if (!paymentMethod) {
-        //         const buttonId = e.target.id;
-        //         if (buttonId === 'payWithCard') {
-        //             paymentMethod = 'stripe';
-        //         } else if (buttonId === 'payWithPayPal') {
-        //             paymentMethod = 'paypal';
-        //         } else if (buttonId === 'payWithBank') {
-        //             paymentMethod = 'bank_transfer';
-        //         } else if (buttonId === 'payWithCash') {
-        //             paymentMethod = 'cash_on_delivery';
-        //         }
-        //     }
-
-        //     if (!validateForm()) {
-        //         return false;
-        //     }
-
-        //     document.getElementById('loader').style.display = 'block';
-        //     e.target.disabled = true;
-
-        //     const formData = {
-        //         shipping_method: document.getElementById('shippingMethod').value,
-        //         first_name: document.getElementById('first_name').value,
-        //         company_name: document.getElementById('company_name').value,
-        //         email: document.getElementById('email').value,
-        //         phone: document.getElementById('phone').value,
-        //         address_first_line: document.getElementById('address_first_line').value,
-        //         address_second_line: document.getElementById('address_second_line').value,
-        //         city: document.getElementById('city').value,
-        //         postcode: document.getElementById('postcode').value,
-        //         order_notes: document.getElementById('order_notes').value,
-        //         is_billing_same: document.getElementById('is_billing_same').value,
-        //         billing_first_name: document.getElementById('billing_first_name').value || document.getElementById(
-        //             'first_name').value,
-        //         billing_company_name: document.getElementById('billing_company_name').value || document
-        //             .getElementById('company_name').value,
-        //         billing_phone: document.getElementById('billing_phone').value || document.getElementById('phone')
-        //             .value,
-        //         billing_address_first_line: document.getElementById('billing_address_first_line').value || document
-        //             .getElementById('address_first_line').value,
-        //         billing_address_second_line: document.getElementById('billing_address_second_line').value ||
-        //             document.getElementById('address_second_line').value,
-        //         billing_address_third_line: document.getElementById('billing_address_third_line').value || document
-        //             .getElementById('address_third_line').value,
-        //         billing_city: document.getElementById('billing_city').value || document.getElementById('city')
-        //             .value,
-        //         billing_postcode: document.getElementById('billing_postcode').value || document.getElementById(
-        //             'postcode').value,
-        //         payment_method: paymentMethod,
-        //         cart_items: @json($cartItems),
-        //         subtotal: {{ $total }},
-        //         shipping_charge: parseFloat(document.getElementById('shipping-charge').textContent.replace('£',
-        //             '')),
-        //         vat_amount: parseFloat(document.getElementById('vat-charge').textContent.replace('£', '')),
-        //         total_amount: parseFloat(document.getElementById('total-amount').textContent.replace('£', '')),
-        //         _token: '{{ csrf_token() }}'
-        //     };
-
-        //     try {
-        //         const response = await fetch("{{ route('checkout.process') }}", {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //             },
-        //             body: JSON.stringify(formData)
-        //         });
-
-        //         const text = await response.text(); // 👈 same as xhr.responseText
-        //         console.log('Raw Response Text:', text); // debug like xhr.responseText
-
-        //         let result;
-        //         try {
-        //             result = JSON.parse(text);
-        //         } catch (e) {
-        //             console.error('JSON Parse Error:', e);
-        //             alert('Invalid server response. Check console for details.');
-        //             throw e;
-        //         }
-
-        //         if (result.success) {
-        //             if (result.redirect_url) {
-        //                 window.location.href = result.redirect_url;
-        //             }
-        //         } else {
-        //             console.error('Server Error:', result);
-        //             alert(result.message || 'Error processing your order.');
-        //             document.getElementById('loader').style.display = 'none';
-        //             e.target.disabled = false;
-        //         }
-
-        //     } catch (error) {
-        //         console.error('Fetch Error:', error);
-        //         alert('Unexpected error occurred. Check console for details.');
-        //         document.getElementById('loader').style.display = 'none';
-        //         e.target.disabled = false;
-        //     }
-
-        // }
-
-        // function validateForm() {
-        //     let isValid = true;
-
-        //     document.querySelectorAll('.error').forEach(el => el.textContent = '');
-        //     document.querySelectorAll('.form-control').forEach(el => el.classList.remove('is-invalid'));
-
-        //     const shippingMethod = document.getElementById('shippingMethod').value;
-
-        //     if (shippingMethod === '0') {
-        //         const requiredFields = [{
-        //                 id: 'first_name',
-        //                 message: 'Full name is required'
-        //             },
-        //             {
-        //                 id: 'email',
-        //                 message: 'Valid email is required'
-        //             },
-        //             {
-        //                 id: 'phone',
-        //                 message: 'Phone number is required'
-        //             },
-        //             {
-        //                 id: 'address_first_line',
-        //                 message: 'Address line 1 is required'
-        //             },
-        //             {
-        //                 id: 'city',
-        //                 message: 'City is required'
-        //             },
-        //             {
-        //                 id: 'postcode',
-        //                 message: 'Postcode is required'
-        //             }
-        //         ];
-
-        //         requiredFields.forEach(field => {
-        //             const element = document.getElementById(field.id);
-        //             if (!element.value.trim()) {
-        //                 document.getElementById(field.id + '-error').textContent = field.message;
-        //                 element.classList.add('is-invalid');
-        //                 isValid = false;
-        //             }
-        //         });
-
-        //         const email = document.getElementById('email').value;
-        //         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        //         if (email && !emailRegex.test(email)) {
-        //             document.getElementById('email-error').textContent = 'Please enter a valid email address';
-        //             document.getElementById('email').classList.add('is-invalid');
-        //             isValid = false;
-        //         }
-        //     }
-
-        //     if (!document.getElementById('termsCheck').checked) {
-        //         document.getElementById('terms-error').textContent = 'You must accept the terms and conditions';
-        //         isValid = false;
-        //     }
-
-        //     return isValid;
-        // }
     </script>
 @endsection
 
 @section('script')
+    <script>
+        $(document).ready(function() {
+            $('#payWithCard, #payWithPayPal, #payWithBank, #payWithCash').on('click', function(e) {
+                e.preventDefault();
+                let paymentMethod;
+                const btnId = $(this).attr('id');
 
-<script>
-$(document).ready(function() {
-  $('#payWithCard, #payWithPayPal, #payWithBank, #payWithCash').on('click', function(e) {
-      e.preventDefault();
-      let paymentMethod;
-      const btnId = $(this).attr('id');
+                if (btnId === 'payWithCard') paymentMethod = 'stripe';
+                else if (btnId === 'payWithPayPal') paymentMethod = 'paypal';
+                else if (btnId === 'payWithBank') paymentMethod = 'bank_transfer';
+                else if (btnId === 'payWithCash') paymentMethod = 'cash_on_delivery';
 
-      if (btnId === 'payWithCard') paymentMethod = 'stripe';
-      else if (btnId === 'payWithPayPal') paymentMethod = 'paypal';
-      else if (btnId === 'payWithBank') paymentMethod = 'bank_transfer';
-      else if (btnId === 'payWithCash') paymentMethod = 'cash_on_delivery';
+                if (!validateForm()) return false;
 
-      if (!validateForm()) return false;
+                $('#loader').show();
+                $(this).prop('disabled', true);
 
-      $('#loader').show();
-      $(this).prop('disabled', true);
+                const formData = {
+                    shipping_method: $('#shippingMethod').val(),
+                    first_name: $('#first_name').val(),
+                    company_name: $('#company_name').val(),
+                    email: $('#email').val(),
+                    phone: $('#phone').val(),
+                    address_first_line: $('#address_first_line').val(),
+                    address_second_line: $('#address_second_line').val(),
+                    city: $('#city').val(),
+                    postcode: $('#postcode').val(),
+                    order_notes: $('#order_notes').val(),
+                    is_billing_same: $('#is_billing_same').val(),
+                    billing_first_name: $('#billing_first_name').val() || $('#first_name').val(),
+                    billing_company_name: $('#billing_company_name').val() || $('#company_name').val(),
+                    billing_email: $('#billing_email').val() || $('#email').val(),
+                    billing_phone: $('#billing_phone').val() || $('#phone').val(),
+                    billing_address_first_line: $('#billing_address_first_line').val() || $('#address_first_line').val(),
+                    billing_address_second_line: $('#billing_address_second_line').val() || $('#address_second_line').val(),
+                    billing_address_third_line: $('#billing_address_third_line').val() || $('#address_third_line').val(),
+                    billing_city: $('#billing_city').val() || $('#city').val(),
+                    billing_postcode: $('#billing_postcode').val() || $('#postcode').val(),
+                    payment_method: paymentMethod,
+                    cart_items: @json($cartItems),
+                    subtotal: {{ $total }},
+                    shipping_charge: parseFloat($('#shipping-charge').text().replace('£','')),
+                    vat_amount: parseFloat($('#vat-charge').text().replace('£','')),
+                    total_amount: parseFloat($('#total-amount').text().replace('£','')),
+                    _token: '{{ csrf_token() }}'
+                };
 
-      const formData = {
-          shipping_method: $('#shippingMethod').val(),
-          first_name: $('#first_name').val(),
-          company_name: $('#company_name').val(),
-          email: $('#email').val(),
-          phone: $('#phone').val(),
-          address_first_line: $('#address_first_line').val(),
-          address_second_line: $('#address_second_line').val(),
-          city: $('#city').val(),
-          postcode: $('#postcode').val(),
-          order_notes: $('#order_notes').val(),
-          is_billing_same: $('#is_billing_same').val(),
-          billing_first_name: $('#billing_first_name').val() || $('#first_name').val(),
-          billing_company_name: $('#billing_company_name').val() || $('#company_name').val(),
-          billing_phone: $('#billing_phone').val() || $('#phone').val(),
-          billing_address_first_line: $('#billing_address_first_line').val() || $('#address_first_line').val(),
-          billing_address_second_line: $('#billing_address_second_line').val() || $('#address_second_line').val(),
-          billing_address_third_line: $('#billing_address_third_line').val() || $('#address_third_line').val(),
-          billing_city: $('#billing_city').val() || $('#city').val(),
-          billing_postcode: $('#billing_postcode').val() || $('#postcode').val(),
-          payment_method: paymentMethod,
-          cart_items: @json($cartItems),
-          subtotal: {{ $total }},
-          shipping_charge: parseFloat($('#shipping-charge').text().replace('£','')),
-          vat_amount: parseFloat($('#vat-charge').text().replace('£','')),
-          total_amount: parseFloat($('#total-amount').text().replace('£','')),
-          _token: '{{ csrf_token() }}'
-      };
+                $.ajax({
+                    url: "{{ route('checkout.process') }}",
+                    type: "POST",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function(result) {
 
-      $.ajax({
-          url: "{{ route('checkout.process') }}",
-          type: "POST",
-          data: JSON.stringify(formData),
-          contentType: "application/json",
-          headers: {
-              'X-CSRF-TOKEN': '{{ csrf_token() }}'
-          },
-          success: function(result) {
+                        $('#loader').hide();
+                        $('#' + btnId).prop('disabled', false);
 
-              $('#loader').hide();
-              $('#' + btnId).prop('disabled', false);
+                        if (result.success && result.redirect_url) {
+                            window.location.href = result.redirect_url;
+                        } else if (result.errors) {
+                            setTimeout(scrollToTop, 0);
+                            $('html, body').animate({
+                                scrollTop: 0
+                            }, 'fast');
+                            // Clear previous errors
+                            $('.error').text('');
+                            $('.form-control').removeClass('is-invalid');
 
-              if (result.success && result.redirect_url) {
-                  window.location.href = result.redirect_url;
-              } else if (result.errors) {
-                     setTimeout(scrollToTop, 0);
-                     $('html, body').animate({ scrollTop: 0 }, 'fast');
-                  // Clear previous errors
-                  $('.error').text('');
-                  $('.form-control').removeClass('is-invalid');
+                            // Show validation errors
+                            $.each(result.errors, function(field, messages) {
+                                $('#' + field + '-error').text(messages[
+                                0]); // first error only
+                                $('#' + field).addClass('is-invalid');
+                            });
+                        } else {
+                            alert(result.message || 'Error processing your order.');
+                            setTimeout(scrollToTop, 0);
+                        }
+                    },
+                    error: function(xhr) {
 
-                  // Show validation errors
-                  $.each(result.errors, function(field, messages) {
-                      $('#' + field + '-error').text(messages[0]); // first error only
-                      $('#' + field).addClass('is-invalid');
-                  });
-              } else {
-                  alert(result.message || 'Error processing your order.');
-                   setTimeout(scrollToTop, 0);
-              }
-          },
-          error: function(xhr) {
+                        $('#loader').hide();
+                        $('#' + btnId).prop('disabled', false);
 
-              $('#loader').hide();
-              $('#' + btnId).prop('disabled', false);
+                        if (xhr.status === 422) {
+                            setTimeout(scrollToTop, 0);
+                            // Laravel validation errors
+                            var errors = xhr.responseJSON.errors;
+                            $('.error').text('');
+                            $('.form-control').removeClass('is-invalid');
+                            $.each(errors, function(field, messages) {
+                                $('#' + field + '-error').text(messages[0]);
+                                $('#' + field).addClass('is-invalid');
+                            });
+                        } else {
+                            // Other errors
+                            alert('Unexpected error occurred. Check console for details.');
+                            setTimeout(scrollToTop, 0);
+                            console.error(xhr.responseText);
+                        }
+                    }
+                });
 
-              if (xhr.status === 422) {
-                    setTimeout(scrollToTop, 0); 
-                  // Laravel validation errors
-                  var errors = xhr.responseJSON.errors;
-                  $('.error').text('');
-                  $('.form-control').removeClass('is-invalid');
-                  $.each(errors, function(field, messages) {
-                      $('#' + field + '-error').text(messages[0]);
-                      $('#' + field).addClass('is-invalid');
-                  });
-              } else {
-                  // Other errors
-                  alert('Unexpected error occurred. Check console for details.');
-                   setTimeout(scrollToTop, 0); 
-                  console.error(xhr.responseText);
-              }
-          }
-      });
+            });
 
-  });
+            function scrollToTop() {
+                setTimeout(function() {
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, 'fast');
+                }, 50);
+            }
 
-  function scrollToTop() {
-      setTimeout(function() {
-          $('html, body').animate({ scrollTop: 0 }, 'fast');
-      }, 50);
-  }
+            function validateForm() {
+                let isValid = true;
+                $('.error').text('');
+                $('.form-control').removeClass('is-invalid');
 
-  function validateForm() {
-      let isValid = true;
-      $('.error').text('');
-      $('.form-control').removeClass('is-invalid');
+                const shippingMethod = $('#shippingMethod').val();
+                const isBillingSame = $('#is_billing_same').val();
 
-      if ($('#shippingMethod').val() === '0') {
-          const fields = [
-              {id: 'first_name', message: 'Full name is required'},
-              {id: 'email', message: 'Valid email is required'},
-              {id: 'phone', message: 'Phone number is required'},
-              {id: 'address_first_line', message: 'Address line 1 is required'},
-              {id: 'city', message: 'City is required'},
-              {id: 'postcode', message: 'Postcode is required'}
-          ];
+                // For shipping method, validate shipping address
+                if (shippingMethod === '0') {
+                    const fields = [
+                        {id: 'first_name', message: 'Full name is required'},
+                        {id: 'email', message: 'Valid email is required'},
+                        {id: 'phone', message: 'Phone number is required'},
+                        {id: 'address_first_line', message: 'Address line 1 is required'},
+                        {id: 'city', message: 'City is required'},
+                        {id: 'postcode', message: 'Postcode is required'}
+                    ];
 
-          $.each(fields, function(_, field) {
-              if (!$('#'+field.id).val().trim()) {
-                  $('#'+field.id+'-error').text(field.message);
-                  $('#'+field.id).addClass('is-invalid');
-                  isValid = false;
-              }
-          });
+                    $.each(fields, function(_, field) {
+                        if (!$('#'+field.id).val().trim()) {
+                            $('#'+field.id+'-error').text(field.message);
+                            $('#'+field.id).addClass('is-invalid');
+                            isValid = false;
+                        }
+                    });
 
-          const email = $('#email').val();
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (email && !emailRegex.test(email)) {
-              $('#email-error').text('Please enter a valid email address');
-              $('#email').addClass('is-invalid');
-              isValid = false;
-          }
-      }
+                    const email = $('#email').val();
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (email && !emailRegex.test(email)) {
+                        $('#email-error').text('Please enter a valid email address');
+                        $('#email').addClass('is-invalid');
+                        isValid = false;
+                    }
+                }
 
-      if (!$('#termsCheck').is(':checked')) {
-          $('#terms-error').text('You must accept the terms and conditions');
-          isValid = false;
-      }
+                // For pickup OR when different billing is selected, validate billing address
+                if (shippingMethod === '1' || isBillingSame === '0') {
+                    const billingFields = [
+                        {id: 'billing_first_name', message: 'Full name is required'},
+                        {id: 'billing_email', message: 'Valid email is required'},
+                        {id: 'billing_phone', message: 'Phone number is required'},
+                        {id: 'billing_address_first_line', message: 'Address line 1 is required'},
+                        {id: 'billing_city', message: 'City is required'},
+                        {id: 'billing_postcode', message: 'Postcode is required'}
+                    ];
 
-      return isValid;
-  }
-});
-</script>
+                    $.each(billingFields, function(_, field) {
+                        if (!$('#'+field.id).val().trim()) {
+                            $('#'+field.id+'-error').text(field.message);
+                            $('#'+field.id).addClass('is-invalid');
+                            isValid = false;
+                        }
+                    });
 
+                    const billingEmail = $('#billing_email').val();
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (billingEmail && !emailRegex.test(billingEmail)) {
+                        $('#billing_email-error').text('Please enter a valid email address');
+                        $('#billing_email').addClass('is-invalid');
+                        isValid = false;
+                    }
+                }
+
+                if (!$('#termsCheck').is(':checked')) {
+                    $('#terms-error').text('You must accept the terms and conditions');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+        });
+    </script>
 @endsection

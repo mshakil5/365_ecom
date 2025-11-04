@@ -451,7 +451,7 @@ class ProductController extends Controller
     public function updateVariants(Request $request, Product $product)
     {
         $request->validate([
-            'variants' => 'required|array',
+            'variants' => 'nullable|array',
             'variants.*.color_id' => 'nullable|exists:colors,id',
             'variants.*.size_id' => 'nullable|exists:sizes,id',
             'variants.*.variant_short_code' => 'nullable|string',
@@ -482,59 +482,63 @@ class ProductController extends Controller
             $existingVariantIds = $product->variants()->pluck('id')->toArray();
             $submittedVariantIds = [];
 
-            foreach ($request->variants as $variantData) {
-                if (!empty($variantData['ean'])) {
-                    $eanExists = ProductVariant::where('ean', $variantData['ean'])
-                        ->where('product_id', $product->id)
-                        ->when(isset($variantData['id']), function ($q) use ($variantData) {
-                            $q->where('id', '!=', $variantData['id']);
-                        })
-                        ->exists();
+            if ($request->has('variants') && is_array($request->variants)) {
+                foreach ($request->variants as $variantData) {
+                    if (!empty($variantData['ean'])) {
+                        $eanExists = ProductVariant::where('ean', $variantData['ean'])
+                            ->where('product_id', $product->id)
+                            ->when(isset($variantData['id']), function ($q) use ($variantData) {
+                                $q->where('id', '!=', $variantData['id']);
+                            })
+                            ->exists();
 
-                    if ($eanExists) {
-                        throw new \Exception("EAN '{$variantData['ean']}' is already used by another variant.");
+                        if ($eanExists) {
+                            throw new \Exception("EAN '{$variantData['ean']}' is already used by another variant.");
+                        }
                     }
+
+                    $variant = ProductVariant::updateOrCreate(
+                        [
+                            'id' => $variantData['id'] ?? null,
+                        ],
+                        [
+                            'product_id' => $product->id,
+                            'color_id' => $variantData['color_id'] ?? null,
+                            'size_id' => $variantData['size_id'] ?? null,
+                            'variant_short_code' => $variantData['variant_short_code'] ?? null,
+                            'short_code' => $variantData['short_code'] ?? null,
+                            'ean' => $variantData['ean'] ?? null,
+                            'price_single' => $variantData['price_single'] ?? null,
+                            'qty_single' => $variantData['qty_single'] ?? null,
+                            'price_pack' => $variantData['price_pack'] ?? null,
+                            'pack_qty' => $variantData['pack_qty'] ?? null,
+                            'price_carton' => $variantData['price_carton'] ?? null,
+                            'carton_qty' => $variantData['carton_qty'] ?? null,
+                            'price_1k' => $variantData['price_1k'] ?? null,
+                            'quantity' => $variantData['quantity'] ?? null,
+                            'my_price' => $variantData['my_price'] ?? null,
+                            'stock_quantity' => $variantData['stock_quantity'] ?? 0,
+                            'is_active' => $variantData['is_active'] ?? true,
+                        ]
+                    );
+                    $submittedVariantIds[] = $variant->id;
                 }
 
-                $variant = ProductVariant::updateOrCreate(
-                    [
-                        'id' => $variantData['id'] ?? null,
-                    ],
-                    [
-                        'product_id' => $product->id,
-                        'color_id' => $variantData['color_id'] ?? null,
-                        'size_id' => $variantData['size_id'] ?? null,
-                        'variant_short_code' => $variantData['variant_short_code'] ?? null,
-                        'short_code' => $variantData['short_code'] ?? null,
-                        'ean' => $variantData['ean'] ?? null,
-                        'price_single' => $variantData['price_single'] ?? null,
-                        'qty_single' => $variantData['qty_single'] ?? null,
-                        'price_pack' => $variantData['price_pack'] ?? null,
-                        'pack_qty' => $variantData['pack_qty'] ?? null,
-                        'price_carton' => $variantData['price_carton'] ?? null,
-                        'carton_qty' => $variantData['carton_qty'] ?? null,
-                        'price_1k' => $variantData['price_1k'] ?? null,
-                        'quantity' => $variantData['quantity'] ?? null,
-                        'my_price' => $variantData['my_price'] ?? null,
-                        'stock_quantity' => $variantData['stock_quantity'] ?? 0,
-                        'is_active' => $variantData['is_active'] ?? true,
-                    ]
-                );
-                $submittedVariantIds[] = $variant->id;
-            }
-
-            $variantsToDelete = array_diff($existingVariantIds, $submittedVariantIds);
-            if (!empty($variantsToDelete)) {
-                ProductVariant::whereIn('id', $variantsToDelete)->delete();
+                $variantsToDelete = array_diff($existingVariantIds, $submittedVariantIds);
+                if (!empty($variantsToDelete)) {
+                    ProductVariant::whereIn('id', $variantsToDelete)->delete();
+                }
             }
 
             if ($request->has('delete_images')) {
                 foreach ($request->delete_images as $imageId) {
                     $image = ProductImage::find($imageId);
-                    if ($image && file_exists(public_path($image->image_path))) {
-                        unlink(public_path($image->image_path));
+                    if ($image) {
+                        if (file_exists(public_path($image->image_path))) {
+                            unlink(public_path($image->image_path));
+                        }
+                        $image->delete();
                     }
-                    $image->delete();
                 }
             }
 
@@ -856,8 +860,8 @@ class ProductController extends Controller
 
             return DataTables::of($products)
                 ->addIndexColumn()
-                ->addColumn('code', fn($row) => $row->product_code)
-                ->addColumn('name', fn($row) => $row->name)
+                ->editColumn('product_code', fn($row) => $row->product_code)
+                ->editColumn('name', fn($row) => $row->name)
                 ->addColumn('price', fn($row) => $row->price)
                 ->addColumn('category', fn($row) => $row->category?->name ?? '')
                 ->addColumn('company', fn($row) => $row->company?->name ?? '')

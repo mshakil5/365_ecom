@@ -131,32 +131,32 @@ class CheckoutController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'shipping_method' => 'required|in:0,1',
-            'first_name' => 'required|string|max:64',
-            'email' => 'required|email',
-            'phone' => 'required|string|max:15',
-            'address_first_line' => 'required|string|max:128',
-            'city' => 'required|string|max:128',
-            'postcode' => 'required|string|max:10',
             'payment_method' => 'required|in:cash_on_delivery,bank_transfer,paypal,stripe',
             'cart_items' => 'required|array',
         ]);
 
+        // Only require shipping address for "Ship" method
         if ($request->shipping_method === '0') {
-            $validator->sometimes(['first_name', 'email', 'phone', 'address_first_line', 'city', 'postcode'], 'required', function ($input) {
-                return true;
-            });
+            $validator->addRules([
+                'first_name' => 'required|string|max:64',
+                'email' => 'required|email',
+                'phone' => 'required|string|max:15',
+                'address_first_line' => 'required|string|max:128',
+                'city' => 'required|string|max:128',
+                'postcode' => 'required|string|max:10',
+            ]);
         }
 
-        if ($request->is_billing_same == '0') {
-            $validator->sometimes([
-                'billing_first_name', 
-                'billing_phone', 
-                'billing_address_first_line', 
-                'billing_city', 
-                'billing_postcode'
-            ], 'required', function ($input) {
-                return true;
-            });
+        // Always require billing address for pickup OR when different billing is selected
+        if ($request->shipping_method === '1' || $request->is_billing_same == '0') {
+            $validator->addRules([
+                'billing_first_name' => 'required|string|max:64',
+                'billing_email' => 'required|email',
+                'billing_phone' => 'required|string|max:15',
+                'billing_address_first_line' => 'required|string|max:128',
+                'billing_city' => 'required|string|max:128',
+                'billing_postcode' => 'required|string|max:10',
+            ]);
         }
 
         return $validator;

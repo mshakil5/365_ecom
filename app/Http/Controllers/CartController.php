@@ -16,8 +16,6 @@ class CartController extends Controller
 
     }
 
-
-
     public function showCart(Request $request)
     {
         $sessionCart = $request->session()->get('cart', []);
